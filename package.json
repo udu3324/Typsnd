@@ -1,7 +1,7 @@
 {
   "name": "typsnd",
   "version": "1.0.0",
-  "description": "todo",
+  "description": "Typsnd is a simple web app that people can chat and send images into.",
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -24,10 +24,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "todo"
+    "url": "https://github.com/udu3324/Typsnd"
   },
   "bugs": {
-    "url": "todo"
+    "url": "https://github.com/udu3324/Typsnd/issues"
   },
-  "homepage": "todo"
+  "homepage": "https://github.com/udu3324"
 }
