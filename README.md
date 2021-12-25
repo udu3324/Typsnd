@@ -17,7 +17,7 @@ Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that peop
 ## Installation and Running
 Make sure you have [Node.JS](https://nodejs.org/en/download) installed. The version of Node I've tested it on was v14.15.4. 
 Clone the repo and run `npm install` to install all dependencies. 
-`npm run dev` will run Typsnd in development mode (nodemon)
+`npm run dev` will run Typsnd in development mode (nodemon) and
 `npm start` will run Typsnd normally
 
 ## Config.js
