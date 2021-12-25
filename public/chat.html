@@ -1,0 +1,115 @@
+<!doctype html>
+<html translate="no">
+
+<head>
+    <title>Typsnd</title>
+    <link rel="icon" href="/img/favicon.png">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="chat">
+        <div id="disconnect-overlay" style="display: none;">
+            <div class="disconnect__box">
+                <h1>Disconnected</h1>
+                <h3>Heres Possibly Why - </h3>
+                <p id="kicked">* A constant Wi-Fi connection between the server has been lost
+                    <br>
+                    * The server is updating or off
+                </p>
+                <h3>How To Fix - </h3>
+                <p id="kicked">* Refresh the page (try first)
+                    <br>
+                    * Ask for the server to turned back on
+                </p>
+            </div>
+        </div>
+
+        <div id="settings-overlay" style="display: none;">
+            <div id="settings-box" class="settings__box">
+                <h1>Settings</h1>
+                <p id="admin-status">if you see this, something went wrong</p>
+                <div id="admin-panel" style="display: none;">
+                    <div id="cooldown">
+                        <input type="number" id="cooldown-input" class="cooldown-int" min="0" max="9">
+                        <button id="set-cooldown-button">Set Cooldown</button>
+                    </div>
+                </div>
+                <br>
+                <p><input type="color" id="accent-color-picker" name="head" value="#8FBC8F"> Accent Color</p>
+                <div class="dark-mode-div">
+                    <label class="switch">
+                        <input id="dark-mode-switch" type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                    <p class="dark-mode-p">Dark Mode</p>
+                </div>
+                <br>
+                <button id="github-button"><i class="fa-brands fa-github fa-lg"></i> Github Repository</button>
+            </div>
+        </div>
+
+        <div class="sidebar__main">
+            <div id="sidebar" class="users__sidebar"></div>
+
+            <div class="user__sidebar">
+                <h id="user-replace" style="
+                    margin-right: 16px;
+                    align-self: center;
+                ">temp</h>
+                <button id="settingsButton" style="
+                    margin-left: auto;
+                    margin-right: 0;
+                "><i class="fa-solid fa-gear fa-lg"></i></button>
+            </div>
+        </div>
+
+        <div class="chat__main">
+            <div id="messages" class="chat__messages"></div>
+
+            <div class="compose">
+                <form id="message-form" action="">
+                    <input maxlength="3000" name="message" type="text" placeholder="Message" required autocomplete="off"
+                        oninvalid="this.setCustomValidity('Please enter a message to send.')"
+                        oninput="setCustomValidity('')">
+                    <button><i class="fa-solid fa-paper-plane fa-lg"></i></button>
+                </form>
+                <button id="sendImageButton"><i class="fa-solid fa-image fa-lg"></i></button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script id="message-template" type="text/html">
+            <div class="message">
+                <p>
+                    <span class="message__name">{{username}}</span>
+                    <span class="message__meta">{{createdAt}}</span>
+                </p>
+                <p id="message__container">{{{message}}}</p>
+            </div>
+        </script>
+
+    <script id="sidebar-template" type="text/html">
+
+            <h2 class="room-title">{{room}}</h2>
+            <h3 class="list-title">Users</h3>
+            <ul class="users">
+                {{#users}}
+                    <li>{{username}}</li>
+                {{/users}}
+            </ul>
+        </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.8.0/qs.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/chat.js"></script>
+</body>
+
+</html>
