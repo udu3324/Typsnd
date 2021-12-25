@@ -10,7 +10,9 @@
 Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into. It is based on [Express.JS](https://expressjs.com/), [Node.JS](https://nodejs.org/), and [Socket.io.JS](https://socket.io/). 
 
 ## What it Looks Like
-temp
+![1](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/1.png)
+![2](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/2.png)
+![3](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/3.png)
 
 ## Installation and Running
 Make sure you have [Node.JS](https://nodejs.org/en/download) installed. The version of Node I've tested it on was v14.15.4. 
@@ -34,4 +36,3 @@ var  showIPsInChat = false;
 var  msgGreet = ""; //this string is shown when a user joins typsnd
 var  msgCooldown = "2"; //(second interval) message cooldown
 ```
-
