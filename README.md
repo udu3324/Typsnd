@@ -9,6 +9,9 @@
 # Typsnd
 Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into. It is based on [Express.JS](https://expressjs.com/), [Node.JS](https://nodejs.org/), and [Socket.io.JS](https://socket.io/). 
 
+## Sample Server
+You can try out Typsnd using this link: [https://Typsnd.potatochips3.repl.co](https://Typsnd.potatochips3.repl.co)
+
 ## What it Looks Like
 ![1](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/1.png)
 ![2](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/2.png)
@@ -17,7 +20,7 @@ Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that peop
 ## Installation and Running
 Make sure you have [Node.JS](https://nodejs.org/en/download) installed. The version of Node I've tested it on was v14.15.4. 
 Clone the repo and run `npm install` to install all dependencies. 
-`npm run dev` will run Typsnd in development mode (nodemon)
+`npm run dev` will run Typsnd in development mode (nodemon) and
 `npm start` will run Typsnd normally
 
 ## Config.js
