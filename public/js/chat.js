@@ -107,6 +107,20 @@ socket.on("message-cooldown", msgCooldown => {
   $cooldownInput.value = `${messageCooldown}`;
 });
 
+// message animate opacity
+function messageNew() {
+  var $msg = $messages.lastElementChild;
+  var messageOpacity = 0;
+  function messageAnimate() {
+    $msg.style.opacity = messageOpacity;
+
+    if (messageOpacity < 1) {
+      setTimeout(messageAnimate, 5)
+      messageOpacity = messageOpacity + 0.01;
+    }
+  }
+  messageAnimate();
+}
 // display message when socket server sends
 socket.on("message", message => {
   const html = Mustache.render(messageTemplate, {
@@ -117,6 +131,8 @@ socket.on("message", message => {
 
   $messages.insertAdjacentHTML("beforeend", html);
   autoscroll();
+
+  messageNew();
 });
 
 // display image message when socket server sends
@@ -129,6 +145,8 @@ socket.on("image", message => {
 
   $messages.insertAdjacentHTML("beforeend", html);
   autoscroll();
+
+  messageNew();
 });
 
 // When socket server sends roomData, update sidebar
@@ -305,9 +323,35 @@ if (getCookie("accent") == "") {
   $accentColorPicker.value = getCookie("accent");
 }
 
+var opacityInt;
+function opacityUp() {
+  $settingsOverlay.style.opacity = opacityInt;
+
+  if (opacityInt < 1) {
+    setTimeout(opacityUp, 3)
+    opacityInt = opacityInt + 0.01;
+  } else {
+    $settingsOverlay.style.pointerEvents = "auto";
+  }
+}
+var opacityIntTwo;
+function opacityDown() {
+  $settingsOverlay.style.opacity = opacityIntTwo;
+
+  if (opacityIntTwo > 0) {
+    setTimeout(opacityDown, 3)
+    opacityIntTwo = opacityIntTwo - 0.01;
+  } else {
+    $settingsOverlay.style.display = "none";
+    $settingsOverlay.style.pointerEvents = "auto";
+  }
+}
 $settingsButton.addEventListener("click", function () {
   console.log("Settings button has been clicked on.");
   $settingsOverlay.style.display = "flex";
+  $settingsOverlay.style.pointerEvents = "none";
+  opacityInt = 0;
+  opacityUp();
 });
 
 // settings box
@@ -322,7 +366,9 @@ $settingsBox.onmouseout = function () {
 $settingsOverlay.addEventListener("click", function () {
   if (onSettingsBox) {
     console.log("Settings overlay has been clicked off of.");
-    $settingsOverlay.style.display = "none";
+    $settingsOverlay.style.pointerEvents = "none";
+    opacityIntTwo = 1;
+    opacityDown();
   }
 });
 // Settings Stuff Above
