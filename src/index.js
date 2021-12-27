@@ -102,13 +102,8 @@ function sockets(socket) {
       return callback("Refresh the page!");
     }
 
-    // creates href clickable links for links in the msg
-    var msg = URI.withinString(message, function (url) {
-      return "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>";
-    });
-
     // remove profanity from the message
-    msg = filter.clean(msg);
+    var msg = filter.clean(message);
 
     // removes unsafe tags and attributes from html
     msg = DOMPurify.sanitize(msg);
@@ -116,6 +111,11 @@ function sockets(socket) {
       console.log(`Message from ${user.username} has been blocked due to XSS.`);
       msg = `Hi, I'm ${user.username} and just tried to do XSS like a fool.`;
     }
+
+    // creates href clickable links for links in the msg
+    msg = URI.withinString(msg, function (url) {
+      return "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>";
+    });
 
     // check if msg is over 3000 charactars
     if (msg.length > 3000) {
