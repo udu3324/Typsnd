@@ -14,7 +14,7 @@
     "bad-words": "^3.0.3",
     "dompurify": "^2.3.3",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "jsdom": "^19.0.0",
     "socket.io": "^2.3.0",
     "urijs": "^1.19.7"
