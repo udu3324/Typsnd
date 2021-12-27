@@ -16,7 +16,7 @@ const DOMPurify = createDOMPurify(window);
 
 const app = express();
 const server = http.createServer(app);
-const io = require('socket.io').listen(server);
+const io = require('socket.io')(server);
 
 const port = serverPort;
 const publicDirectoryPath = path.join(__dirname, "../public");
