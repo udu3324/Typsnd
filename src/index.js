@@ -101,7 +101,7 @@ function sockets(socket) {
     }
 
     // creates href clickable links for links in the msg
-    msg = URI.withinString(message, function (url) {
+    var msg = URI.withinString(message, function (url) {
       return "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>";
     });
 
@@ -147,8 +147,6 @@ function sockets(socket) {
 
   socket.on("setCooldown", (seconds) => {
     let ip = getIP(socket);
-    const user = getUser(socket.id);
-
     // check if user is actually a admin
     if (adminIPs.some(v => ip.includes(v))) {
       msgCooldown = seconds;

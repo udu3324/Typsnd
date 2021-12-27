@@ -11,6 +11,7 @@ const $messageFormButton = $messageForm.querySelector("button");
 const $messages = document.querySelector("#messages");
 const $imageSendButton = document.querySelector("#sendImageButton");
 const $user = document.querySelector("#user-replace");
+const $disconnectOverlay = document.querySelector("#disconnect-overlay");
 const $adminStatus = document.querySelector("#admin-status");
 const $adminPanel = document.querySelector("#admin-panel");
 const $settingsButton = document.querySelector("#settingsButton");
@@ -20,7 +21,6 @@ const $accentColorPicker = document.querySelector("#accent-color-picker");
 const $githubButton = document.querySelector("#github-button");
 const $cooldownSetButton = document.querySelector("#set-cooldown-button");
 const $cooldownInput = document.querySelector("#cooldown-input");
-const $disconnectOverlay = document.querySelector("#disconnect-overlay");
 const $darkModeSwitch = document.querySelector("#dark-mode-switch");
 
 // Templates
@@ -183,7 +183,7 @@ function enableSendMSG() {
   $messageFormButton.removeAttribute("disabled");
   $messageFormButton.innerHTML = "<i class=\"fa-solid fa-paper-plane fa-lg\"></i>";
   $messageFormInput.focus();
-};
+}
 
 var timeLeft;
 function cooldownMSGSend() {
