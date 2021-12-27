@@ -85,7 +85,9 @@ const autoscroll = () => {
   const scrollOffset = $messages.scrollTop + visibleHeight;
 
   if (containerHeight - newMessageHeight <= scrollOffset) {
-    $newMessage.scrollIntoView();
+    $('#messages').animate({
+      scrollTop: $messages.scrollHeight - $messages.clientHeight
+    }, 125);
   }
 };
 
