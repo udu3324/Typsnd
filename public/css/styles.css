@@ -2,6 +2,7 @@
 @font-face {
     font-family: JetBrainsMonoRegular;
     src: url(JetBrainsMono-Regular.woff2);
+    font-display: swap;
 }
 
 body {
@@ -65,7 +66,7 @@ label {
     display: block;
     font-size: 14px;
     margin-bottom: 8px;
-    color: #777;
+    color: #cbcbcb;
 }
 
 input {
@@ -368,7 +369,7 @@ div#messages {
 }
 
 .message__meta {
-    color: #777;
+    color: #c1c1c1;
     font-size: 14px;
 }
 

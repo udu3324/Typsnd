@@ -1,8 +1,11 @@
 <!doctype html>
-<html translate="no">
+<html lang="en">
 
 <head>
     <title>Typsnd</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+        content="Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into.">
     <link rel="icon" href="/img/favicon.png">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
@@ -13,8 +16,8 @@
             <h1>Typsnd</h1>
             <form action="/chat.html">
                 <label for="username">Username</label>
-                <input type="text" name="username" maxlength="19" required>
-                <button>Join</button>
+                <input id="username" type="text" name="username" maxlength="19" required>
+                <button aria-label="Join">Join</button>
             </form>
         </div>
     </div>

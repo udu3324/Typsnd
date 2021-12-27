@@ -1,8 +1,11 @@
 <!doctype html>
-<html translate="no">
+<html lang="en">
 
 <head>
     <title>Typsnd</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+        content="Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into.">
     <link rel="icon" href="/img/favicon.png">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -60,7 +63,7 @@
                     margin-right: 16px;
                     align-self: center;
                 ">temp</h>
-                <button id="settingsButton" style="
+                <button id="settingsButton" aria-label="Settings" style="
                     margin-left: auto;
                     margin-right: 0;
                 "><i class="fa-solid fa-gear fa-lg"></i></button>
@@ -75,9 +78,9 @@
                     <input maxlength="3000" name="message" type="text" placeholder="Message" required autocomplete="off"
                         oninvalid="this.setCustomValidity('Please enter a message to send.')"
                         oninput="setCustomValidity('')">
-                    <button><i class="fa-solid fa-paper-plane fa-lg"></i></button>
+                    <button aria-label="Send Message"><i class="fa-solid fa-paper-plane fa-lg"></i></button>
                 </form>
-                <button id="sendImageButton"><i class="fa-solid fa-image fa-lg"></i></button>
+                <button id="sendImageButton" aria-label="Send Image"><i class="fa-solid fa-image fa-lg"></i></button>
             </div>
         </div>
     </div>
