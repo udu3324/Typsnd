@@ -16,7 +16,9 @@ const DOMPurify = createDOMPurify(window);
 
 const app = express();
 const server = http.createServer(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+  maxHttpBufferSize: 25e8
+});
 
 const port = serverPort;
 const publicDirectoryPath = path.join(__dirname, "../public");
