@@ -353,6 +353,16 @@ div#messages {
     overflow-y: scroll;
 }
 
+button#scrollDownMSG {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 104px;
+    margin-right: 24px;
+    border-radius: 27px;
+    visibility: hidden;
+}
+
 /* Message Styles */
 
 .message {
@@ -369,12 +379,12 @@ div#messages {
 }
 
 .message__meta {
-    color: #c1c1c1;
+    color: var(--fontColor);
     font-size: 14px;
 }
 
 .message a {
-    color: #0070cc;
+    color: var(--accent);
 }
 
 /* Message Composition Styles */

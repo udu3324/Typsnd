@@ -10,6 +10,7 @@ const $messageFormInput = $messageForm.querySelector("input");
 const $messageFormButton = $messageForm.querySelector("button");
 const $messages = document.querySelector("#messages");
 const $imageSendButton = document.querySelector("#sendImageButton");
+const $scrollDownButton = document.querySelector("#scrollDownMSG");
 const $user = document.querySelector("#user-replace");
 const $disconnectOverlay = document.querySelector("#disconnect-overlay");
 const $adminStatus = document.querySelector("#admin-status");
@@ -63,6 +64,7 @@ socket.on('disconnect', function () {
   console.log("Disconnected from client!")
   $settingsOverlay.style.display = "none";
   $disconnectOverlay.style.display = "flex";
+  $(':button').prop('disabled', true);
 });
 
 // autoscroll div down when user is looking at latest msgs
@@ -88,9 +90,31 @@ const autoscroll = () => {
     $('#messages').animate({
       scrollTop: $messages.scrollHeight - $messages.clientHeight
     }, 125);
+    $scrollDownButton.style.visibility = "hidden";
+  } else {
+    $scrollDownButton.style.visibility = "visible";
   }
 };
 
+// check if div has scrolled down to remove scrollDownButton
+$(document).ready(function () {
+  $('#messages').on('scroll', chk_scroll);
+});
+function chk_scroll(e) {
+  var elem = $(e.currentTarget);
+  if (elem[0].scrollHeight - elem.scrollTop() == elem.outerHeight()) {
+    $scrollDownButton.style.visibility = "hidden";
+  }
+}
+
+// scroll down button below
+$scrollDownButton.addEventListener("click", function () {
+  console.log("Scroll down button has been clicked on.");
+  $('#messages').animate({
+    scrollTop: $messages.scrollHeight - $messages.clientHeight
+  }, 300);
+  $scrollDownButton.style.visibility = "hidden";
+});
 
 // socket server kick below
 socket.on("alt-kick", () => {
