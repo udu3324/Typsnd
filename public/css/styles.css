@@ -226,7 +226,7 @@ input:checked+.slider:before {
 
 .users__sidebar {
     height: 100vh;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .user__sidebar {
@@ -350,7 +350,7 @@ div#messages {
 .chat__messages {
     flex-grow: 1;
     padding: 17px 17px 0 17px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 button#scrollDownMSG {
@@ -447,4 +447,34 @@ img#uploaded-image {
     border-radius: 4px;
     max-width: 100%;
     height: auto;
+}
+
+/* Right Click Menu */
+.show {
+    z-index: 1000;
+    position: absolute;
+    background-color: #C0C0C0;
+    border: 1px solid blue;
+    padding: 2px;
+    display: block;
+    margin: 0;
+    list-style-type: none;
+    list-style: none;
+}
+
+.hide {
+    display: none;
+}
+
+.show li {
+    list-style: none;
+}
+
+.show a {
+    border: 0 !important;
+    text-decoration: none;
+}
+
+.show a:hover {
+    text-decoration: underline !important;
 }
