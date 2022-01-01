@@ -23,13 +23,15 @@ const $githubButton = document.querySelector("#github-button");
 const $cooldownSetButton = document.querySelector("#set-cooldown-button");
 const $cooldownInput = document.querySelector("#cooldown-input");
 const $darkModeSwitch = document.querySelector("#dark-mode-switch");
+const $usernameInput = document.querySelector("#username-input");
+const $setUsernameButton = document.querySelector("#set-username-button");
 
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
 const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML;
 
 // Options
-const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+const { room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
 // Set Cookies and Get Cookies
 function setCookie(cname, cvalue, exdays) {
@@ -54,18 +56,13 @@ function getCookie(cname) {
   return "";
 }
 
+// set username from cookies
+const username = getCookie("username");
+
 //set username on bottom left corner
 $user.innerHTML = username;
 
 let onSettingsBox = true;
-
-// refresh when lost connection to socket server
-socket.on('disconnect', function () {
-  console.log("Disconnected from client!")
-  $settingsOverlay.style.display = "none";
-  $disconnectOverlay.style.display = "flex";
-  $(':button').prop('disabled', true);
-});
 
 // autoscroll div down when user is looking at latest msgs
 const autoscroll = () => {
@@ -116,6 +113,14 @@ $scrollDownButton.addEventListener("click", function () {
   $scrollDownButton.style.visibility = "hidden";
 });
 
+// show disconnect div when lost connection to socketio
+socket.on('disconnect', function () {
+  console.log("Disconnected from client!")
+  $settingsOverlay.style.display = "none";
+  $disconnectOverlay.style.display = "flex";
+  $(':button').prop('disabled', true);
+});
+
 // socket server kick below
 socket.on("alt-kick", () => {
   location.href = "/alt-kick.html";
@@ -124,7 +129,6 @@ socket.on("alt-kick", () => {
 socket.on("blacklisted-ip-kick", () => {
   location.href = "/blacklisted-ip-kick.html";
 });
-// socket server kick above
 
 // Set message cooldown input
 var messageCooldown;
@@ -249,6 +253,46 @@ $messageForm.addEventListener("submit", e => {
 
 
 // Settings Stuff Below
+// set username placeholder
+$usernameInput.placeholder = `${username}`;
+
+// set username button event
+$setUsernameButton.addEventListener("click", joinChat);
+$usernameInput.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) { //13 = enter
+    event.preventDefault();
+    joinChat()
+  }
+});
+
+function joinChat() {
+  if ($usernameInput.value === "") {
+    window.alert("You need a username! It can't be empty.");
+  } else {
+    // send msg alerting change of username
+    var alertUsernameChange = "I'm changing my username from \"" + username + "\" to \"" + $usernameInput.value + "\".";
+    socket.emit("sendMessage", alertUsernameChange, error => {
+      $messageFormInput.value = "";
+
+      //catch user being undefined
+      if (error == "Refresh the page!") {
+        window.location.reload();
+        return console.log(error);
+      } else {
+        console.log("Message delivered!");
+
+        timeLeft = messageCooldown;
+        cooldownMSGSend();
+      }
+    });
+
+    // do login
+    console.log("Username is " + $usernameInput.value);
+    setCookie("username", $usernameInput.value, 9999999999);
+    location.href = "/chat.html";
+  }
+}
+
 // dark mode stuff
 if (getCookie("dark-mode") == "") {
   setCookie("dark-mode", "true", 9999999999);
@@ -376,6 +420,7 @@ $settingsButton.addEventListener("click", function () {
   console.log("Settings button has been clicked on.");
   $settingsOverlay.style.display = "flex";
   $settingsOverlay.style.pointerEvents = "none";
+  $settingsButton.disabled = true;
   opacityInt = 0;
   opacityUp();
 });
@@ -393,6 +438,7 @@ $settingsOverlay.addEventListener("click", function () {
   if (onSettingsBox) {
     console.log("Settings overlay has been clicked off of.");
     $settingsOverlay.style.pointerEvents = "none";
+    $settingsButton.disabled = false;
     opacityIntTwo = 1;
     opacityDown();
   }

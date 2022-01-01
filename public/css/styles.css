@@ -257,12 +257,24 @@ p.dark-mode-p {
     display: inline;
 }
 
+input#username-input {
+    color: var(--fontColor);
+    background: var(--composeInput);
+    box-shadow: 0px 0px 17px 1px rgb(0 0 0 / 50%);
+    border: 1px solid var(--accent);
+    padding: 12px;
+    margin: 0 16px 0 0;
+    flex-grow: 1;
+    border-radius: 4px;
+    transition: 0.3s ease;
+    width: 177px;
+}
+
 input.cooldown-int {
     color: var(--fontColor);
     background: var(--composeInput);
     box-shadow: 0px 0px 17px 1px rgb(0 0 0 / 50%);
     border: 1px solid var(--accent);
-    width: 100%;
     padding: 12px;
     margin: 0 16px 0 0;
     flex-grow: 1;

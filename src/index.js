@@ -16,7 +16,7 @@ const DOMPurify = createDOMPurify(window);
 const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server, {
-  maxHttpBufferSize: 25e8
+  maxHttpBufferSize: 25e8 //25mb
 });
 
 const port = serverPort;
@@ -55,8 +55,7 @@ io.on("connection", socket => {
     socket.emit("blacklisted-ip-kick")
     console.log(`${ip} has attempted to join while blacklisted.`);
   } else {
-    // add ip to ip list and allow them to connect
-    ipArray.push(ip);
+    // allow them to connect
     sockets(socket);
   }
 });
@@ -84,6 +83,8 @@ function sockets(socket) {
         users: getUsersInRoom(user.room)
       });
 
+      //add ip to ip list, set msg cooldown, and set admin status
+      ipArray.push(ip);
       socket.emit("message-cooldown", msgCooldown);
       socket.emit("admin-status", adminIPs.some(v => ip.includes(v)))
       callback();
