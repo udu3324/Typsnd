@@ -1,7 +1,6 @@
 const path = require("path");
 const http = require("http");
 const express = require("express");
-const Filter = require("bad-words");
 const URI = require("urijs");
 const { generateMessage } = require("./utils/messages");
 const { addUser, removeUser, getUser, getUsersInRoom } = require("./utils/users");
@@ -26,6 +25,7 @@ const publicDirectoryPath = path.join(__dirname, "../public");
 app.use(express.static(publicDirectoryPath));
 
 const { networkInterfaces } = require('os');
+const { encode } = require("html-entities");
 
 const nets = networkInterfaces();
 const results = Object.create(null); // Or just '{}', an empty object
@@ -92,7 +92,6 @@ function sockets(socket) {
 
   socket.on("sendMessage", (message, callback) => {
     const user = getUser(socket.id);
-    const filter = new Filter();
     try {
       if (user.username == null) {
         return callback("Refresh the page!");
@@ -102,15 +101,15 @@ function sockets(socket) {
       return callback("Refresh the page!");
     }
 
-    // remove profanity from the message
-    var msg = filter.clean(message);
-
     // removes unsafe tags and attributes from html
-    msg = DOMPurify.sanitize(msg);
+    var msg = DOMPurify.sanitize(message);
     if (msg === "") {
       console.log(`Message from ${user.username} has been blocked due to XSS.`);
-      msg = `Hi, I'm ${user.username} and just tried to do XSS like a fool.`;
+      msg = `Hi, I'm ${user.username} and just tried to do XSS.`;
     }
+
+    // convert &, <, >, ", ' into entities
+    msg = encode(msg);
 
     // creates href clickable links for links in the msg
     msg = URI.withinString(msg, function (url) {
@@ -120,7 +119,7 @@ function sockets(socket) {
     // check if msg is over 3000 charactars
     if (msg.length > 3000) {
       console.log(`Message from ${user.username} has been blocked due to charactar limit.`);
-      msg = `Hi, I'm ${user.username} and just tried to go over the 3000 charactar limit like a fool.`;
+      msg = `Hi, I'm ${user.username} and just tried to go over the 3000 charactar limit.`;
     }
 
     socket.emit("message-cooldown", msgCooldown);
@@ -130,7 +129,7 @@ function sockets(socket) {
     callback();
   });
 
-  socket.on("sendImage", (message, callback) => {
+  socket.on("sendImage", (base64, callback) => {
     const user = getUser(socket.id);
     try {
       if (user.username == null) {
@@ -140,10 +139,11 @@ function sockets(socket) {
       console.error(error);
       return callback("Refresh the page!");
     }
+    var element = "<img id=\"uploaded-image\" alt=\"image\"  src=\"" + base64 + "\">";
 
     console.log(`Image message from ${user.username} has been sent.`);
 
-    io.to(user.room).emit("image", generateMessage(user.username, message));
+    io.to(user.room).emit("image", generateMessage(user.username, element));
     callback();
   });
 
@@ -191,9 +191,10 @@ function getIP(socket) {
 
 server.listen(port, () => { //credits n stuff
   process.stdout.write('\033c');
+
   console.log("\n Typsnd is running at:");
   console.log(" - Local:   " + '\x1b[36m%s\x1b[0m', 'http://localhost:' + port);
-  console.log(" - Network: " + '\x1b[36m%s\x1b[0m', 'http://' + results["Wi-Fi"][0] + ":" + port);
+  console.log(" - Network: " + '\x1b[36m%s\x1b[0m', 'http://' + "IPv4-Adress" + ":" + port);
   console.log("\n Have fun using Typsnd! Check out\n more of my projects on GitHub! \n" +
     '\x1b[32m', 'http://github.com/udu3324' + '\x1b[37m', '\n');
 });

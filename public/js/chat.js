@@ -433,13 +433,11 @@ function handleFiles() {
     const file = fileList[i];
     var reader = new FileReader()
     reader.onload = function (base64) {
-      var message = "<img id=\"uploaded-image\" alt=\"image\"  src=\"" + base64.target.result + "\">"
 
-      console.log(message);
+      console.log(base64.target.result);
 
       //emit new message
-      socket.emit("sendImage", message, error => {
-
+      socket.emit("sendImage", base64.target.result, error => {
         if (error == "Refresh the page!") {
           window.location.reload();
           return console.log(error);

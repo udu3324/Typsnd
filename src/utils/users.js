@@ -1,5 +1,4 @@
 const users = [];
-const Filter = require("bad-words");
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
 const { blacklistedUsernames, adminIPs } = require("../config.js");
@@ -22,14 +21,6 @@ const addUser = ({ ip, id, username, room }) => {
   if (!username) {
     return {
       error: "Username is required!"
-    };
-  }
-
-  // Check if user has profanity in it
-  const filter = new Filter();
-  if (filter.isProfane(username)) {
-    return {
-      error: "Wow, your username contains profanity in it."
     };
   }
 
