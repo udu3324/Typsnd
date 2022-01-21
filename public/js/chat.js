@@ -10,6 +10,7 @@ const $messageFormInput = $messageForm.querySelector("input");
 const $messageFormButton = $messageForm.querySelector("button");
 const $messages = document.querySelector("#messages");
 const $imageSendButton = document.querySelector("#sendImageButton");
+const $imagesSentInChat = document.querySelector("img#uploaded-image");
 const $scrollDownButton = document.querySelector("#scrollDownMSG");
 const $user = document.querySelector("#user-replace");
 const $disconnectOverlay = document.querySelector("#disconnect-overlay");
@@ -212,7 +213,11 @@ document.addEventListener('keydown', getEventType, false);
 function enableSendMSG() {
   $messageFormButton.removeAttribute("disabled");
   $messageFormButton.innerHTML = "<i class=\"fa-solid fa-paper-plane fa-lg\"></i>";
+
   $messageFormInput.focus();
+
+  $imageSendButton.removeAttribute("disabled");
+  $imageSendButton.innerHTML = "<i class=\"fa-solid fa-image fa-lg\"></i>";
 }
 
 var timeLeft;
@@ -231,6 +236,7 @@ $messageForm.addEventListener("submit", e => {
   e.preventDefault();
 
   $messageFormButton.setAttribute("disabled", "disabled");
+  $imageSendButton.setAttribute("disabled", "disabled");
 
   const message = e.target.elements.message.value;
 
@@ -488,7 +494,13 @@ function handleFiles() {
           window.location.reload();
           return console.log(error);
         } else {
+          $messageFormButton.setAttribute("disabled", "disabled");
+          $imageSendButton.setAttribute("disabled", "disabled");
+
           console.log("Message delivered!");
+
+          timeLeft = messageCooldown;
+          cooldownMSGSend();
         }
       });
     }
@@ -496,3 +508,15 @@ function handleFiles() {
   }
 }
 // Image Upload Stuff Above
+
+// Image select and view stuff below
+$('body').on('click', 'img', function () {
+  var imgSrc = $(this).attr('src');
+
+  var image = new Image();
+  image.src = imgSrc;
+
+  var w = window.open("");
+  w.document.write(image.outerHTML);
+})
+// image select and view stuff above

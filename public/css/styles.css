@@ -457,8 +457,14 @@ button#scrollDownMSG {
 /* Uploaded Image */
 img#uploaded-image {
     border-radius: 4px;
-    max-width: 100%;
+    max-width: 75%;
     height: auto;
+}
+
+img#uploaded-image:hover {
+    cursor: pointer;
+    filter: brightness(70%);
+    transition: .2s;
 }
 
 /* Right Click Menu */

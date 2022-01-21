@@ -142,9 +142,10 @@ function sockets(socket) {
     }
     var element = "<img id=\"uploaded-image\" alt=\"image\"  src=\"" + base64 + "\">";
 
-    console.log(`Image message from ${user.username} has been sent.`);
-
+    socket.emit("message-cooldown", msgCooldown);
     io.to(user.room).emit("image", generateMessage(user.username, element));
+
+    console.log(`Image message from ${user.username} has been sent.`);
     callback();
   });
 
