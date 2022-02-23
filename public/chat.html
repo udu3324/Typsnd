@@ -99,7 +99,7 @@
     <script id="message-template" type="text/html">
             <div class="message">
                 <p>
-                    <span class="message__name">{{username}}</span>
+                    <span class="message__name">{{{username}}}</span>
                     <span class="message__meta">{{createdAt}}</span>
                 </p>
                 <p id="message__container">{{{message}}}</p>
@@ -112,7 +112,7 @@
             <h3 class="list-title">Users</h3>
             <ul class="users">
                 {{#users}}
-                    <li>{{username}}</li>
+                    <li>{{{username}}}</li>
                 {{/users}}
             </ul>
         </script>

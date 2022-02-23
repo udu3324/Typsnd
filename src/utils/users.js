@@ -6,6 +6,8 @@ const { blacklistedUsernames, adminIPs } = require("../config.js");
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
+const { encode } = require("html-entities");
+
 const addUser = ({ ip, id, username, room }) => {
   room = "Typsnd";
 
@@ -33,8 +35,9 @@ const addUser = ({ ip, id, username, room }) => {
 
   // Check for existing user
   const existingUser = users.find(user => {
-    return user.room === room && user.username === username;
+    return user.room === room && user.username.replace("<i class=\"fa-solid fa-shield\"></i> ", "") === username;
   });
+  
   // Validate username
   if (existingUser) {
     return {
@@ -69,6 +72,14 @@ const addUser = ({ ip, id, username, room }) => {
     return {
       error: "Nice try, but XSS does not work here!"
     };
+  }
+
+  // encode entities
+  username = encode(username);
+
+  // Add admin icon
+  if (adminIPs.some(v => ip.includes(v))) {
+    username = "<i class=\"fa-solid fa-shield\"></i> " + username
   }
 
   // Store id, user, and room
