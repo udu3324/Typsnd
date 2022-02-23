@@ -33,6 +33,9 @@ var msgGreet = "";
 // Cooldown can be from 0s to 9s
 var msgCooldown = "2";
 
+// This is the icon that will be on the right of admin usernames.
+var adminIcon = "<i class=\"fa-solid fa-shield\"></i> ";
+
 module.exports = {
     serverPort,
     adminIPs,
@@ -40,5 +43,6 @@ module.exports = {
     blacklistedUsernames,
     showIPsInChat,
     msgGreet,
-    msgCooldown
+    msgCooldown,
+    adminIcon
 };

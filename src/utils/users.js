@@ -1,7 +1,7 @@
 const users = [];
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
-const { blacklistedUsernames, adminIPs } = require("../config.js");
+const { blacklistedUsernames, adminIPs, adminIcon } = require("../config.js");
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -35,7 +35,7 @@ const addUser = ({ ip, id, username, room }) => {
 
   // Check for existing user
   const existingUser = users.find(user => {
-    return user.room === room && user.username.replace("<i class=\"fa-solid fa-shield\"></i> ", "") === username;
+    return user.room === room && user.username.replace(`${adminIcon}`, "") === username;
   });
   
   // Validate username
@@ -79,7 +79,7 @@ const addUser = ({ ip, id, username, room }) => {
 
   // Add admin icon
   if (adminIPs.some(v => ip.includes(v))) {
-    username = "<i class=\"fa-solid fa-shield\"></i> " + username
+    username = adminIcon + username
   }
 
   // Store id, user, and room
