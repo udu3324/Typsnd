@@ -68,13 +68,13 @@ function sockets(socket) {
       return callback(error);
     } else {
       socket.join(user.room);
-      console.log(`JOIN -> User: ${user.username} | IP: ${getIP(socket)}`);
+      console.log(`JOIN -> User: ${user.username.replace("<i class=\"fa-solid fa-shield\"></i> ", "(admin) ")} | IP: ${getIP(socket)}`);
 
       if (showIPsInChat) {
-        socket.emit("message", generateMessage("Admin", `Welcome, ${user.username}! ${msgGreet} ${getIP(socket)}`));
+        socket.emit("message", generateMessage("<i class=\"fa-solid fa-shield\"></i> Admin", `Welcome, ${user.username}! ${msgGreet} ${getIP(socket)}`));
         socket.broadcast.to(user.room).emit("message", generateMessage("Admin", `${user.username} has joined! ${getIP(socket)}`));
       } else {
-        socket.emit("message", generateMessage("Admin", `Welcome, ${user.username}! ${msgGreet}`));
+        socket.emit("message", generateMessage("<i class=\"fa-solid fa-shield\"></i> Admin", `Welcome, ${user.username}! ${msgGreet}`));
         socket.broadcast.to(user.room).emit("message", generateMessage("Admin", `${user.username} has joined!`));
       }
 
@@ -105,7 +105,7 @@ function sockets(socket) {
     // removes unsafe tags and attributes from html
     var msg = DOMPurify.sanitize(message);
     if (msg === "") {
-      console.log(`Message from ${user.username} has been blocked due to XSS.`);
+      console.log(`Message from ${user.username.replace("<i class=\"fa-solid fa-shield\"></i> ", "(admin) ")} has been blocked due to XSS.`);
       msg = `Hi, I'm ${user.username} and just tried to do XSS.`;
     }
 
@@ -119,14 +119,14 @@ function sockets(socket) {
 
     // check if msg is over 3000 charactars
     if (msg.length > 3000) {
-      console.log(`Message from ${user.username} has been blocked due to charactar limit.`);
+      console.log(`Message from ${user.username.replace("<i class=\"fa-solid fa-shield\"></i> ", "(admin) ")} has been blocked due to charactar limit.`);
       msg = `Hi, I'm ${user.username} and just tried to go over the 3000 charactar limit.`;
     }
 
     socket.emit("message-cooldown", msgCooldown);
     io.to(user.room).emit("message", generateMessage(user.username, msg));
 
-    console.log(`Message from ${user.username} has been sent.`);
+    console.log(`Message from ${user.username.replace("<i class=\"fa-solid fa-shield\"></i> ", "(admin) ")} has been sent.`);
     callback();
   });
 
@@ -145,7 +145,7 @@ function sockets(socket) {
     socket.emit("message-cooldown", msgCooldown);
     io.to(user.room).emit("image", generateMessage(user.username, element));
 
-    console.log(`Image message from ${user.username} has been sent.`);
+    console.log(`Image message from ${user.username.replace("<i class=\"fa-solid fa-shield\"></i> ", "(admin) ")} has been sent.`);
     callback();
   });
 
@@ -162,18 +162,34 @@ function sockets(socket) {
     }
   });
 
+  socket.on("kickUser", (username) => {
+    const user = getUser(socket.id);
+    let ip = getIP(socket);
+
+    // check if user is actually a admin
+    if (adminIPs.some(v => ip.includes(v))) {
+      io.to(user.room).emit("kick", username);
+
+      io.to(user.room).emit("message", generateMessage("<i class=\"fa-solid fa-shield\"></i> Admin", username + " has been kicked. "));
+
+      console.log("User: " + username + " has been kicked. (kicked by ip: " + ip + ")")
+    } else {
+      console.log("IP: " + ip + " has tried to kick someone without having admin!")
+    }
+  });
+
   socket.on("disconnect", () => {
     const user = removeUser(socket.id);
 
     //remove ip from list when they leave
-    ipArray = ipArray.filter(e => e !== getIP(socket));
+    ipArray = ipArray.filter(e => e !== getIP(socket)); 
 
     if (user) {
-      console.log(`LEFT -> User: ${user.username} | IP: ${getIP(socket)}`);
+      console.log(`LEFT -> User: ${user.username.replace("<i class=\"fa-solid fa-shield\"></i> ", "(admin) ")} | IP: ${getIP(socket)}`);
       if (showIPsInChat) {
-        io.to(user.room).emit("message", generateMessage("Admin", `${user.username} has left! ${getIP(socket)}`));
+        io.to(user.room).emit("message", generateMessage("<i class=\"fa-solid fa-shield\"></i> Admin", `${user.username} has left! ${getIP(socket)}`));
       } else {
-        io.to(user.room).emit("message", generateMessage("Admin", `${user.username} has left!`));
+        io.to(user.room).emit("message", generateMessage("<i class=\"fa-solid fa-shield\"></i> Admin", `${user.username} has left!`));
       }
       io.to(user.room).emit("roomData", {
         room: user.room,

@@ -26,6 +26,8 @@ const $cooldownInput = document.querySelector("#cooldown-input");
 const $darkModeSwitch = document.querySelector("#dark-mode-switch");
 const $usernameInput = document.querySelector("#username-input");
 const $setUsernameButton = document.querySelector("#set-username-button");
+const $kickUserInput = document.querySelector("#kick-user-input");
+const $kickUserButton = document.querySelector("#kick-user-button");
 
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
@@ -123,6 +125,14 @@ socket.on('disconnect', function () {
 });
 
 // socket server kick below
+socket.on("kick", (usernameGiven) => {
+  if (username === usernameGiven) {
+    console.log("kicked.")
+    
+    location.href = "/kick.html"
+  } 
+});
+
 socket.on("alt-kick", () => {
   location.href = "/alt-kick.html";
 });
@@ -451,6 +461,35 @@ $settingsOverlay.addEventListener("click", function () {
     opacityDown();
   }
 });
+
+
+// kick user stuff
+$kickUserButton.addEventListener("click", kickUser);
+$kickUserInput.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) { //13 = enter
+    event.preventDefault();
+    kickUser()
+  }
+});
+function kickUser() {
+  if ($kickUserInput.value === "") {
+    window.alert("You need a username! It can't be empty.");
+  } else {
+    // send msg alerting change of username
+    var kickingUsername = $kickUserInput.value
+    socket.emit("kickUser", kickingUsername, error => {
+      $messageFormInput.value = "";
+
+      //catch user being undefined
+      if (error == "Refresh the page!") {
+        window.location.reload();
+        return console.log(error);
+      } else {
+        console.log("Kicked user successfuly.");
+      }
+    });
+  }
+}
 // Settings Stuff Above
 
 

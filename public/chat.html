@@ -40,14 +40,17 @@
                         <input type="number" id="cooldown-input" class="cooldown-int" min="0" max="9">
                         <button id="set-cooldown-button">Set Cooldown</button>
                     </div>
+                    <div id="kick">
+                        <input id="kick-user-input" class="kick-user-input" type="text" name="kick-user" placeholder="username" maxlength="19" required>
+                        <button id="kick-user-button">Kick User</button>
+                    </div>
                 </div>
-                <br>
                 <div id="username">
                     <input id="username-input" class="username-input" type="text" name="username" maxlength="19" required>
                     <button id="set-username-button">Set Username</button>
                 </div>
                 <br>
-                <p><input type="color" id="accent-color-picker" name="head" value="#8FBC8F"> Accent Color</p>
+                <p id="accent-color-p"><input type="color" id="accent-color-picker" name="head" value="#8FBC8F"> Accent Color</p>
                 <div class="dark-mode-div">
                     <label class="switch">
                         <input id="dark-mode-switch" type="checkbox">

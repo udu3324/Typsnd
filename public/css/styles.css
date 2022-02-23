@@ -325,6 +325,29 @@ div#admin-panel {
     padding-right: 4px;
     background-color: var(--messages);
     border-radius: 0px 0px 4px 4px;
+    flex-direction: column;
+    margin-bottom: 21px;
+}
+
+div#cooldown {
+    padding-bottom: 11px;
+}
+
+input#kick-user-input {
+    color: var(--fontColor);
+    background: var(--composeInput);
+    box-shadow: 0px 0px 17px 1px rgb(0 0 0 / 50%);
+    border: 1px solid var(--accent);
+    padding: 12px;
+    margin: 0 16px 0 0;
+    flex-grow: 1;
+    border-radius: 4px;
+    transition: 0.3s ease;
+    width: 177px;
+}
+
+p#accent-color-p {
+    padding-bottom: 11px;
 }
 
 /* Disconnect Overlay */
@@ -465,34 +488,4 @@ img#uploaded-image:hover {
     cursor: pointer;
     filter: brightness(70%);
     transition: .2s;
-}
-
-/* Right Click Menu */
-.show {
-    z-index: 1000;
-    position: absolute;
-    background-color: #C0C0C0;
-    border: 1px solid blue;
-    padding: 2px;
-    display: block;
-    margin: 0;
-    list-style-type: none;
-    list-style: none;
-}
-
-.hide {
-    display: none;
-}
-
-.show li {
-    list-style: none;
-}
-
-.show a {
-    border: 0 !important;
-    text-decoration: none;
-}
-
-.show a:hover {
-    text-decoration: underline !important;
 }
