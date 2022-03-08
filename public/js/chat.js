@@ -232,6 +232,7 @@ function enableSendMSG() {
 
   $imageSendButton.removeAttribute("disabled");
   $imageSendButton.innerHTML = "<i class=\"fa-solid fa-image fa-lg\"></i>";
+  $insertEmojiButton.removeAttribute("disabled");
 }
 
 var timeLeft;
@@ -253,6 +254,9 @@ $messageForm.addEventListener("submit", e => {
 
   $messageFormButton.setAttribute("disabled", "disabled");
   $imageSendButton.setAttribute("disabled", "disabled");
+  $insertEmojiButton.setAttribute("disabled", "disabled");
+  $emojiBox.style.display = "none"
+  boolClickedOn = false;
 
   const message = e.target.elements.message.value;
 
