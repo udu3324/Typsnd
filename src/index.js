@@ -170,8 +170,6 @@ function sockets(socket) {
     if (adminIPs.some(v => ip.includes(v))) {
       io.to(user.room).emit("kick", username);
 
-      io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, username + " has been kicked. "));
-
       console.log("User: " + username + " has been kicked. (kicked by ip: " + ip + ")")
     } else {
       console.log("IP: " + ip + " has tried to kick someone without having admin!")

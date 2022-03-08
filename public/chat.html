@@ -63,6 +63,8 @@
             </div>
         </div>
 
+        <emoji-picker></emoji-picker>
+
         <div class="sidebar__main">
             <div id="sidebar" class="users__sidebar"></div>
 
@@ -92,6 +94,7 @@
                         oninput="setCustomValidity('')">
                     <button aria-label="Send Message"><i class="fa-solid fa-paper-plane fa-lg"></i></button>
                 </form>
+                <button id="insertEmojiButton" aria-label="Insert Emoji"><i class="fa-solid fa-icons fa-lg"></i></button>
                 <button id="sendImageButton" aria-label="Send Image"><i class="fa-solid fa-image fa-lg"></i></button>
             </div>
         </div>
@@ -124,6 +127,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.8.0/qs.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/chat.js"></script>
 </body>

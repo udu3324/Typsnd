@@ -10,6 +10,8 @@ const $messageFormInput = $messageForm.querySelector("input");
 const $messageFormButton = $messageForm.querySelector("button");
 const $messages = document.querySelector("#messages");
 const $imageSendButton = document.querySelector("#sendImageButton");
+const $insertEmojiButton = document.querySelector("#insertEmojiButton");
+const $emojiBox = document.querySelector("emoji-picker");
 const $imagesSentInChat = document.querySelector("img#uploaded-image");
 const $scrollDownButton = document.querySelector("#scrollDownMSG");
 const $user = document.querySelector("#user-replace");
@@ -120,7 +122,9 @@ $scrollDownButton.addEventListener("click", function () {
 socket.on('disconnect', function () {
   console.log("Disconnected from client!")
   $settingsOverlay.style.display = "none";
+  $emojiBox.style.display = "none";
   $disconnectOverlay.style.display = "flex";
+
   $(':button').prop('disabled', true);
 });
 
@@ -213,7 +217,7 @@ socket.emit("join", { username, room }, error => {
 // Message Send Stuff Below
 // Autoselect message send input when key is pressed
 function getEventType() {
-  if (!($messageFormInput === document.activeElement) && onSettingsBox) {
+  if (!($messageFormInput === document.activeElement) && onSettingsBox && onEmojiBox) {
     console.log("Selected input automatically.");
     $messageFormInput.focus();
   }
@@ -267,6 +271,36 @@ $messageForm.addEventListener("submit", e => {
     }
   });
 });
+
+var boolClickedOn = false;
+// Insert Emoji
+$insertEmojiButton.addEventListener("click", function () {
+  console.log("Insert Emoji button has been clicked on.");
+  if (boolClickedOn) {
+    $emojiBox.style.display = "none"
+    boolClickedOn = false;
+  } else {
+    $emojiBox.style.display = "flex"
+    boolClickedOn = true;
+  }
+});
+
+var onEmojiBox = false;
+// emoji box
+$emojiBox.onmouseover = function () {
+  onEmojiBox = false
+  $messageFormInput.blur()
+}
+$emojiBox.onmouseout = function () {
+  onEmojiBox = true
+  $messageFormInput.focus()
+}
+
+// On Emoji Click
+$emojiBox.addEventListener('emoji-click', event => sendEmoji(event.detail));
+function sendEmoji(detail) {
+  $messageFormInput.value = $messageFormInput.value + detail.unicode;
+}
 // Message Send Stuff Above
 
 
@@ -323,16 +357,25 @@ function setLightmode() {
     $adminStatus.style.backgroundColor = '#c3c3c3';
   }
   console.log("Dark mode has been turned off.")
-  cssVar.style.setProperty('--messageDiv', "#f5f5f5");
-  cssVar.style.setProperty('--messages', "#c3c3c3");
-  cssVar.style.setProperty('--compose', "#ffffff");
-  cssVar.style.setProperty('--userSidebar', "#959595");
-  cssVar.style.setProperty('--sidebar', "#a7a7a7");
-  cssVar.style.setProperty('--roomTitle', "#7e7e7e");
+  cssVar.style.setProperty('--messageDiv', "#f7f7f7");
+  cssVar.style.setProperty('--messages', "#ffffff");
+  cssVar.style.setProperty('--compose', "#f5f5f5");
+  cssVar.style.setProperty('--userSidebar', "#d1d1d1");
+  cssVar.style.setProperty('--sidebar', "#ebebeb");
+  cssVar.style.setProperty('--roomTitle', "#d9d9d9");
   cssVar.style.setProperty('--fontColor', "#000000");
   cssVar.style.setProperty('--scrollbarTrack', "#cbcbcb");
   cssVar.style.setProperty('--scrollbarThumb', "#ababab");
-  cssVar.style.setProperty('--composeInput', "#cbcbcb");
+  cssVar.style.setProperty('--composeInput', "#dfdfdf");
+  $emojiBox.setAttribute("class", "light");
+  $emojiBox.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 0%)"
+  $settingsButton.style.boxShadow = "none"
+  $messageFormInput.style.boxShadow = "none"
+  $imageSendButton.style.boxShadow = "none"
+  $insertEmojiButton.style.boxShadow = "none"
+  $messageFormButton.style.boxShadow = "none"
+
+
 }
 function setDarkmode() {
   if (adminPanelStyle) {
@@ -349,6 +392,13 @@ function setDarkmode() {
   cssVar.style.setProperty('--scrollbarTrack', "#2E3338");
   cssVar.style.setProperty('--scrollbarThumb', "#202225");
   cssVar.style.setProperty('--composeInput', "#40444b");
+  $emojiBox.setAttribute("class", "dark");
+  $emojiBox.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
+  $settingsButton.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
+  $messageFormInput.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
+  $imageSendButton.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
+  $insertEmojiButton.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
+  $messageFormButton.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
 }
 var adminPanelStyle;
 function checkIt() {
@@ -478,8 +528,6 @@ function kickUser() {
     // send msg alerting change of username
     var kickingUsername = $kickUserInput.value
     socket.emit("kickUser", kickingUsername, error => {
-      $messageFormInput.value = "";
-
       //catch user being undefined
       if (error == "Refresh the page!") {
         window.location.reload();
@@ -488,6 +536,7 @@ function kickUser() {
         console.log("Kicked user successfuly.");
       }
     });
+    $kickUserInput.value = "";
   }
 }
 // Settings Stuff Above
