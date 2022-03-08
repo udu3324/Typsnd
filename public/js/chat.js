@@ -30,6 +30,7 @@ const $usernameInput = document.querySelector("#username-input");
 const $setUsernameButton = document.querySelector("#set-username-button");
 const $kickUserInput = document.querySelector("#kick-user-input");
 const $kickUserButton = document.querySelector("#kick-user-button");
+const $refreshButton = document.querySelector("#refreshButton");
 
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
@@ -126,7 +127,44 @@ socket.on('disconnect', function () {
   $disconnectOverlay.style.display = "flex";
 
   $(':button').prop('disabled', true);
+  $refreshButton.disabled = false;
+  
+  setInterval(refreshLoop(), 11000);
 });
+
+function delay(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
+
+var refreshString = "<i class=\"fa-solid fa-rotate-right\"></i> Refreshing in "
+async function refreshLoop() {
+  $refreshButton.innerHTML = refreshString + "10"
+  await delay(1000);
+  $refreshButton.innerHTML = refreshString + "9"
+  await delay(1000);
+  $refreshButton.innerHTML = refreshString + "8"
+  await delay(1000);
+  $refreshButton.innerHTML = refreshString + "7"
+  await delay(1000);
+  $refreshButton.innerHTML = refreshString + "6"
+  await delay(1000);
+  $refreshButton.innerHTML = refreshString + "5"
+  await delay(1000);
+  $refreshButton.innerHTML = refreshString + "4"
+  await delay(1000);
+  $refreshButton.innerHTML = refreshString + "3"
+  await delay(1000);
+  $refreshButton.innerHTML = refreshString + "2"
+  await delay(1000);
+  $refreshButton.innerHTML = refreshString + "1"
+  await delay(1000);
+  refreshPage()
+}
+
+$refreshButton.addEventListener("click", refreshPage);
+function refreshPage() {
+  location.reload();
+}
 
 // socket server kick below
 socket.on("kick", (usernameGiven) => {

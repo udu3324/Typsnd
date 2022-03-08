@@ -380,6 +380,11 @@ emoji-picker {
     align-items: center;
 }
 
+button#refreshButton {
+    margin-top: 14px;
+    background: #7e1c1c;
+}
+
 /* Chat styles */
 .chat__main {
     flex-grow: 1;
