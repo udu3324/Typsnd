@@ -39,29 +39,6 @@ const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML;
 // Options
 const { room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
-// Set Cookies and Get Cookies
-function setCookie(cname, cvalue, exdays) {
-  const d = new Date();
-  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-  let expires = "expires=" + d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-
 // set username from cookies
 const username = getCookie("username");
 
@@ -118,53 +95,6 @@ $scrollDownButton.addEventListener("click", function () {
   }, 300);
   $scrollDownButton.style.visibility = "hidden";
 });
-
-// show disconnect div when lost connection to socketio
-socket.on('disconnect', function () {
-  console.log("Disconnected from client!")
-  $settingsOverlay.style.display = "none";
-  $emojiBox.style.display = "none";
-  $disconnectOverlay.style.display = "flex";
-
-  $(':button').prop('disabled', true);
-  $refreshButton.disabled = false;
-  
-  setInterval(refreshLoop(), 11000);
-});
-
-function delay(time) {
-  return new Promise(resolve => setTimeout(resolve, time));
-}
-
-var refreshString = "<i class=\"fa-solid fa-rotate-right\"></i> Refreshing in "
-async function refreshLoop() {
-  $refreshButton.innerHTML = refreshString + "10"
-  await delay(1000);
-  $refreshButton.innerHTML = refreshString + "9"
-  await delay(1000);
-  $refreshButton.innerHTML = refreshString + "8"
-  await delay(1000);
-  $refreshButton.innerHTML = refreshString + "7"
-  await delay(1000);
-  $refreshButton.innerHTML = refreshString + "6"
-  await delay(1000);
-  $refreshButton.innerHTML = refreshString + "5"
-  await delay(1000);
-  $refreshButton.innerHTML = refreshString + "4"
-  await delay(1000);
-  $refreshButton.innerHTML = refreshString + "3"
-  await delay(1000);
-  $refreshButton.innerHTML = refreshString + "2"
-  await delay(1000);
-  $refreshButton.innerHTML = refreshString + "1"
-  await delay(1000);
-  refreshPage()
-}
-
-$refreshButton.addEventListener("click", refreshPage);
-function refreshPage() {
-  location.reload();
-}
 
 // socket server kick below
 socket.on("kick", (usernameGiven) => {
@@ -315,34 +245,6 @@ $messageForm.addEventListener("submit", e => {
 });
 
 var boolClickedOn = false;
-// Insert Emoji
-$insertEmojiButton.addEventListener("click", function () {
-  console.log("Insert Emoji button has been clicked on.");
-  if (boolClickedOn) {
-    $emojiBox.style.display = "none"
-    boolClickedOn = false;
-  } else {
-    $emojiBox.style.display = "flex"
-    boolClickedOn = true;
-  }
-});
-
-var onEmojiBox = false;
-// emoji box
-$emojiBox.onmouseover = function () {
-  onEmojiBox = false
-  $messageFormInput.blur()
-}
-$emojiBox.onmouseout = function () {
-  onEmojiBox = true
-  $messageFormInput.focus()
-}
-
-// On Emoji Click
-$emojiBox.addEventListener('emoji-click', event => sendEmoji(event.detail));
-function sendEmoji(detail) {
-  $messageFormInput.value = $messageFormInput.value + detail.unicode;
-}
 // Message Send Stuff Above
 
 
@@ -416,8 +318,6 @@ function setLightmode() {
   $imageSendButton.style.boxShadow = "none"
   $insertEmojiButton.style.boxShadow = "none"
   $messageFormButton.style.boxShadow = "none"
-
-
 }
 function setDarkmode() {
   if (adminPanelStyle) {
@@ -469,25 +369,6 @@ $cooldownSetButton.addEventListener("click", function () {
 // github button send to
 $githubButton.addEventListener("click", function () {
   window.open("https://github.com/udu3324/Typsnd");
-});
-
-//set admin status and reveal admin panel
-socket.on("admin-status", isAdmin => {
-  if (isAdmin) {
-    adminPanelStyle = true;
-    $adminStatus.innerHTML = "<i class=\"fa-solid fa-lock-open\"></i> You're Admin! " +
-      "Anything set below wont be saved. Use config.js instead to make it permanent.";
-
-    $adminStatus.style.backgroundColor = '#313338';
-    $adminStatus.style.borderRadius = '4px 4px 0px 0px';
-    $adminStatus.style.paddingTop = '4px';
-    $adminStatus.style.paddingLeft = '4px';
-    $adminStatus.style.paddingRight = '4px';
-    $adminPanel.style.display = "flex";
-  } else {
-    adminPanelStyle = false;
-    $adminStatus.innerHTML = "<i class=\"fa-solid fa-lock\"></i> You aren't Admin! Sadly you cant do much stuff here.";
-  }
 });
 
 // change accent color
@@ -639,39 +520,6 @@ function handleFiles() {
     reader.readAsDataURL(file);
   }
 }
-document.onpaste = function (event) {
-    var items = (event.clipboardData || event.originalEvent.clipboardData).items;
-    console.log(JSON.stringify(items)); // might give you mime types
-    for (var index in items) {
-        var item = items[index];
-        if (item.kind === 'file') {
-            var blob = item.getAsFile();
-            var reader = new FileReader();
-            reader.onload = function (event) {
-              //emit new message
-
-              if (pasteEnabled) {
-                pasteEnabled = false;
-                socket.emit("sendImage", event.target.result, error => {
-                if (error == "Refresh the page!") {
-                  window.location.reload();
-                  return console.log(error);
-                } else {
-                  $messageFormButton.setAttribute("disabled", "disabled");
-                  $imageSendButton.setAttribute("disabled", "disabled");
-                  
-                  console.log("Message delivered!");
-                
-                  timeLeft = messageCooldown;
-                  cooldownMSGSend();
-                }
-              });
-            }
-          }; 
-          reader.readAsDataURL(blob);
-        }
-    }
-};
 // Image Upload Stuff Above
 
 // Image select and view stuff below
