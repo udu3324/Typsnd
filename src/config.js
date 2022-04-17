@@ -36,13 +36,17 @@ var msgCooldown = "2";
 // This is the icon that will be on the right of admin usernames.
 var adminIcon = "<i class=\"fa-solid fa-shield\"></i> ";
 
+// This boolean toggles if multiple rooms are allowed
+var multipleRooms = true;
+
 module.exports = {
-    serverPort,
-    adminIPs,
-    blacklistedIPs,
-    blacklistedUsernames,
-    showIPsInChat,
-    msgGreet,
-    msgCooldown,
-    adminIcon
+  serverPort,
+  adminIPs,
+  blacklistedIPs,
+  blacklistedUsernames,
+  showIPsInChat,
+  msgGreet,
+  msgCooldown,
+  adminIcon,
+  multipleRooms
 };

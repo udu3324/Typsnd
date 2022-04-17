@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 const socket = io();
 
 // CSS
@@ -32,15 +34,21 @@ const $kickUserInput = document.querySelector("#kick-user-input");
 const $kickUserButton = document.querySelector("#kick-user-button");
 const $refreshButton = document.querySelector("#refreshButton");
 
+const $roomInput = document.querySelector("#room-input");
+const $setRoomButton = document.querySelector("#set-room-button");
+
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
 const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML;
 
-// Options
-const { room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
-
 // set username from cookies
 const username = getCookie("username");
+
+// set room from cookies
+var room = getCookie("room");
+if (room === "") {
+  room = "Typsnd"
+}
 
 //set username on bottom left corner
 $user.innerHTML = username;
@@ -100,9 +108,9 @@ $scrollDownButton.addEventListener("click", function () {
 socket.on("kick", (usernameGiven) => {
   if (username === usernameGiven) {
     console.log("kicked.")
-    
+
     location.href = "/kick.html"
-  } 
+  }
 });
 
 socket.on("alt-kick", () => {
@@ -169,6 +177,10 @@ socket.on("roomData", ({ room, users }) => {
     room,
     users
   });
+
+  // set username placeholder
+  $roomInput.placeholder = `${room}`;
+  console.log(room)
 
   document.querySelector("#sidebar").innerHTML = html;
 });
@@ -254,7 +266,7 @@ $usernameInput.placeholder = `${username}`;
 
 // set username button event
 $setUsernameButton.addEventListener("click", joinChat);
-$usernameInput.addEventListener("keyup", function(event) {
+$usernameInput.addEventListener("keyup", function (event) {
   if (event.keyCode === 13) { //13 = enter
     event.preventDefault();
     joinChat()
@@ -289,6 +301,43 @@ function joinChat() {
   }
 }
 
+// set room button event
+$setRoomButton.addEventListener("click", joinDiffRoom);
+$roomInput.addEventListener("keyup", function (event) {
+  if (event.keyCode === 13) { //13 = enter
+    event.preventDefault();
+    joinDiffRoom()
+  }
+});
+
+function joinDiffRoom() {
+  if ($roomInput.value === "") {
+    window.alert("You need a room! It can't be empty.");
+  } else {
+    // send msg alerting change of username
+    var alertRoomChange = "I'm leaving this room to join another one. ";
+    socket.emit("sendMessage", alertRoomChange, error => {
+      $messageFormInput.value = "";
+
+      //catch user being undefined
+      if (error == "Refresh the page!") {
+        window.location.reload();
+        return console.log(error);
+      } else {
+        console.log("Message delivered!");
+
+        timeLeft = messageCooldown;
+        cooldownMSGSend();
+      }
+    });
+
+    // do login
+    console.log("Room is " + $roomInput.value);
+    setCookie("room", $roomInput.value, 9999999999);
+    location.href = "/chat.html";
+  }
+}
+
 // dark mode stuff
 if (getCookie("dark-mode") == "") {
   setCookie("dark-mode", "true", 9999999999);
@@ -297,9 +346,6 @@ if (getCookie("dark-mode") == "") {
   $darkModeSwitch.checked = true;
 }
 function setLightmode() {
-  if (adminPanelStyle) {
-    $adminStatus.style.backgroundColor = '#c3c3c3';
-  }
   console.log("Dark mode has been turned off.")
   cssVar.style.setProperty('--messageDiv', "#f7f7f7");
   cssVar.style.setProperty('--messages', "#ffffff");
@@ -320,9 +366,6 @@ function setLightmode() {
   $messageFormButton.style.boxShadow = "none"
 }
 function setDarkmode() {
-  if (adminPanelStyle) {
-    $adminStatus.style.backgroundColor = '#313338';
-  }
   console.log("Dark mode has been turned on.")
   cssVar.style.setProperty('--messageDiv', "#36393f");
   cssVar.style.setProperty('--messages', "#313338");
@@ -438,7 +481,7 @@ $settingsOverlay.addEventListener("click", function () {
 
 // kick user stuff
 $kickUserButton.addEventListener("click", kickUser);
-$kickUserInput.addEventListener("keyup", function(event) {
+$kickUserInput.addEventListener("keyup", function (event) {
   if (event.keyCode === 13) { //13 = enter
     event.preventDefault();
     kickUser()
@@ -480,7 +523,7 @@ function openFileDialog(callback) {  // this function must be called from  a use
   // Set its type to file
   inputElement.type = "file";
 
-  // Set accept to the file types you want the user to select. 
+  // Set accept to the file types you want the user to select.
   // Include both the file extension and the mime type
   inputElement.accept = "image/png, image/jpeg, image/gif, image/apng, image/svg, image/bmp, image/ico";
 

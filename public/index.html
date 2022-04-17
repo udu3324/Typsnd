@@ -1,27 +1,33 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <title>Typsnd</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description"
-        content="Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into.">
-    <link rel="icon" href="/img/favicon.png">
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into."
+    />
+    <link rel="icon" href="/img/favicon.png" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
 
-<body>
+  <body>
     <div class="centered-form">
-        <div class="centered-form__box">
-            <h1>Typsnd</h1>
-            <label for="username">Username</label>
-            <input id="username" type="text" name="username" maxlength="19" required>
-            <button id="join-button" aria-label="Join">Join</button>
-        </div>
+      <div class="centered-form__box" id="centered-form__box">
+        <h1>Typsnd</h1>
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          name="username"
+          maxlength="19"
+          required
+        />
+        <button id="join-button" aria-label="Join">Join</button>
+      </div>
     </div>
 
     <script src="/js/cookie.js"></script>
     <script src="/js/join.js"></script>
-</body>
-
+  </body>
 </html>

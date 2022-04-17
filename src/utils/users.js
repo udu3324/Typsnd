@@ -1,7 +1,7 @@
 const users = [];
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
-const { blacklistedUsernames, adminIPs, adminIcon } = require("../config.js");
+const { blacklistedUsernames, adminIPs, adminIcon, multipleRooms } = require("../config.js");
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -9,7 +9,6 @@ const DOMPurify = createDOMPurify(window);
 const { encode } = require("html-entities");
 
 const addUser = ({ ip, id, username, room }) => {
-  room = "Typsnd";
 
   // Clean the data
   try {
@@ -37,7 +36,7 @@ const addUser = ({ ip, id, username, room }) => {
   const existingUser = users.find(user => {
     return user.room === room && user.username.replace(`${adminIcon}`, "") === username;
   });
-  
+
   // Validate username
   if (existingUser) {
     return {
@@ -53,7 +52,7 @@ const addUser = ({ ip, id, username, room }) => {
   }
 
   // Validate only chatroom is chat
-  if (!(room === "Typsnd")) {
+  if (!(room === "Typsnd") && !multipleRooms) {
     return {
       error: "Nice try, but there is only one chat!"
     };

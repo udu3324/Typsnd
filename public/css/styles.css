@@ -319,10 +319,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 div#admin-panel {
-    padding-top: 20px;
-    padding-bottom: 4px;
-    padding-left: 4px;
-    padding-right: 4px;
+    padding: 4px;
     background-color: var(--messages);
     border-radius: 0px 0px 4px 4px;
     flex-direction: column;
@@ -348,6 +345,19 @@ input#kick-user-input {
 
 p#accent-color-p {
     padding-bottom: 11px;
+}
+
+input#room-input {
+    color: var(--fontColor);
+    background: var(--composeInput);
+    box-shadow: 0px 0px 17px 1px rgb(0 0 0 / 50%);
+    border: 1px solid var(--accent);
+    padding: 12px;
+    margin: 0 16px 0 0;
+    flex-grow: 1;
+    border-radius: 4px;
+    transition: 0.3s ease;
+    width: 100px;
 }
 
 /* Emoji Picker */
