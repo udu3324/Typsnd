@@ -28,12 +28,13 @@ function joinChat() {
 }
 
 //previous room indicator
-if (getCookie("room") != "" || getCookie("room") != "Typsnd") {
+if (!(getCookie("room") === "")) {
+  if (!(getCookie("room") === "Typsnd")) {
 
-  const para = document.createElement("p");
-  const node = document.createTextNode("Your previous room was \"" + getCookie("room") + "\"");
-  para.style.cssText += 'color:#8fbc8f;padding-top:13px'
-  para.appendChild(node);
-  document.getElementById("centered-form__box").appendChild(para);
-
+    const para = document.createElement("p");
+    const node = document.createTextNode("Your previous room was \"" + getCookie("room") + "\"");
+    para.style.cssText += 'color:#8fbc8f;padding-top:13px'
+    para.appendChild(node);
+    document.getElementById("centered-form__box").appendChild(para);
+  }
 }
