@@ -39,6 +39,21 @@ var adminIcon = "<i class=\"fa-solid fa-shield\"></i> ";
 // This boolean toggles if multiple rooms are allowed
 var multipleRooms = true;
 
+// This array contains the links for tabs
+var tabs = [
+  //example tab
+  //string 1 is what the button will say
+  //string 2 is what the button will link to
+  [
+    ["<i class=\"fa-brands fa-github\"></i> Github"],
+    ["https://github.com/udu3324/Typsnd"]
+  ],
+  [
+    ["<i class=\"fa-brands fa-youtube\"></i> Youtube"],
+    ["https://youtube.com"]
+  ]
+];
+
 module.exports = {
   serverPort,
   adminIPs,
@@ -48,5 +63,6 @@ module.exports = {
   msgGreet,
   msgCooldown,
   adminIcon,
-  multipleRooms
+  multipleRooms,
+  tabs
 };

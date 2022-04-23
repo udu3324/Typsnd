@@ -20,6 +20,32 @@
 
   <body>
     <div class="chat">
+      <div id="tools-bar">
+        <button class="toolButton" id="roomButton" aria-label="Room">
+          <i class="fa-solid fa-house-chimney"></i> Join Room
+        </button>
+      </div>
+      <button class="toggleButton" id="toolToggleButton" aria-label="Room">
+        <i class="fa-solid fa-angle-down"></i>
+      </button>
+
+      <div id="room-overlay" style="display: none">
+        <div class="room__box" id="room-box">
+          <h1>Join Different Room</h1>
+          <div id="room">
+            <input
+              id="room-input"
+              class="room-input"
+              type="text"
+              name="room"
+              maxlength="9"
+              required
+            />
+            <button id="set-room-button">Join</button>
+          </div>
+        </div>
+      </div>
+
       <div id="disconnect-overlay" style="display: none">
         <div class="disconnect__box">
           <h1>Disconnected</h1>
@@ -69,6 +95,7 @@
               <button id="kick-user-button">Kick User</button>
             </div>
           </div>
+
           <div id="username">
             <input
               id="username-input"
@@ -80,18 +107,7 @@
             />
             <button id="set-username-button">Set Username</button>
           </div>
-          <br />
-          <div id="room">
-            <input
-              id="room-input"
-              class="room-input"
-              type="text"
-              name="room"
-              maxlength="9"
-              required
-            />
-            <button id="set-room-button">Join Room</button>
-          </div>
+
           <br />
           <p id="accent-color-p">
             <input
@@ -109,10 +125,6 @@
             </label>
             <p class="dark-mode-p">Dark Mode</p>
           </div>
-          <br />
-          <button id="github-button">
-            <i class="fa-brands fa-github fa-lg"></i> Github Repo
-          </button>
         </div>
       </div>
 

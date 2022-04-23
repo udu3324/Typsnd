@@ -10,7 +10,7 @@ $insertEmojiButton.addEventListener("click", function () {
   }
 });
 
-var onEmojiBox = false;
+var onEmojiBox = true;
 // emoji box
 $emojiBox.onmouseover = function () {
   onEmojiBox = false

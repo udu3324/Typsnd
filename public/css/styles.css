@@ -95,7 +95,6 @@ input {
 
 /* Button Styles */
 button {
-    box-shadow: 0px 0px 17px 1px rgba(0, 0, 0, 0.5);
     cursor: pointer;
     padding: 12px;
     background: var(--accent);
@@ -158,10 +157,6 @@ input:checked+.slider {
     background-color: #ad1313;
 }
 
-input:focus+.slider {
-    box-shadow: 0 0 1px #2196F3;
-}
-
 input:checked+.slider:before {
     -webkit-transform: translateX(13px);
     -ms-transform: translateX(13px);
@@ -189,7 +184,6 @@ input:checked+.slider:before {
 
 .centered-form__box {
     color: white;
-    box-shadow: 0px 0px 17px 1px #1d1f26;
     background: #36393f;
     padding: 24px;
     width: 340px;
@@ -198,7 +192,6 @@ input:checked+.slider:before {
 
 .centered-form__box2 {
     color: white;
-    box-shadow: 0px 0px 17px 1px #1d1f26;
     background: #36393f;
     padding: 24px;
     width: 570px;
@@ -212,7 +205,6 @@ input:checked+.slider:before {
 .centered-form input {
     color: white;
     background: #40444b;
-    box-shadow: 0px 0px 17px 1px rgba(0, 0, 0, 0.5);
     border: 1px solid var(--accent);
     margin-bottom: 16px;
     width: 100%;
@@ -260,23 +252,25 @@ p.dark-mode-p {
 input#username-input {
     color: var(--fontColor);
     background: var(--composeInput);
-    box-shadow: 0px 0px 17px 1px rgb(0 0 0 / 50%);
     border: 1px solid var(--accent);
     padding: 12px;
-    margin: 0 16px 0 0;
+    margin: 0 -28px 0 0;
     flex-grow: 1;
     border-radius: 4px;
     transition: 0.3s ease;
-    width: 177px;
+    width: 194px;
+}
+
+button#set-username-button, button#kick-user-button, button#set-cooldown-button {
+    border-radius: 0px 4px 4px 0px;
 }
 
 input.cooldown-int {
     color: var(--fontColor);
     background: var(--composeInput);
-    box-shadow: 0px 0px 17px 1px rgb(0 0 0 / 50%);
     border: 1px solid var(--accent);
     padding: 12px;
-    margin: 0 16px 0 0;
+    margin: 0 -20px 0 0;
     flex-grow: 1;
     border-radius: 4px;
     transition: 0.3s ease;
@@ -285,10 +279,8 @@ input.cooldown-int {
 
 .settings__box {
     color: var(--fontColor);
-    box-shadow: 0px 0px 17px 1px #1d1f26;
     background: var(--messageDiv);
     padding: 24px;
-    width: 377px;
     border-radius: 4px;
 }
 
@@ -333,14 +325,13 @@ div#cooldown {
 input#kick-user-input {
     color: var(--fontColor);
     background: var(--composeInput);
-    box-shadow: 0px 0px 17px 1px rgb(0 0 0 / 50%);
     border: 1px solid var(--accent);
     padding: 12px;
-    margin: 0 16px 0 0;
+    margin: 0 -64px 0 0;
     flex-grow: 1;
     border-radius: 4px;
     transition: 0.3s ease;
-    width: 177px;
+    width: 253px;
 }
 
 p#accent-color-p {
@@ -350,14 +341,13 @@ p#accent-color-p {
 input#room-input {
     color: var(--fontColor);
     background: var(--composeInput);
-    box-shadow: 0px 0px 17px 1px rgb(0 0 0 / 50%);
     border: 1px solid var(--accent);
     padding: 12px;
     margin: 0 16px 0 0;
     flex-grow: 1;
     border-radius: 4px;
     transition: 0.3s ease;
-    width: 100px;
+    width: 286px;
 }
 
 /* Emoji Picker */
@@ -367,14 +357,12 @@ emoji-picker {
     right: 0;
     margin-bottom: 80px;
     margin-right: 80px;
-    box-shadow: 0px 0px 17px 1px rgb(0 0 0 / 50%);
     display: none;
 }
 
 /* Disconnect Overlay */
 .disconnect__box {
     color: var(--fontColor);
-    box-shadow: 0px 0px 17px 1px #1d1f26;
     background: #b72a2a;
     padding: 24px;
     width: 420px;
@@ -470,7 +458,6 @@ button#insertEmojiButton {
 .compose input {
     color: var(--fontColor);
     background: var(--composeInput);
-    box-shadow: 0px 0px 17px 1px rgba(0, 0, 0, 0.5);
     border: 1px solid var(--accent);
     width: 100%;
     padding: 12px;
@@ -518,4 +505,47 @@ img#uploaded-image:hover {
     cursor: pointer;
     filter: brightness(70%);
     transition: .2s;
+}
+
+/* Tools Bar */
+div#tools-bar {
+    position: fixed;
+    width: 100%;
+    display: flex;
+  justify-content: center;
+  transition: 0.5s ease;
+
+  opacity: 0;
+}
+
+.toolButton {
+    border-radius: 0px 0px 20px 20px;
+    margin-left: 7px;
+    margin-right: 7px;
+}
+
+.toggleButton {
+    border-radius: 0px 0px 30px 30px;
+    margin-right: 6px;
+    position: absolute;
+    right: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Room Overlay */
+.room__box {
+    color: var(--fontColor);
+    background: var(--messageDiv);
+    padding: 24px;
+    border-radius: 4px;
+}
+
+#room-overlay {
+    background-color: rgba(0, 0, 0, 0.301);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
 }

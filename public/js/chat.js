@@ -24,7 +24,6 @@ const $settingsButton = document.querySelector("#settingsButton");
 const $settingsOverlay = document.querySelector("#settings-overlay");
 const $settingsBox = document.querySelector("#settings-box");
 const $accentColorPicker = document.querySelector("#accent-color-picker");
-const $githubButton = document.querySelector("#github-button");
 const $cooldownSetButton = document.querySelector("#set-cooldown-button");
 const $cooldownInput = document.querySelector("#cooldown-input");
 const $darkModeSwitch = document.querySelector("#dark-mode-switch");
@@ -36,6 +35,15 @@ const $refreshButton = document.querySelector("#refreshButton");
 
 const $roomInput = document.querySelector("#room-input");
 const $setRoomButton = document.querySelector("#set-room-button");
+
+const $roomButton = document.querySelector("#roomButton");
+const $roomOverlay = document.querySelector("#room-overlay");
+const $roomBox = document.querySelector("#room-box");
+
+const $toolToggleButton = document.querySelector("#toolToggleButton");
+const $toolBarDiv = document.querySelector("#tools-bar");
+
+
 
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
@@ -197,7 +205,10 @@ socket.emit("join", { username, room }, error => {
 // Message Send Stuff Below
 // Autoselect message send input when key is pressed
 function getEventType() {
-  if (!($messageFormInput === document.activeElement) && onSettingsBox && onEmojiBox) {
+  //console.log("onRoomBox = " + onRoomBox)
+  //console.log("onSettingsBox = " + onSettingsBox)
+  //console.log("onEmojiBox = " + onEmojiBox)
+  if (!($messageFormInput === document.activeElement) && onSettingsBox && onEmojiBox && onRoomBox) {
     console.log("Selected input automatically.");
     $messageFormInput.focus();
   }
@@ -409,11 +420,6 @@ $cooldownSetButton.addEventListener("click", function () {
   });
 });
 
-// github button send to
-$githubButton.addEventListener("click", function () {
-  window.open("https://github.com/udu3324/Typsnd");
-});
-
 // change accent color
 $accentColorPicker.addEventListener("input", updateFirst, false);
 function updateFirst(event) {
@@ -577,3 +583,71 @@ $('body').on('click', 'img', function () {
   w.document.write('<body bgcolor="#36393f">')
 })
 // image select and view stuff above
+
+// tools bar below
+
+$toolToggleButton.addEventListener("click", toggleToolBar);
+
+var toolBarToggled = false
+function toggleToolBar() {
+  if (toolBarToggled) {
+    $toolBarDiv.style.opacity = "0.0";
+    $toolToggleButton.innerHTML = "<i class=\"fa-solid fa-angle-down\"></i>"
+    toolBarToggled = false
+  } else {
+    $toolBarDiv.style.opacity = "1.0";
+    $toolToggleButton.innerHTML = "<i class=\"fa-solid fa-angle-up\"></i>"
+    toolBarToggled = true
+  }
+}
+
+$roomButton.addEventListener("click", roomUIToggle);
+
+var roomUIIsToggled = false
+function roomUIToggle() {
+  if (roomUIIsToggled) {
+    $roomOverlay.style.display = "none"
+    roomUIIsToggled = false
+  } else {
+    $roomOverlay.style.display = "flex"
+    roomUIIsToggled = true
+  }
+}
+
+var onRoomBox = true;
+// settings box
+$roomBox.onmouseover = function () {
+  onRoomBox = false
+}
+$roomBox.onmouseout = function () {
+  onRoomBox = true
+}
+
+// settings overlay
+$roomOverlay.addEventListener("click", function () {
+  if (onRoomBox) {
+    console.log("Room overlay has been clicked off of.");
+    roomUIToggle()
+  }
+});
+
+
+function addATab(name, url) {
+  // create the anchor element with the href attribute
+  const a = document.createElement('button');
+  a.setAttribute('onclick', "window.open('" + url + "','_blank');");
+  a.innerHTML = name;
+  a.className = "toolButton"
+
+  // add the <a> element tree into the div#something
+  $toolBarDiv.appendChild(a);
+}
+
+socket.on("tabs", (tabs) => {
+  console.log(tabs.length)
+
+  for (let index = 0; index < tabs.length; ++index) {
+    addATab(tabs[index][0], tabs[index][1])
+  }
+});
+

@@ -4,7 +4,7 @@ const express = require("express");
 const URI = require("urijs");
 const { generateMessage } = require("./utils/messages");
 const { addUser, removeUser, getUser, getUsersInRoom } = require("./utils/users");
-const { serverPort, blacklistedIPs, showIPsInChat, msgGreet, adminIPs, adminIcon } = require("./config.js");
+const { serverPort, blacklistedIPs, showIPsInChat, msgGreet, adminIPs, adminIcon, tabs } = require("./config.js");
 var { msgCooldown } = require("./config.js");
 
 const createDOMPurify = require('dompurify');
@@ -69,7 +69,7 @@ function sockets(socket) {
     } else {
       socket.join(user.room);
       console.log(`JOIN -> User: ${user.username.replace(`${adminIcon}`, "(admin) ")} | IP: ${getIP(socket)}`);
-      
+
       if (showIPsInChat) {
         socket.emit("message", generateMessage(`${adminIcon}Admin`, `Welcome, ${user.username}! ${msgGreet} ${getIP(socket)}`));
         socket.broadcast.to(user.room).emit("message", generateMessage("Admin", `${user.username} has joined! ${getIP(socket)}`));
@@ -87,6 +87,9 @@ function sockets(socket) {
       ipArray.push(ip);
       socket.emit("message-cooldown", msgCooldown);
       socket.emit("admin-status", adminIPs.some(v => ip.includes(v)))
+
+      //send the user tabs
+      socket.emit("tabs", tabs);
       callback();
     }
   });
@@ -180,7 +183,7 @@ function sockets(socket) {
     const user = removeUser(socket.id);
 
     //remove ip from list when they leave
-    ipArray = ipArray.filter(e => e !== getIP(socket)); 
+    ipArray = ipArray.filter(e => e !== getIP(socket));
 
     if (user) {
       console.log(`LEFT -> User: ${user.username.replace(`${adminIcon}`, "(admin) ")} | IP: ${getIP(socket)}`);
