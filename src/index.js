@@ -2,10 +2,12 @@ const path = require("path");
 const http = require("http");
 const express = require("express");
 const URI = require("urijs");
+const ip = require('ip');
 const { generateMessage } = require("./utils/messages");
 const { addUser, removeUser, getUser, getUsersInRoom } = require("./utils/users");
-const { serverPort, blacklistedIPs, showIPsInChat, msgGreet, adminIPs, adminIcon, tabs } = require("./config.js");
+const { serverPort, blacklistedIPs, msgGreet, adminIPs, adminIcon, tabs } = require("./config.js");
 var { msgCooldown } = require("./config.js");
+
 
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
@@ -47,7 +49,7 @@ var ipArray = [];
 
 io.on("connection", socket => {
   let ip = getIP(socket);
-  console.log("NEW! -> WebSocket Connection: " + ip);
+  console.log("CONNECTION -> IP: " + ip);
   if (ipArray.some(v => ip.includes(v))) { // checking if user already has a connection
     socket.emit("alt-kick")
     console.log(`${ip} has attempted to create a alt account.`);
@@ -61,22 +63,18 @@ io.on("connection", socket => {
 });
 
 function sockets(socket) {
+  let ip = getIP(socket);
+
   socket.on("join", (options, callback) => {
-    let ip = getIP(socket);
     const { error, user } = addUser({ ip, id: socket.id, ...options });
     if (error) {
       return callback(error);
     } else {
       socket.join(user.room);
-      console.log(`JOIN -> User: ${user.username.replace(`${adminIcon}`, "(admin) ")} | IP: ${getIP(socket)}`);
+      console.log(`JOIN -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
 
-      if (showIPsInChat) {
-        socket.emit("message", generateMessage(`${adminIcon}Admin`, `Welcome, ${user.username}! ${msgGreet} ${getIP(socket)}`));
-        socket.broadcast.to(user.room).emit("message", generateMessage("Admin", `${user.username} has joined! ${getIP(socket)}`));
-      } else {
-        socket.emit("message", generateMessage(`${adminIcon}Admin`, `Welcome, ${user.username}! ${msgGreet}`));
-        socket.broadcast.to(user.room).emit("message", generateMessage("Admin", `${user.username} has joined!`));
-      }
+      socket.emit("message", generateMessage(`${adminIcon}Admin`, `Welcome, ${user.username}! ${msgGreet}`));
+      socket.broadcast.to(user.room).emit("message", generateMessage("Admin", `${user.username} has joined!`));
 
       io.to(user.room).emit("roomData", {
         room: user.room,
@@ -108,28 +106,31 @@ function sockets(socket) {
     // removes unsafe tags and attributes from html
     var msg = DOMPurify.sanitize(message);
     if (msg === "") {
-      console.log(`Message from ${user.username.replace(`${adminIcon}`, "(admin) ")} has been blocked due to XSS.`);
-      msg = `Hi, I'm ${user.username} and just tried to do XSS.`;
+      console.log(`Message from ${getUsername(user)} has been blocked due to XSS.`);
+      msg = `Hi, I'm ${getUsername(user)} and just tried to do XSS.`;
+    }
+
+    // check if msg is over 3000 charactars
+    if (msg.length > 3000) {
+      console.log(`Message from ${getUsername(user)} has been blocked due to charactar limit.`);
+      msg = `Hi, I'm ${getUsername(user)} and just tried to go over the 3000 charactar limit.`;
     }
 
     // convert &, <, >, ", ' into entities
     msg = encode(msg);
+
+    //fix < and >
+    msg = msg.replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;")
 
     // creates href clickable links for links in the msg
     msg = URI.withinString(msg, function (url) {
       return "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>";
     });
 
-    // check if msg is over 3000 charactars
-    if (msg.length > 3000) {
-      console.log(`Message from ${user.username.replace(`${adminIcon}`, "(admin) ")} has been blocked due to charactar limit.`);
-      msg = `Hi, I'm ${user.username} and just tried to go over the 3000 charactar limit.`;
-    }
-
     socket.emit("message-cooldown", msgCooldown);
     io.to(user.room).emit("message", generateMessage(user.username, msg));
 
-    console.log(`Message from ${user.username.replace(`${adminIcon}`, "(admin) ")} has been sent.`);
+    console.log(`MESSAGE -> USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
     callback();
   });
 
@@ -143,17 +144,16 @@ function sockets(socket) {
       console.error(error);
       return callback("Refresh the page!");
     }
-    var element = "<img id=\"uploaded-image\" alt=\"image\"  src=\"" + base64 + "\">";
+    var element = "<img id=\"uploaded-image\" alt=\"image\" src=\"" + base64 + "\">";
 
     socket.emit("message-cooldown", msgCooldown);
     io.to(user.room).emit("image", generateMessage(user.username, element));
 
-    console.log(`Image message from ${user.username.replace(`${adminIcon}`, "(admin) ")} has been sent.`);
+    console.log(`IMAGE -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
     callback();
   });
 
   socket.on("setCooldown", (seconds) => {
-    let ip = getIP(socket);
     // check if user is actually a admin
     if (adminIPs.some(v => ip.includes(v))) {
       msgCooldown = seconds;
@@ -167,7 +167,6 @@ function sockets(socket) {
 
   socket.on("kickUser", (username) => {
     const user = getUser(socket.id);
-    let ip = getIP(socket);
 
     // check if user is actually a admin
     if (adminIPs.some(v => ip.includes(v))) {
@@ -186,12 +185,10 @@ function sockets(socket) {
     ipArray = ipArray.filter(e => e !== getIP(socket));
 
     if (user) {
-      console.log(`LEFT -> User: ${user.username.replace(`${adminIcon}`, "(admin) ")} | IP: ${getIP(socket)}`);
-      if (showIPsInChat) {
-        io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `${user.username} has left! ${getIP(socket)}`));
-      } else {
-        io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `${user.username} has left!`));
-      }
+      console.log(`LEFT -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+
+      io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `${user.username} has left!`));
+
       io.to(user.room).emit("roomData", {
         room: user.room,
         users: getUsersInRoom(user.room)
@@ -208,12 +205,16 @@ function getIP(socket) {
   return ip;
 }
 
+function getUsername(user) {
+  return user.username.replace(`${adminIcon}`, "(admin) ");
+}
+
 server.listen(port, () => { //credits n stuff
   process.stdout.write('\033c');
 
   console.log("\n Typsnd is running at:");
   console.log(" - Local:   " + '\x1b[36m%s\x1b[0m', 'http://localhost:' + port);
-  console.log(" - Network: " + '\x1b[36m%s\x1b[0m', 'http://' + "IPv4-Adress" + ":" + port);
+  console.log(" - Network: " + '\x1b[36m%s\x1b[0m', 'http://' + ip.address() + ":" + port);
   console.log("\n Have fun using Typsnd! Check out\n more of my projects on GitHub! \n" +
     '\x1b[32m', 'http://github.com/udu3324' + '\x1b[37m', '\n');
 });

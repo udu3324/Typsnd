@@ -110,7 +110,7 @@ button:hover {
 }
 
 button:disabled {
-    filter: brightness(50%);
+    filter: brightness(75%);
 }
 
 /* The switch - the box around the slider */
@@ -412,10 +412,6 @@ button#scrollDownMSG {
     visibility: hidden;
 }
 
-button#insertEmojiButton {
-    margin-right: 15px;
-}
-
 /* Message Styles */
 
 .message {
@@ -452,7 +448,6 @@ button#insertEmojiButton {
 .compose form {
     display: flex;
     flex-grow: 1;
-    margin-right: 16px;
 }
 
 .compose input {
@@ -461,14 +456,22 @@ button#insertEmojiButton {
     border: 1px solid var(--accent);
     width: 100%;
     padding: 12px;
-    margin: 0 16px 0 0;
     flex-grow: 1;
-    border-radius: 4px;
+    border-radius: 0px 0px 0px 0px;
     transition: 0.3s ease;
 }
 
 .compose button {
     font-size: 14px;
+    border-radius: 0px 0px 0px 0px;
+}
+
+button#sendImageButton {
+    border-radius: 4px 0px 0px 4px;
+}
+
+button#insertEmojiButton {
+    border-radius: 0px 3px 3px 0px;
 }
 
 /* Chat Sidebar Styles */

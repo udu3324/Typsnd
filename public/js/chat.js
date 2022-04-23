@@ -222,7 +222,7 @@ function enableSendMSG() {
   $messageFormInput.focus();
 
   $imageSendButton.removeAttribute("disabled");
-  $imageSendButton.innerHTML = "<i class=\"fa-solid fa-image fa-lg\"></i>";
+  $imageSendButton.innerHTML = "<i class=\"fa-solid fa-circle-plus fa-lg\"></i>";
   $insertEmojiButton.removeAttribute("disabled");
 }
 
@@ -230,6 +230,9 @@ var timeLeft;
 var pasteEnabled = true;
 function cooldownMSGSend() {
   $messageFormButton.innerHTML = "<i class=\"fa-solid fa-" + timeLeft + " fa-lg\"></i>";
+  $messageFormButton.setAttribute("disabled", "disabled");
+  $imageSendButton.setAttribute("disabled", "disabled");
+  $insertEmojiButton.setAttribute("disabled", "disabled");
 
   if (timeLeft > 0) {
     setTimeout(cooldownMSGSend, 1000)
@@ -556,9 +559,6 @@ function handleFiles() {
           window.location.reload();
           return console.log(error);
         } else {
-          $messageFormButton.setAttribute("disabled", "disabled");
-          $imageSendButton.setAttribute("disabled", "disabled");
-
           console.log("Message delivered!");
 
           timeLeft = messageCooldown;
@@ -572,15 +572,31 @@ function handleFiles() {
 // Image Upload Stuff Above
 
 // Image select and view stuff below
+// tysm <3 https://stackoverflow.com/a/54466127/14677066
 $('body').on('click', 'img', function () {
-  var imgSrc = $(this).attr('src');
+  const base64ImageData = $(this).attr('src');
 
-  var image = new Image();
-  image.src = imgSrc;
+  const contentType = base64ImageData.substring(5, base64ImageData.indexOf(";"));
 
-  var w = window.open("");
-  w.document.write(image.outerHTML);
-  w.document.write('<body bgcolor="#36393f">')
+  const byteCharacters = atob(base64ImageData.substr(`data:${contentType};base64,`.length));
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+    const slice = byteCharacters.slice(offset, offset + 1024);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+
+    byteArrays.push(byteArray);
+  }
+  const blob = new Blob(byteArrays, { type: contentType });
+  const blobUrl = URL.createObjectURL(blob);
+
+  window.open(blobUrl, '_blank');
 })
 // image select and view stuff above
 

@@ -21,10 +21,6 @@ var blacklistedIPs = [];
 // The usernames below wont be able to be used unless if they're an admin
 var blacklistedUsernames = [];
 
-// This determines if IPs should be publicly be shown in chat
-// It still will be shown if a user is admin
-var showIPsInChat = false;
-
 // This is the greeting message of the new user
 // Use <br> to create another line
 var msgGreet = "";
@@ -59,7 +55,6 @@ module.exports = {
   adminIPs,
   blacklistedIPs,
   blacklistedUsernames,
-  showIPsInChat,
   msgGreet,
   msgCooldown,
   adminIcon,
