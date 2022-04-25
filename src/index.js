@@ -4,10 +4,12 @@ const express = require("express");
 const URI = require("urijs");
 const ip = require('ip');
 const { generateMessage } = require("./utils/messages");
-const { addUser, removeUser, getUser, getUsersInRoom } = require("./utils/users");
-const { serverPort, blacklistedIPs, msgGreet, adminIPs, adminIcon, tabs } = require("./config.js");
+const { addUser, removeUser, getUser, getUsersInRoom, users } = require("./utils/users");
+const { serverPort, blacklistedIPs, msgGreet, adminIPs, tabs } = require("./config.js");
 var { msgCooldown } = require("./config.js");
 
+//changing this will break things
+const adminIcon = "<i class=\"fa-solid fa-shield\"></i> ";
 
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
@@ -151,6 +153,45 @@ function sockets(socket) {
 
     console.log(`IMAGE -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
     callback();
+  });
+
+  socket.on("sendDirectMessage", (packet, callback) => {
+    const userSentFrom = getUser(socket.id);
+    const userSendTo = packet[0];
+    const userMessage = packet[1];
+
+    //check if user sending to is real
+    var userExists = false;
+    var userID;
+
+    for (let index = 0; index < users.length; ++index) {
+      //remove shield
+      if (users[index].username.replace("<i class=\"fa-solid fa-shield\"></i> ", "") === userSendTo) {
+        userID = users[index].id;
+        userExists = true
+      }
+    }
+
+    //check if message is over 280
+    if (userMessage.length > 280) {
+      console.log("IP: " + ip + " has tried to bypass the 280 charactar limit!")
+      callback("Message is over 280!");
+      return;
+    }
+
+    if (!userExists) {
+      callback("User does not exist!");
+    } else {
+
+      //send to that user
+      var userSendingTo = getUser(userID)
+
+      var packetOut = [userSentFrom.username, userMessage]
+      io.to(userSendingTo.room).emit("recieveDirectMessage" + userSendTo, packetOut);
+
+      console.log("DM -> FROM: " + userSentFrom.username.replace("<i class=\"fa-solid fa-shield\"></i> ", "") + " | TO: " + userSendTo.replace("<i class=\"fa-solid fa-shield\"></i> ", ""))
+      callback();
+    }
   });
 
   socket.on("setCooldown", (seconds) => {

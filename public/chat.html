@@ -20,14 +20,61 @@
 
   <body>
     <div class="chat">
+      <div id="message-bar" style="display: none">
+        <div id="from">
+          <p>
+            <i class="fa-solid fa-message"></i> From
+            <b id="message-user-replace"></b>
+            <button id="close-message">
+              <i class="fa-solid fa-xmark fa-lg"></i> Close
+            </button>
+          </p>
+        </div>
+        <div id="message-to">
+          <p id="message-replace"></p>
+        </div>
+      </div>
+
       <div id="tools-bar">
         <button class="toolButton" id="roomButton" aria-label="Room">
-          <i class="fa-solid fa-house-chimney"></i> Join Room
+          <i class="fa-solid fa-house-chimney"></i> Room
+        </button>
+        <button class="toolButton" id="messageButton" aria-label="Message">
+          <i class="fa-solid fa-message"></i> Message
         </button>
       </div>
-      <button class="toggleButton" id="toolToggleButton" aria-label="Room">
+      <button class="toggleButton" id="toolToggleButton" aria-label="Toggle">
         <i class="fa-solid fa-angle-down"></i>
       </button>
+
+      <div id="message-overlay" style="display: none">
+        <div class="message__box" id="message-box">
+          <h1>Message A User</h1>
+          <div id="message">
+            <p>Username</p>
+            <input
+              id="user-message-input"
+              class="message-input"
+              type="text"
+              name="room"
+              maxlength="19"
+              placeholder="the user that recieves"
+              required
+            />
+            <p>Message (280 charactar limit)</p>
+            <textarea
+              placeholder="the message that the user recieves"
+              id="message-input"
+              class="message-input"
+              name="room"
+              maxlength="280"
+            ></textarea>
+
+            <br />
+            <button id="send-message-button">Send</button>
+          </div>
+        </div>
+      </div>
 
       <div id="room-overlay" style="display: none">
         <div class="room__box" id="room-box">

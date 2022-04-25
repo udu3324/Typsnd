@@ -43,7 +43,20 @@ const $roomBox = document.querySelector("#room-box");
 const $toolToggleButton = document.querySelector("#toolToggleButton");
 const $toolBarDiv = document.querySelector("#tools-bar");
 
+const $messageButton = document.querySelector("#messageButton");
+const $messageOverlay = document.querySelector("#message-overlay");
+const $messageBox = document.querySelector("#message-box");
 
+const $userMessageInput = document.querySelector("#user-message-input");
+const $messageInput = document.querySelector("#message-input");
+const $sendMessageButton = document.querySelector("#send-message-button");
+
+const $messageBar = document.querySelector("#message-bar");
+
+const $fromReplace = document.querySelector("#message-user-replace");
+const $messageReplace = document.querySelector("#message-replace");
+
+const $closeMessageButton = document.querySelector("#close-message");
 
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
@@ -188,7 +201,6 @@ socket.on("roomData", ({ room, users }) => {
 
   // set username placeholder
   $roomInput.placeholder = `${room}`;
-  console.log(room)
 
   document.querySelector("#sidebar").innerHTML = html;
 });
@@ -204,16 +216,33 @@ socket.emit("join", { username, room }, error => {
 
 // Message Send Stuff Below
 // Autoselect message send input when key is pressed
-function getEventType() {
-  //console.log("onRoomBox = " + onRoomBox)
-  //console.log("onSettingsBox = " + onSettingsBox)
-  //console.log("onEmojiBox = " + onEmojiBox)
-  if (!($messageFormInput === document.activeElement) && onSettingsBox && onEmojiBox && onRoomBox) {
-    console.log("Selected input automatically.");
-    $messageFormInput.focus();
+var isHoldingDownCtrl = false;
+function getEventTypeDown(key) {
+  var keyCode = key.keyCode;
+
+  //if key pressed is not control
+  if (!(keyCode === 17) && !isHoldingDownCtrl) {
+    if (!($messageFormInput === document.activeElement) && onSettingsBox && onEmojiBox && !roomUIIsToggled && !messageUIIsToggled) {
+      console.log("Selected input automatically.");
+      $messageFormInput.focus();
+    }
+  } else {
+    console.log("holding ctrl")
+    isHoldingDownCtrl = true;
   }
 }
-document.addEventListener('keydown', getEventType, false);
+document.addEventListener('keydown', getEventTypeDown, false);
+
+function getEventTypeUp(key) {
+  var keyCode = key.keyCode;
+
+  //if key pressed is not control
+  if (!(keyCode === 17)) {
+    console.log("not ctrl")
+    isHoldingDownCtrl = false;
+  }
+}
+document.addEventListener('keyup', getEventTypeUp, false);
 
 function enableSendMSG() {
   $messageFormButton.removeAttribute("disabled");
@@ -372,12 +401,6 @@ function setLightmode() {
   cssVar.style.setProperty('--scrollbarThumb', "#ababab");
   cssVar.style.setProperty('--composeInput', "#dfdfdf");
   $emojiBox.setAttribute("class", "light");
-  $emojiBox.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 0%)"
-  $settingsButton.style.boxShadow = "none"
-  $messageFormInput.style.boxShadow = "none"
-  $imageSendButton.style.boxShadow = "none"
-  $insertEmojiButton.style.boxShadow = "none"
-  $messageFormButton.style.boxShadow = "none"
 }
 function setDarkmode() {
   console.log("Dark mode has been turned on.")
@@ -392,12 +415,6 @@ function setDarkmode() {
   cssVar.style.setProperty('--scrollbarThumb', "#202225");
   cssVar.style.setProperty('--composeInput', "#40444b");
   $emojiBox.setAttribute("class", "dark");
-  $emojiBox.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
-  $settingsButton.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
-  $messageFormInput.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
-  $imageSendButton.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
-  $insertEmojiButton.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
-  $messageFormButton.style.boxShadow = "0px 0px 17px 1px rgb(0 0 0 / 50%)"
 }
 var adminPanelStyle;
 function checkIt() {
@@ -617,6 +634,7 @@ function toggleToolBar() {
   }
 }
 
+//room change stuff below
 $roomButton.addEventListener("click", roomUIToggle);
 
 var roomUIIsToggled = false
@@ -660,10 +678,146 @@ function addATab(name, url) {
 }
 
 socket.on("tabs", (tabs) => {
-  console.log(tabs.length)
 
+  //for each tab in array, create one
   for (let index = 0; index < tabs.length; ++index) {
     addATab(tabs[index][0], tabs[index][1])
   }
 });
 
+//message user stuff below
+$messageButton.addEventListener("click", messageUIToggle);
+
+var messageUIIsToggled = false
+function messageUIToggle() {
+  if (messageUIIsToggled) {
+    $messageOverlay.style.display = "none"
+    messageUIIsToggled = false
+  } else {
+    $messageOverlay.style.display = "flex"
+    messageUIIsToggled = true
+  }
+}
+
+var onMessageBox = true;
+// message box
+$messageBox.onmouseover = function () {
+  onMessageBox = false
+}
+$messageBox.onmouseout = function () {
+  onMessageBox = true
+}
+
+// message overlay
+$messageOverlay.addEventListener("click", function () {
+  if (onMessageBox) {
+    console.log("Message overlay has been clicked off of.");
+    messageUIToggle()
+  }
+});
+
+$sendMessageButton.onclick = function () {
+  var user = $userMessageInput.value
+  var message = $messageInput.value
+
+  //make sure all inputs are provided
+  if (user === "") {
+    alert("No user provided!")
+    return;
+  }
+  if (message === "") {
+    alert("No message provided!")
+    return;
+  }
+
+  var packet = [user, message]
+
+  //send it
+  socket.emit("sendDirectMessage", packet, error => {
+    $messageInput.value = "";
+
+    //catch errors
+    if (error === "User does not exist!") {
+
+      setTimeout(function () { alert("User specified does not exist!"); }, 1);
+      $userMessageInput.value = "";
+
+      return console.log(error);
+    } else if (error === "Message is over 280!") {
+
+      setTimeout(function () { alert("Message is over 280 charactars long!"); }, 1);
+      $userMessageInput.value = "";
+
+      return console.log(error);
+    } else {
+
+      setTimeout(function () { alert("Message has been sucessfully sent!"); }, 1);
+
+      console.log("Message delivered!");
+    }
+  });
+};
+
+var userHashed = username
+
+//recieve direct messages sent
+socket.on("recieveDirectMessage" + userHashed, (packetOut) => {
+  //alert(packetOut[0] + "\n" + packetOut[1])
+
+  $fromReplace.innerHTML = packetOut[0]
+  $messageReplace.innerHTML = packetOut[1]
+
+  $messageBar.style.display = "block"
+});
+
+$closeMessageButton.onclick = function () {
+  $messageBar.style.display = "none"
+
+  $fromReplace.innerHTML = ""
+  $messageReplace.innerHTML = ""
+}
+
+// Make the DIV element draggable:
+dragElement($messageBar);
+
+//tysm w3schools <3 https://www.w3schools.com/howto/howto_js_draggable.asp
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    // if present, the header is where you move the DIV from:
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    // otherwise, move the DIV from anywhere inside the DIV:
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    // stop moving when mouse button is released:
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}

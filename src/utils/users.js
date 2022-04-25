@@ -1,12 +1,13 @@
 const users = [];
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
-const { blacklistedUsernames, adminIPs, adminIcon, multipleRooms } = require("../config.js");
+const { blacklistedUsernames, adminIPs, multipleRooms } = require("../config.js");
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
 const { encode } = require("html-entities");
+const adminIcon = "<i class=\"fa-solid fa-shield\"></i> "
 
 const addUser = ({ ip, id, username, room }) => {
 
@@ -108,5 +109,6 @@ module.exports = {
   addUser,
   removeUser,
   getUser,
-  getUsersInRoom
+  getUsersInRoom,
+  users
 };
