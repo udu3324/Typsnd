@@ -38,17 +38,17 @@ io.on("connection", socket => {
 
   if (isAlt && altDetection) {
     socket.emit("alt-kick")
-    console.log("ALT.CONNECTION -|-> IP: " + ip);
+    console.log("CONNECTION -|-> IP.ALT: " + ip);
   } else if (isBlacklisted) {
     socket.emit("blacklisted-ip-kick")
-    console.log("IP.BLACKLISTED -|-> IP: " + ip);
+    console.log("CONNECTION -|-> IP.BLACKLISTED: " + ip);
   } else {
 
     // allow them to connect
     if (isAlt && !altDetection) {
-      console.log("CONNECTION.ALT ---> IP: " + ip);
+      console.log("CONNECTION ---> IP.ALT: " + ip);
     } else {
-      console.log("CONNECTION -------> IP: " + ip);
+      console.log("CONNECTION ---> IP: " + ip);
     }
 
     sockets(socket);
