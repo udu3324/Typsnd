@@ -5,11 +5,9 @@ const URI = require("urijs");
 const ip = require('ip');
 const { generateMessage } = require("./utils/messages");
 const { addUser, removeUser, getUser, getUsersInRoom, users } = require("./utils/users");
-const { serverPort, blacklistedIPs, msgGreet, adminIPs, tabs } = require("./config.js");
+const { serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle } = require("./config.js");
+const { encode } = require("html-entities");
 var { msgCooldown } = require("./config.js");
-
-//changing this will break things
-const adminIcon = "<i class=\"fa-solid fa-shield\"></i> ";
 
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
@@ -28,38 +26,31 @@ const publicDirectoryPath = path.join(__dirname, "../public");
 
 app.use(express.static(publicDirectoryPath));
 
-const { networkInterfaces } = require('os');
-const { encode } = require("html-entities");
-
-const nets = networkInterfaces();
-const results = Object.create(null); // Or just '{}', an empty object
-
-for (const name of Object.keys(nets)) {
-  for (const net of nets[name]) {
-    // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
-    if (net.family === 'IPv4' && !net.internal) {
-      if (!results[name]) {
-        results[name] = [];
-      }
-      results[name].push(net.address);
-    }
-  }
-}
 
 // this array is used to store the ips of the users connected to Typsnd
 var ipArray = [];
 
 io.on("connection", socket => {
   let ip = getIP(socket);
-  console.log("CONNECTION -> IP: " + ip);
-  if (ipArray.some(v => ip.includes(v))) { // checking if user already has a connection
+
+  var isAlt = ipArray.some(v => ip.includes(v));
+  var isBlacklisted = blacklistedIPs.some(v => ip.includes(v));
+
+  if (isAlt && altDetection) {
     socket.emit("alt-kick")
-    console.log(`${ip} has attempted to create a alt account.`);
-  } else if (blacklistedIPs.some(v => ip.includes(v))) { // checking if user is blacklisted
+    console.log("ALT.CONNECTION -|-> IP: " + ip);
+  } else if (isBlacklisted) {
     socket.emit("blacklisted-ip-kick")
-    console.log(`${ip} has attempted to join while blacklisted.`);
+    console.log("IP.BLACKLISTED -|-> IP: " + ip);
   } else {
+
     // allow them to connect
+    if (isAlt && !altDetection) {
+      console.log("CONNECTION.ALT ---> IP: " + ip);
+    } else {
+      console.log("CONNECTION -------> IP: " + ip);
+    }
+
     sockets(socket);
   }
 });
@@ -86,24 +77,23 @@ function sockets(socket) {
       //add ip to ip list, set msg cooldown, and set admin status
       ipArray.push(ip);
       socket.emit("message-cooldown", msgCooldown);
-      socket.emit("admin-status", adminIPs.some(v => ip.includes(v)))
+
+      //send user if they're an admin and what the admin icon is
+      var adminArr = [adminIPs.some(v => ip.includes(v)), adminIcon]
+      socket.emit("admin-status", adminArr)
 
       //send the user tabs
       socket.emit("tabs", tabs);
+
+      //send the user the name of the html file
+      socket.emit("html-title", htmlTitle);
+
       callback();
     }
   });
 
   socket.on("sendMessage", (message, callback) => {
     const user = getUser(socket.id);
-    try {
-      if (user.username == null) {
-        return callback("Refresh the page!");
-      }
-    } catch (error) {
-      console.error(error);
-      return callback("Refresh the page!");
-    }
 
     // removes unsafe tags and attributes from html
     var msg = DOMPurify.sanitize(message);
@@ -138,14 +128,7 @@ function sockets(socket) {
 
   socket.on("sendImage", (base64, callback) => {
     const user = getUser(socket.id);
-    try {
-      if (user.username == null) {
-        return callback("Refresh the page!");
-      }
-    } catch (error) {
-      console.error(error);
-      return callback("Refresh the page!");
-    }
+
     var element = "<img id=\"uploaded-image\" alt=\"image\" src=\"" + base64 + "\">";
 
     socket.emit("message-cooldown", msgCooldown);
@@ -189,7 +172,7 @@ function sockets(socket) {
       var packetOut = [userSentFrom.username, userMessage]
       io.to(userSendingTo.room).emit("recieveDirectMessage" + userSendTo, packetOut);
 
-      console.log("DM -> FROM: " + userSentFrom.username.replace("<i class=\"fa-solid fa-shield\"></i> ", "") + " | TO: " + userSendTo.replace("<i class=\"fa-solid fa-shield\"></i> ", ""))
+      console.log("DM -> FROM: " + getUsername(userSentFrom) + " | TO: " + userSendTo)
       callback();
     }
   });
@@ -247,7 +230,12 @@ function getIP(socket) {
 }
 
 function getUsername(user) {
-  return user.username.replace(`${adminIcon}`, "(admin) ");
+  if (user.username === undefined) {
+    return user.replace(`${adminIcon}`, "(admin) ");
+  } else {
+    return user.username.replace(`${adminIcon}`, "(admin) ");
+  }
+
 }
 
 server.listen(port, () => { //credits n stuff

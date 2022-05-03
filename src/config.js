@@ -1,20 +1,16 @@
-// Please do not leave arry variables empty like [""]
-// This can cause errors and break some functionality
-
-// This won't break Typsnd:
-// var example = ["localhost"];
-// var example = [];
-
-// This will break Typsnd:
-// var example = [""];
-// var example = ["10.0.3.45", ""];
-
 // This is the port Typsnd will run on
 var serverPort = "3000";
 
 // The IPs below will recieve admin privlages
 var adminIPs = ["localhost"];
 
+// This is the admin icon that shows right next to the admins
+var adminIcon = "<i class=\"fa-solid fa-shield\"></i> ";
+
+// booleon that toggles on alt detection
+var altDetection = true;
+
+// This boolean below turns on the
 // The IPs below wont be able to join the chat
 var blacklistedIPs = [];
 
@@ -22,11 +18,9 @@ var blacklistedIPs = [];
 var blacklistedUsernames = [];
 
 // This is the greeting message of the new user
-// Use <br> to create another line
 var msgGreet = "";
 
-// This is the cooldown when a user sends a message
-// Cooldown can be from 0s to 9s
+// This is the cooldown when a user sends a message (from 0-9 seconds)
 var msgCooldown = "2";
 
 // This boolean toggles if multiple rooms are allowed
@@ -47,13 +41,28 @@ var tabs = [
   ]
 ];
 
+// html title
+var htmlTitle = "Typsnd";
+
+
+
+//filter variables
+adminIPs.filter(n => n)
+blacklistedIPs.filter(n => n)
+blacklistedUsernames.filter(n => n)
+
+msgGreet = msgGreet.replaceAll("\n", "<br/>");
+
 module.exports = {
   serverPort,
   adminIPs,
+  adminIcon,
+  altDetection,
   blacklistedIPs,
   blacklistedUsernames,
   msgGreet,
   msgCooldown,
   multipleRooms,
-  tabs
+  tabs,
+  htmlTitle
 };

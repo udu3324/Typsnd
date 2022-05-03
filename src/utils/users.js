@@ -1,15 +1,15 @@
 const users = [];
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
-const { blacklistedUsernames, adminIPs, multipleRooms } = require("../config.js");
+const { blacklistedUsernames, adminIPs, multipleRooms, adminIcon } = require("../config.js");
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
 const { encode } = require("html-entities");
-const adminIcon = "<i class=\"fa-solid fa-shield\"></i> "
 
 const addUser = ({ ip, id, username, room }) => {
+  var isAdmin = adminIPs.some(v => ip.includes(v));
 
   // Clean the data
   try {
@@ -34,22 +34,25 @@ const addUser = ({ ip, id, username, room }) => {
   }
 
   // Check for existing user
-  const existingUser = users.find(user => {
-    return user.room === room && user.username.replace(`${adminIcon}`, "") === username;
-  });
+  for (let index = 0; index < users.length; ++index) {
 
-  // Validate username
-  if (existingUser) {
-    return {
-      error: "Username is in use!"
-    };
+    //remove shield and check all users in rooms
+    if (users[index].username.replace(adminIcon, "") === username) {
+      return {
+        error: "Username is in use!"
+      };
+    }
   }
 
-  // Make sure user is not impersonating
-  if ((username.toLowerCase() === "admin")) {
-    return {
-      error: "Nice try, but impersonating is not allowed!"
-    };
+  // Make sure normal users are not impersonating staff/admin/mods
+  var lcUsr = username.toLowerCase();
+  if (lcUsr.includes("admin") || lcUsr.includes("mod") || lcUsr.includes("staff") || lcUsr.includes("server")) {
+    //allow user to have impersonating usernames if they're an admin
+    if (!isAdmin) {
+      return {
+        error: "Nice try, but impersonating is not allowed!"
+      };
+    }
   }
 
   // Validate only chatroom is chat
@@ -59,8 +62,8 @@ const addUser = ({ ip, id, username, room }) => {
     };
   }
 
-  // Make sure username is not blacklisted
-  if (blacklistedUsernames.map(v => v.toLowerCase()).some(v => username.toLowerCase().includes(v)) && !adminIPs.some(v => ip.includes(v))) {
+  // Make sure username is not blacklisted (allow admins to use blacklisted usernames anyways)
+  if (blacklistedUsernames.map(v => v.toLowerCase()).some(v => username.toLowerCase().includes(v)) && !isAdmin) {
     return {
       error: "Hey! That is a blacklisted username."
     };

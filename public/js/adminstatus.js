@@ -1,9 +1,9 @@
 //set admin status and reveal admin panel
 
 socket.on("admin-status", isAdmin => {
-  if (isAdmin) {
+  if (isAdmin[0]) {
 
-    userHashed = "<i class=\"fa-solid fa-shield\"></i> " + username
+    userHashed = isAdmin[1] + username
 
     adminPanelStyle = true;
     $adminStatus.innerHTML = "<i class=\"fa-solid fa-lock-open\"></i> You are a Admin!";

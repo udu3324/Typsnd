@@ -821,3 +821,8 @@ function dragElement(elmnt) {
     document.onmousemove = null;
   }
 }
+
+//recieve direct messages sent
+socket.on("html-title", htmlTitleSent => {
+  document.title = htmlTitleSent;
+});
