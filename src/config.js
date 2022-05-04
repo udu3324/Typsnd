@@ -51,7 +51,7 @@ adminIPs.filter(n => n)
 blacklistedIPs.filter(n => n)
 blacklistedUsernames.filter(n => n)
 
-msgGreet = msgGreet.replaceAll("\n", "<br/>");
+msgGreet = msgGreet.replace(/\n/g, "<br/>");
 
 module.exports = {
   serverPort,
