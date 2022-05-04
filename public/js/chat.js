@@ -747,7 +747,7 @@ $sendMessageButton.onclick = function () {
       return console.log(error);
     } else if (error === "Message is over 280!") {
 
-      setTimeout(function () { alert("Message is over 280 charactars long!"); }, 1);
+      setTimeout(function () { alert("Message is over 280 characters long!"); }, 1);
       $userMessageInput.value = "";
 
       return console.log(error);

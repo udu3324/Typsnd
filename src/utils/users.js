@@ -26,10 +26,10 @@ const addUser = ({ ip, id, username, room }) => {
     };
   }
 
-  // Check if user is over 19 charactars long
+  // Check if user is over 19 characters long
   if (username.length > 19) {
     return {
-      error: "Nice try, but your username is over 19 charactars!"
+      error: "Nice try, but your username is over 19 characters!"
     };
   }
 

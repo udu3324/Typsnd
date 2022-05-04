@@ -102,10 +102,10 @@ function sockets(socket) {
       msg = `Hi, I'm ${getUsername(user)} and just tried to do XSS.`;
     }
 
-    // check if msg is over 3000 charactars
+    // check if msg is over 3000 characters
     if (msg.length > 3000) {
-      console.log(`Message from ${getUsername(user)} has been blocked due to charactar limit.`);
-      msg = `Hi, I'm ${getUsername(user)} and just tried to go over the 3000 charactar limit.`;
+      console.log(`Message from ${getUsername(user)} has been blocked due to character limit.`);
+      msg = `Hi, I'm ${getUsername(user)} and just tried to go over the 3000 character limit.`;
     }
 
     // convert &, <, >, ", ' into entities
@@ -157,7 +157,7 @@ function sockets(socket) {
 
     //check if message is over 280
     if (userMessage.length > 280) {
-      console.log("IP: " + ip + " has tried to bypass the 280 charactar limit!")
+      console.log("IP: " + ip + " has tried to bypass the 280 character limit!")
       callback("Message is over 280!");
       return;
     }
