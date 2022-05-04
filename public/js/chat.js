@@ -58,6 +58,8 @@ const $messageReplace = document.querySelector("#message-replace");
 
 const $closeMessageButton = document.querySelector("#close-message");
 
+const $joinDefaultButton = document.querySelector("#join-default-button");
+
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
 const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML;
@@ -826,3 +828,15 @@ function dragElement(elmnt) {
 socket.on("html-title", htmlTitleSent => {
   document.title = htmlTitleSent;
 });
+
+$joinDefaultButton.onclick = function () {
+  var currentRoom = getCookie("room");
+
+  //check if room is not default
+  if (currentRoom != "Typsnd") {
+    $roomInput.value = "Typsnd"
+    joinDiffRoom()
+  } else {
+    setTimeout(function () { alert("You're already in the default room!"); }, 1);
+  }
+}
