@@ -46,8 +46,8 @@ const addUser = ({ ip, id, username, room }) => {
 
   // Make sure normal users are not impersonating staff/admin/mods
   var lcUsr = username.toLowerCase();
-  if (lcUsr.includes("admin") || lcUsr.includes("mod") || lcUsr.includes("staff") || lcUsr.includes("server")) {
-    //allow user to have impersonating usernames if they're an admin
+  if (lcUsr.includes("admin") || lcUsr.includes("mod") || lcUsr.includes("staff") || lcUsr.includes("server") || lcUsr.includes("typsnd")) {
+    //discard admins as they're allowed
     if (!isAdmin) {
       return {
         error: "Nice try, but impersonating is not allowed!"
@@ -58,7 +58,7 @@ const addUser = ({ ip, id, username, room }) => {
   // Validate only chatroom is chat
   if (!(room === "Typsnd") && !multipleRooms) {
     return {
-      error: "Nice try, but there is only one chat!"
+      error: "Multiple rooms are currently disabled."
     };
   }
 
