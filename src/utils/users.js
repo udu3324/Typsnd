@@ -19,6 +19,8 @@ const addUser = ({ ip, id, username, room }) => {
     console.log(e.name + ": " + e.message)
   }
 
+  var lcUsr = username.toLowerCase();
+
   // Validate the data
   if (!username) {
     return {
@@ -37,7 +39,7 @@ const addUser = ({ ip, id, username, room }) => {
   for (let index = 0; index < users.length; ++index) {
 
     //remove shield and check all users in rooms
-    if (users[index].username.replace(adminIcon, "") === username) {
+    if (users[index].username.replace(adminIcon, "").toLowerCase() === lcUsr) {
       return {
         error: "Username is in use!"
       };
@@ -45,8 +47,7 @@ const addUser = ({ ip, id, username, room }) => {
   }
 
   // Make sure normal users are not impersonating staff/admin/mods
-  var lcUsr = username.toLowerCase();
-  if (lcUsr.includes("admin") || lcUsr.includes("mod") || lcUsr.includes("staff") || lcUsr.includes("server") || lcUsr.includes("typsnd")) {
+  if (lcUsr.includes("admin") || lcUsr.includes("mod") || lcUsr.includes("staff") || lcUsr.includes("server") || lcUsr.includes("typsnd") || lcUsr.includes("code")) {
     //discard admins as they're allowed
     if (!isAdmin) {
       return {

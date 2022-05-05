@@ -615,7 +615,7 @@ div#message-bar {
     left: 50%;
     border-radius: 10px;
     box-shadow: 0px 8px 15px rgb(0 0 0 / 22%);
-    z-index: 2;
+    z-index: 5;
     max-width: 509px;
 }
 
@@ -631,10 +631,13 @@ div#message-to {
 
 button#close-message {
     padding: 0px 0px 0px 4px;
-    /* padding-left: 7px; */
     font-family: 'JetBrainsMonoRegular';
 }
 
 p#message-replace {
     word-break: break-word;
+}
+
+button#send-message-button {
+    width: 286px;
 }
