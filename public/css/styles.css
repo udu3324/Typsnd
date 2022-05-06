@@ -641,3 +641,7 @@ p#message-replace {
 button#send-message-button {
     width: 286px;
 }
+
+a {
+    color: var(--accent);
+}
