@@ -166,7 +166,7 @@ function sockets(socket) {
 
     for (let index = 0; index < users.length; ++index) {
       //remove shield
-      if (users[index].username.replace("<i class=\"fa-solid fa-shield\"></i> ", "") === userSendTo) {
+      if (users[index].username.replace(adminIcon, "") === userSendTo) {
         userID = users[index].id;
         userExists = true
       }
@@ -221,9 +221,9 @@ function sockets(socket) {
     // check if user sending to is real
     for (let index = 0; index < users.length; ++index) {
       //remove shield
-      if (users[index].username.replace("<i class=\"fa-solid fa-shield\"></i> ", "") === userKicking) {
+      if (users[index].username.replace(adminIcon, "") === userKicking) {
         //check if its not a admin
-        if (!(users[index].username.includes("<i class=\"fa-solid fa-shield\"></i> ", ""))) {
+        if (!(users[index].username.includes(adminIcon, ""))) {
           userExists = true
         } else {
           callback("isAdmin");
@@ -260,9 +260,9 @@ function sockets(socket) {
     // check if user sending to is real
     for (let index = 0; index < users.length; ++index) {
       //remove shield
-      if (users[index].username.replace("<i class=\"fa-solid fa-shield\"></i> ", "") === userKicking) {
+      if (users[index].username.replace(adminIcon, "") === userKicking) {
         //check if its not a admin
-        if (!(users[index].username.includes("<i class=\"fa-solid fa-shield\"></i> ", ""))) {
+        if (!(users[index].username.includes(adminIcon, ""))) {
           userExists = true
         } else {
           callback("isAdmin");
