@@ -167,33 +167,40 @@ function messageNew() {
   }
   messageAnimate();
 }
+
 // display message when socket server sends
 socket.on("message", message => {
-  const html = Mustache.render(messageTemplate, {
-    username: message.username,
-    message: message.text,
-    createdAt: moment(message.createdAt).format("h:mm a")
-  });
-
-  $messages.insertAdjacentHTML("beforeend", html);
-  autoscroll();
-
-  messageNew();
+  renderNewMessage(message)
 });
 
 // display image message when socket server sends
 socket.on("image", message => {
-  const html = Mustache.render(messageTemplate, {
-    username: message.username,
-    message: message.text,
-    createdAt: moment(message.createdAt).format("h:mm a")
-  });
-
-  $messages.insertAdjacentHTML("beforeend", html);
-  autoscroll();
-
-  messageNew();
+  renderNewMessage(message)
 });
+
+var userStored;
+function renderNewMessage(message) {
+  var stored = $messages.lastElementChild.firstElementChild.innerHTML
+  userStored = stored.substring(39, stored.indexOf("</span>"));
+
+  //if previous user messaged is same with new user message
+  if (message.username === userStored) {
+    //merge it with old one
+    $messages.lastElementChild.lastElementChild.innerHTML += "<br/>" + message.text
+  } else {
+    //dont merge and create a new message
+    const html = Mustache.render(messageTemplate, {
+      username: message.username,
+      message: message.text,
+      createdAt: moment(message.createdAt).format("h:mm a")
+    });
+
+    $messages.insertAdjacentHTML("beforeend", html);
+    messageNew();
+  }
+
+  autoscroll();
+}
 
 // When socket server sends roomData, update sidebar
 socket.on("roomData", ({ room, users }) => {
