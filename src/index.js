@@ -78,7 +78,7 @@ function sockets(socket) {
 
       //join and welcome message
       socket.emit("message", generateMessage(`${adminIcon}Admin`, `Welcome, ${user.username}! ${msgGreet}`));
-      socket.broadcast.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `${user.username} has joined!`));
+      socket.broadcast.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-check fa-lg"></i> ${user.username} has joined!`));
 
       //send new room data
       io.to(user.room).emit("roomData", {
@@ -235,7 +235,7 @@ function sockets(socket) {
       io.to(user.room).emit("kick", username);
 
       console.log("User: " + username + " has been kicked. (kicked by ip: " + ip + ")")
-      socket.emit("message", generateMessage(`${adminIcon}Admin`, `"${username}" has been kicked.`));
+      socket.emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-xmark fa-lg"></i> ${username} has been kicked.`));
       callback("good");
     } else if (!userExists && isAdmin) {
       callback("notExistingUser");
@@ -282,7 +282,7 @@ function sockets(socket) {
       banArray.push(ipUsernameArray[indexOfIP])
 
       console.log("User: " + username + " has been banned. (banned by ip: " + ip + ")")
-      socket.emit("message", generateMessage(`${adminIcon}Admin`, `${username} has been banned.`));
+      socket.emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been banned.`));
       callback("good");
     } else if (!userExists && isAdmin) {
       callback("notExistingUser");
@@ -320,7 +320,7 @@ function sockets(socket) {
       }
 
       console.log("User: " + username + " has been unbanned. (unbanned by ip: " + ip + ")")
-      socket.emit("message", generateMessage(`${adminIcon}Admin`, `${username} has been unbanned.`));
+      socket.emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been unbanned.`));
       callback("good");
     } else if (!userExists && isAdmin) {
       //send a list of banned people if username entered is wrong
@@ -361,7 +361,7 @@ function sockets(socket) {
     if (user) {
       console.log(`LEFT -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
 
-      io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `${user.username} has left!`));
+      io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-large-slash fa-lg"></i> ${user.username} has left!`));
 
       io.to(user.room).emit("roomData", {
         room: user.room,
