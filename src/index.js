@@ -27,28 +27,38 @@ const publicDirectoryPath = path.join(__dirname, "../public");
 app.use(express.static(publicDirectoryPath));
 
 
-// this array is used to store the ips of the users connected to Typsnd
+// array of ips used to detect alts
 var ipArray = [];
+
+// array of ips and usernames to ban and unban people
+var ipUsernameArray = [];
+
+// array of ips and usernames that are banned
+var banArray = [];
 
 io.on("connection", socket => {
   let ip = getIP(socket);
 
   var isAlt = ipArray.some(v => ip.includes(v));
   var isBlacklisted = blacklistedIPs.some(v => ip.includes(v));
+  var isBanned = banArray.some(v => ip.includes(v));
 
   if (isAlt && altDetection) {
     socket.emit("alt-kick")
-    console.log("CONNECTION -|-> IP.ALT: " + ip);
+    console.log("CONNECTION < IP.ALT: " + ip);
   } else if (isBlacklisted) {
     socket.emit("blacklisted-ip-kick")
-    console.log("CONNECTION -|-> IP.BLACKLISTED: " + ip);
+    console.log("CONNECTION < IP.BLACKLISTED: " + ip);
+  } else if (isBanned) {
+    socket.emit("ban", "authenticatedFromSocketServer")
+    console.log("CONNECTION < IP.BANNED: " + ip);
   } else {
 
     // allow them to connect
     if (isAlt && !altDetection) {
-      console.log("CONNECTION ---> IP.ALT: " + ip);
+      console.log("CONNECTION > IP.ALT: " + ip);
     } else {
-      console.log("CONNECTION ---> IP: " + ip);
+      console.log("CONNECTION > IP: " + ip);
     }
 
     sockets(socket);
@@ -66,16 +76,23 @@ function sockets(socket) {
       socket.join(user.room);
       console.log(`JOIN -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
 
+      //join and welcome message
       socket.emit("message", generateMessage(`${adminIcon}Admin`, `Welcome, ${user.username}! ${msgGreet}`));
-      socket.broadcast.to(user.room).emit("message", generateMessage("Admin", `${user.username} has joined!`));
+      socket.broadcast.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `${user.username} has joined!`));
 
+      //send new room data
       io.to(user.room).emit("roomData", {
         room: user.room,
         users: getUsersInRoom(user.room)
       });
 
-      //add ip to ip list, set msg cooldown, and set admin status
+      //add ip to arrays
       ipArray.push(ip);
+
+      ipUsernameArray.push(user.username)
+      ipUsernameArray.push(ip)
+
+      //set cooldown
       socket.emit("message-cooldown", msgCooldown);
 
       //send user if they're an admin and what the admin icon is
@@ -189,16 +206,143 @@ function sockets(socket) {
     }
   });
 
-  socket.on("kickUser", (username) => {
+  socket.on("kickUser", (username, callback) => {
     const user = getUser(socket.id);
+    const userKicking = username;
+
+    var isAdmin = false;
+    var userExists = false;
 
     // check if user is actually a admin
     if (adminIPs.some(v => ip.includes(v))) {
+      isAdmin = true
+    }
+
+    // check if user sending to is real
+    for (let index = 0; index < users.length; ++index) {
+      //remove shield
+      if (users[index].username.replace("<i class=\"fa-solid fa-shield\"></i> ", "") === userKicking) {
+        //check if its not a admin
+        if (!(users[index].username.includes("<i class=\"fa-solid fa-shield\"></i> ", ""))) {
+          userExists = true
+        } else {
+          callback("isAdmin");
+        }
+      }
+    }
+
+    if (userExists && isAdmin) {
       io.to(user.room).emit("kick", username);
 
       console.log("User: " + username + " has been kicked. (kicked by ip: " + ip + ")")
+      socket.emit("message", generateMessage(`${adminIcon}Admin`, `"${username}" has been kicked.`));
+      callback("good");
+    } else if (!userExists && isAdmin) {
+      callback("notExistingUser");
     } else {
-      console.log("IP: " + ip + " has tried to kick someone without having admin!")
+      console.log("!!!!! IP: " + ip + " has tried to kick someone without having Admin !!!!!")
+      callback("bad");
+    }
+  });
+
+  socket.on("banUser", (username, callback) => {
+    const user = getUser(socket.id);
+    const userKicking = username;
+
+    var isAdmin = false;
+    var userExists = false;
+
+    // check if user is actually a admin
+    if (adminIPs.some(v => ip.includes(v))) {
+      isAdmin = true
+    }
+
+    // check if user sending to is real
+    for (let index = 0; index < users.length; ++index) {
+      //remove shield
+      if (users[index].username.replace("<i class=\"fa-solid fa-shield\"></i> ", "") === userKicking) {
+        //check if its not a admin
+        if (!(users[index].username.includes("<i class=\"fa-solid fa-shield\"></i> ", ""))) {
+          userExists = true
+        } else {
+          callback("isAdmin");
+        }
+      }
+    }
+
+    if (userExists && isAdmin) {
+      //ban them
+      io.to(user.room).emit("ban", username);
+
+      //find their ip
+      var indexOfIP = ipUsernameArray.indexOf(username) + 1
+
+      //add to array of ban
+      banArray.push(username)
+      banArray.push(ipUsernameArray[indexOfIP])
+
+      console.log("User: " + username + " has been banned. (banned by ip: " + ip + ")")
+      socket.emit("message", generateMessage(`${adminIcon}Admin`, `${username} has been banned.`));
+      callback("good");
+    } else if (!userExists && isAdmin) {
+      callback("notExistingUser");
+    } else {
+      console.log("!!!!! IP: " + ip + " has tried to ban someone without having Admin !!!!!")
+      callback("bad");
+    }
+  });
+
+  socket.on("unbanUser", (username, callback) => {
+    const userKicking = username;
+
+    var isAdmin = false;
+    var userExists = false;
+
+    // check if user is actually a admin
+    if (adminIPs.some(v => ip.includes(v))) {
+      isAdmin = true
+    }
+
+    // check if user sending to is real
+    for (let index = 0; index < banArray.length; ++index) {
+      //remove shield
+      if (banArray[index] === userKicking) {
+        userExists = true
+      }
+    }
+
+    if (userExists && isAdmin) {
+
+      var index = banArray.indexOf(userKicking)
+      if (index > -1) {
+        banArray.splice(index + 1, 1); //remove ip
+        banArray.splice(index, 1); //remove username
+      }
+
+      console.log("User: " + username + " has been unbanned. (unbanned by ip: " + ip + ")")
+      socket.emit("message", generateMessage(`${adminIcon}Admin`, `${username} has been unbanned.`));
+      callback("good");
+    } else if (!userExists && isAdmin) {
+      //send a list of banned people if username entered is wrong
+      var listOfBannedPeople = "User provided was invalid. See list below for unbannable people! \n\n"
+
+      listOfBannedPeople = listOfBannedPeople + "List of Banned Users: \n"
+
+      //write a list of banned people (not their ips) only if there are any
+      if (banArray.length != 0) {
+
+        for (let index = 0; index < banArray.length; index = index + 2) {
+          listOfBannedPeople = listOfBannedPeople + banArray[index] + "\n"
+        }
+
+      } else {
+        listOfBannedPeople = listOfBannedPeople + "none"
+      }
+
+      callback(listOfBannedPeople);
+    } else {
+      console.log("!!!!! IP: " + ip + " has tried to unban someone without having Admin !!!!!")
+      callback("bad");
     }
   });
 
@@ -207,6 +351,12 @@ function sockets(socket) {
 
     //remove ip from list when they leave
     ipArray = ipArray.filter(e => e !== getIP(socket));
+
+    var index = ipUsernameArray.indexOf(getIP(socket))
+    if (index > -1) {
+      ipUsernameArray.splice(index, 1); //remove ip
+      ipUsernameArray.splice(index - 1, 1); //remove username
+    }
 
     if (user) {
       console.log(`LEFT -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);

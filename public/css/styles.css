@@ -35,6 +35,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'JetBrainsMonoRegular';
 }
 
 img {
@@ -256,8 +257,13 @@ input#username-input {
     width: 194px;
 }
 
-button#set-username-button, button#kick-user-button, button#set-cooldown-button {
+button#set-username-button, button#kick-user-button, button#set-cooldown-button, button#ban-user-button, button#unban-user-button {
     border-radius: 0px 4px 4px 0px;
+    padding-top: 11px;
+}
+
+p#warningConfig {
+    padding-top: 8px;
 }
 
 input.cooldown-int {
@@ -270,6 +276,16 @@ input.cooldown-int {
     border-radius: 4px;
     transition: 0.3s ease;
     width: 50px;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+button#cooldown-up-button, button#cooldown-down-button {
+    border-radius: 0px 0px 0px 0px;
+    padding-top: 11px;
+    margin-right: -10px;
+    padding-left: 7px;
+    padding-right: 7px;
 }
 
 .settings__box {
@@ -314,11 +330,11 @@ div#admin-panel {
     margin-bottom: 21px;
 }
 
-div#cooldown {
-    padding-bottom: 11px;
+div#cooldown, div#kick, div#ban {
+    padding-bottom: 6px;
 }
 
-input#kick-user-input {
+input#kick-user-input, input#ban-user-input, input#unban-user-input {
     color: var(--fontColor);
     background: var(--composeInput);
     border: 1px solid var(--accent);

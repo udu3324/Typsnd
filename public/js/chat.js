@@ -24,13 +24,9 @@ const $settingsButton = document.querySelector("#settingsButton");
 const $settingsOverlay = document.querySelector("#settings-overlay");
 const $settingsBox = document.querySelector("#settings-box");
 const $accentColorPicker = document.querySelector("#accent-color-picker");
-const $cooldownSetButton = document.querySelector("#set-cooldown-button");
-const $cooldownInput = document.querySelector("#cooldown-input");
 const $darkModeSwitch = document.querySelector("#dark-mode-switch");
 const $usernameInput = document.querySelector("#username-input");
 const $setUsernameButton = document.querySelector("#set-username-button");
-const $kickUserInput = document.querySelector("#kick-user-input");
-const $kickUserButton = document.querySelector("#kick-user-button");
 const $refreshButton = document.querySelector("#refreshButton");
 
 const $roomInput = document.querySelector("#room-input");
@@ -130,8 +126,6 @@ $scrollDownButton.addEventListener("click", function () {
 // socket server kick below
 socket.on("kick", (usernameGiven) => {
   if (username === usernameGiven) {
-    console.log("kicked.")
-
     location.href = "/kick.html"
   }
 });
@@ -142,6 +136,14 @@ socket.on("alt-kick", () => {
 
 socket.on("blacklisted-ip-kick", () => {
   location.href = "/blacklisted-ip-kick.html";
+});
+
+socket.on("ban", (usernameGiven) => {
+  if (username === usernameGiven) {
+    location.href = "/ban.html"
+  } else if (usernameGiven === "authenticatedFromSocketServer") {
+    location.href = "/ban.html"
+  }
 });
 
 // Set message cooldown input
@@ -430,18 +432,6 @@ function checkIt() {
 }
 $darkModeSwitch.addEventListener('change', checkIt, false);
 
-// send socket to set cooldown
-$cooldownSetButton.addEventListener("click", function () {
-  var setCooldownTo = $cooldownInput.value;
-  console.log("Cooldown button has been clicked on with a set value of " + setCooldownTo);
-  socket.emit("setCooldown", setCooldownTo, error => {
-    if (error) {
-      alert(error);
-      location.href = "/";
-    }
-  });
-});
-
 // change accent color
 $accentColorPicker.addEventListener("input", updateFirst, false);
 function updateFirst(event) {
@@ -505,34 +495,6 @@ $settingsOverlay.addEventListener("click", function () {
     opacityDown();
   }
 });
-
-
-// kick user stuff
-$kickUserButton.addEventListener("click", kickUser);
-$kickUserInput.addEventListener("keyup", function (event) {
-  if (event.keyCode === 13) { //13 = enter
-    event.preventDefault();
-    kickUser()
-  }
-});
-function kickUser() {
-  if ($kickUserInput.value === "") {
-    window.alert("You need a username! It can't be empty.");
-  } else {
-    // send msg alerting change of username
-    var kickingUsername = $kickUserInput.value
-    socket.emit("kickUser", kickingUsername, error => {
-      //catch user being undefined
-      if (error == "Refresh the page!") {
-        window.location.reload();
-        return console.log(error);
-      } else {
-        console.log("Kicked user successfuly.");
-      }
-    });
-    $kickUserInput.value = "";
-  }
-}
 // Settings Stuff Above
 
 

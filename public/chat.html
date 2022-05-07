@@ -129,7 +129,14 @@
                 class="cooldown-int"
                 min="0"
                 max="9"
+                disabled
               />
+              <button id="cooldown-up-button">
+                <i class="fa-solid fa-caret-up"></i>
+              </button>
+              <button id="cooldown-down-button">
+                <i class="fa-solid fa-caret-down"></i>
+              </button>
               <button id="set-cooldown-button">Set Cooldown</button>
             </div>
             <div id="kick">
@@ -138,11 +145,36 @@
                 class="kick-user-input"
                 type="text"
                 name="kick-user"
-                placeholder="username"
+                placeholder="username kick"
                 maxlength="19"
                 required
               />
               <button id="kick-user-button">Kick User</button>
+            </div>
+            <p id="warningConfig">(wont save on restart)</p>
+            <div id="ban">
+              <input
+                id="ban-user-input"
+                class="ban-user-input"
+                type="text"
+                name="ban-user"
+                placeholder="username ban"
+                maxlength="19"
+                required
+              />
+              <button id="ban-user-button">Ban User</button>
+            </div>
+            <div id="unban">
+              <input
+                id="unban-user-input"
+                class="unban-user-input"
+                type="text"
+                name="unban-user"
+                placeholder="username unban"
+                maxlength="19"
+                required
+              />
+              <button id="unban-user-button">Unban User</button>
             </div>
           </div>
 
@@ -260,6 +292,7 @@
     ></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/cookie.js"></script>
+    <script src="/js/moderation.js"></script>
     <script src="/js/chat.js"></script>
     <script src="/js/adminstatus.js"></script>
     <script src="/js/disconnect.js"></script>

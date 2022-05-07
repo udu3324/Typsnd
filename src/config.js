@@ -1,45 +1,17 @@
+
+// Server/Moderation Config
 var serverPort = 3000;
-
-
-
-// Moderation Config
-
-
-
-// IPs that have admin
 var adminIPs = ["localhost"];
-
-// Displayed on the left of admin users
 var adminIcon = "<i class=\"fa-solid fa-shield\"></i> ";
-
-// Blocks more than one connection from one client
 var altDetection = true;
-
-// IPs that are blocked connecting
 var blacklistedIPs = [];
-
-// Usernames that aren't allowed (not case sensitive)
 var blacklistedUsernames = [];
-
-// This is the cooldown when a user sends a message (from 0-9 seconds)
 var msgCooldown = "2";
 
-
-
 // Chat Addons/Functionality
-
-
-
-// html title
 var htmlTitle = "Typsnd";
-
-// Greeting that user recieves on join
 var msgGreet = "";
-
-// This boolean toggles if multiple rooms are allowed
 var multipleRooms = true;
-
-// More tabs for the top right menu
 var tabs = [
   //example tabs
   [
@@ -52,13 +24,10 @@ var tabs = [
   ]
 ];
 
-
-
 //filter variables
-adminIPs.filter(n => n)
-blacklistedIPs.filter(n => n)
-blacklistedUsernames.filter(n => n)
-
+adminIPs = adminIPs.filter(n => n)
+blacklistedIPs = blacklistedIPs.filter(n => n)
+blacklistedUsernames = blacklistedUsernames.filter(n => n)
 msgGreet = msgGreet.replace(/\n/g, "<br/>");
 
 module.exports = {
