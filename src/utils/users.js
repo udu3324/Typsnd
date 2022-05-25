@@ -46,16 +46,6 @@ const addUser = ({ ip, id, username, room }) => {
     }
   }
 
-  // Make sure normal users are not impersonating staff/admin/mods
-  if (lcUsr.includes("admin") || lcUsr.includes("mod") || lcUsr.includes("staff") || lcUsr.includes("server") || lcUsr.includes("typsnd") || lcUsr.includes("code")) {
-    //discard admins as they're allowed
-    if (!isAdmin) {
-      return {
-        error: "Nice try, but impersonating is not allowed!"
-      };
-    }
-  }
-
   // Validate only chatroom is chat
   if (!(room === "Typsnd") && !multipleRooms) {
     return {
@@ -66,7 +56,7 @@ const addUser = ({ ip, id, username, room }) => {
   // Make sure username is not blacklisted (allow admins to use blacklisted usernames anyways)
   if (blacklistedUsernames.map(v => v.toLowerCase()).some(v => username.toLowerCase().includes(v)) && !isAdmin) {
     return {
-      error: "Hey! That is a blacklisted username."
+      error: "Hey! That's a blacklisted username!"
     };
   }
 

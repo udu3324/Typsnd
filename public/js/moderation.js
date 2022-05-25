@@ -60,11 +60,11 @@ function kickUser() {
         window.location.reload();
         return console.log(error);
       } else if (error === "notExistingUser") {
-        setTimeout(function () { alert("The user you tried to kick doesn't exist!"); }, 1);
+        alertAsync("The user you tried to kick doesn't exist!")
       } else if (error === "isAdmin") {
-        setTimeout(function () { alert("The user you tried to kick is a admin!"); }, 1);
+        alertAsync("The user you tried to kick is a admin!")
       } else {
-        setTimeout(function () { alert("Sucessfully kicked the user."); }, 1);
+        alertAsync("Sucessfully kicked the user.")
         console.log("Kicked user successfuly.");
       }
     });
@@ -93,11 +93,11 @@ function banUser() {
         window.location.reload();
         return console.log(error);
       } else if (error === "notExistingUser") {
-        setTimeout(function () { alert("The user you tried to ban doesn't exist!"); }, 1);
+        alertAsync("The user you tried to ban doesn't exist!")
       } else if (error === "isAdmin") {
-        setTimeout(function () { alert("The user you tried to ban is a admin!"); }, 1);
+        alertAsync("The user you tried to ban is a admin!")
       } else {
-        setTimeout(function () { alert("Sucessfully banned the user."); }, 1);
+        alertAsync("Sucessfully banned the user.")
         console.log("Banned user successfuly.");
       }
     });
@@ -123,9 +123,9 @@ function unbanUser() {
         window.location.reload();
         return console.log(error);
       } else if (error.includes("User provided was invalid.")) {
-        setTimeout(function () { alert(error); }, 1);
+        alertAsync(error)
       } else {
-        setTimeout(function () { alert("Sucessfully unbanned the user."); }, 1);
+        alertAsync("Sucessfully unbanned the user.")
         console.log("Unbanned user successfuly.");
         console.log(error[0]);
       }

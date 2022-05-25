@@ -5,8 +5,9 @@ var adminIPs = ["localhost"];
 var adminIcon = "<i class=\"fa-solid fa-shield\"></i> ";
 var altDetection = true;
 var blacklistedIPs = [];
-var blacklistedUsernames = [];
 var msgCooldown = "2";
+//filter is ignored if user is admin
+var blacklistedUsernames = ["admin", "mod", "staff", "server", "typsnd", "code", "system"];
 
 // Chat Addons/Functionality
 var htmlTitle = "Typsnd";

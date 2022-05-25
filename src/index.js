@@ -195,12 +195,15 @@ function sockets(socket) {
   });
 
   socket.on("setCooldown", (seconds) => {
+    const user = getUser(socket.id);
     // check if user is actually a admin
+
     if (adminIPs.some(v => ip.includes(v))) {
       msgCooldown = seconds;
       socket.emit("message-cooldown", msgCooldown);
 
       console.log("New message cooldown is " + msgCooldown + " seconds. (set by ip: " + ip + ")")
+      io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-stopwatch fa-lg"></i> The message cooldown has been set to ${seconds} second(s).`));
     } else {
       console.log("IP: " + ip + " has tried to set cooldown without having admin!")
     }
@@ -235,7 +238,7 @@ function sockets(socket) {
       io.to(user.room).emit("kick", username);
 
       console.log("User: " + username + " has been kicked. (kicked by ip: " + ip + ")")
-      socket.emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-xmark fa-lg"></i> ${username} has been kicked.`));
+      io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-xmark fa-lg"></i> ${username} has been kicked.`));
       callback("good");
     } else if (!userExists && isAdmin) {
       callback("notExistingUser");
@@ -282,7 +285,7 @@ function sockets(socket) {
       banArray.push(ipUsernameArray[indexOfIP])
 
       console.log("User: " + username + " has been banned. (banned by ip: " + ip + ")")
-      socket.emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been banned.`));
+      io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been banned.`));
       callback("good");
     } else if (!userExists && isAdmin) {
       callback("notExistingUser");
@@ -293,6 +296,7 @@ function sockets(socket) {
   });
 
   socket.on("unbanUser", (username, callback) => {
+    const user = getUser(socket.id);
     const userKicking = username;
 
     var isAdmin = false;
@@ -320,7 +324,7 @@ function sockets(socket) {
       }
 
       console.log("User: " + username + " has been unbanned. (unbanned by ip: " + ip + ")")
-      socket.emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been unbanned.`));
+      io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been unbanned.`));
       callback("good");
     } else if (!userExists && isAdmin) {
       //send a list of banned people if username entered is wrong

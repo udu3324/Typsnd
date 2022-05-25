@@ -399,7 +399,6 @@ div#messages {
 
 .chat__messages {
     flex-grow: 1;
-    padding: 17px 17px 0 17px;
     overflow-y: auto;
 }
 
@@ -411,6 +410,7 @@ button#scrollDownMSG {
     margin-right: 24px;
     border-radius: 27px;
     visibility: hidden;
+    z-index: 3;
 }
 
 /* Message Styles */
@@ -420,6 +420,7 @@ button#scrollDownMSG {
     background: var(--messages);
     border-radius: 4px;
     padding: 10px;
+    margin: 17px 17px 0 17px;
 }
 
 .message__name {
@@ -431,6 +432,7 @@ button#scrollDownMSG {
 p#message__container {
     padding-top: 3px;
     word-break: break-word;
+    margin-top: -151px;
 }
 
 .message__meta {
@@ -440,6 +442,50 @@ p#message__container {
 
 .message a {
     color: var(--accent);
+}
+
+button#message-options {
+    position: relative;
+    top: -48px;
+    right: 22px;
+    font-size: 18px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    opacity: 0.0;
+}
+
+div#message-options-div {
+    pointer-events: none;
+    opacity: 0;
+    width: 148px;
+    position: relative;
+    top: -45px;
+    right: 22px;
+    z-index: 3;
+}
+
+button.message-options-buttons {
+    width: 100%;
+    border-radius: 0px;
+    text-align: left;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+span#mention-text {
+    background-color: #5373ec;
+    color: #ffffff;
+    border-radius: 3px;
+    margin-right: 3px;
+    padding: 0px 3px 0px 3px;
+}
+
+.mentioned-highliter {
+    border: 17px;
+    border-color: var(--messageDiv);
+    border-left: 17px solid var(--accent);
+    border-right: 17px solid var(--userSidebar);
+    background: var(--userSidebar);
 }
 
 /* Message Composition Styles */
@@ -523,9 +569,9 @@ div#tools-bar {
     display: flex;
   justify-content: center;
   transition: 0.5s ease;
-
   opacity: 0;
   z-index: 3;
+  top: -50px;
 }
 
 .toolButton {

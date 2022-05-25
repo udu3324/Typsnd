@@ -122,6 +122,8 @@
           <h1>Settings</h1>
           <p id="admin-status">if you see this, something went wrong</p>
           <div id="admin-panel" style="display: none">
+            <p>Restarting will reset things.</p>
+            <p id="warningConfig">Message Cooldown</p>
             <div id="cooldown">
               <input
                 type="number"
@@ -139,6 +141,7 @@
               </button>
               <button id="set-cooldown-button">Set Cooldown</button>
             </div>
+            <p id="warningConfig">Kick Users</p>
             <div id="kick">
               <input
                 id="kick-user-input"
@@ -151,7 +154,7 @@
               />
               <button id="kick-user-button">Kick User</button>
             </div>
-            <p id="warningConfig">(wont save on restart)</p>
+            <p id="warningConfig">Ban Users</p>
             <div id="ban">
               <input
                 id="ban-user-input"
@@ -263,11 +266,28 @@
     </div>
 
     <script id="message-template" type="text/html">
-      <div class="message">
+      <div id="message-div" class="message">
         <p>
           <span class="message__name">{{{username}}}</span>
           <span class="message__meta">{{createdAt}}</span>
         </p>
+        <button id="message-options" class="message-options">
+          <i class="fa-solid fa-ellipsis"></i>
+        </button>
+        <div id="message-options-div">
+          <button id="menu-mention-button" class="message-options-buttons" style="border-radius: 4px 4px 0px 0px;">
+            <i class="fa-solid fa-quote-right"></i> Mention
+          </button>
+          <button id="menu-kick-button" class="message-options-buttons">
+            <i class="fa-solid fa-user-large-slash"></i> Kick
+          </button>
+          <button id="menu-ban-button" class="message-options-buttons">
+            <i class="fa-solid fa-gavel"></i> Ban
+          </button>
+          <button id="menu-close-button" class="message-options-buttons" style="border-radius: 0px 0px 4px 4px;">
+            <i class="fa-solid fa-xmark"></i> Close
+          </button>
+        </div>
         <p id="message__container">{{{message}}}</p>
       </div>
     </script>
@@ -292,11 +312,13 @@
     ></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/cookie.js"></script>
+    <script src="/js/functions.js"></script>
     <script src="/js/moderation.js"></script>
     <script src="/js/chat.js"></script>
     <script src="/js/adminstatus.js"></script>
     <script src="/js/disconnect.js"></script>
     <script src="/js/emoji.js"></script>
     <script src="/js/imgpaste.js"></script>
+    <script src="/js/message.js"></script>
   </body>
 </html>

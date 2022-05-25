@@ -1,6 +1,9 @@
 //set admin status and reveal admin panel
 
 socket.on("admin-status", isAdmin => {
+  
+  isAnAdmin = isAdmin[0];
+
   if (isAdmin[0]) {
 
     userHashed = isAdmin[1] + username

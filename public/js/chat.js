@@ -2,6 +2,8 @@
 /* eslint-disable no-undef */
 const socket = io();
 
+var isAnAdmin = false;
+
 // CSS
 var cssVar = document.querySelector(':root');
 cssVar.style.setProperty('--accent', getCookie("accent"));
@@ -166,6 +168,8 @@ function messageNew() {
     }
   }
   messageAnimate();
+
+  createMessageOptions($msg);
 }
 
 // display message when socket server sends
@@ -180,8 +184,38 @@ socket.on("image", message => {
 
 var userStored;
 function renderNewMessage(message) {
+  var isMentioned = false
   var stored = $messages.lastElementChild.firstElementChild.innerHTML
   userStored = stored.substring(39, stored.indexOf("</span>"));
+
+  //for mentioning
+  if (message.text.includes(`@${username}`)) {
+    console.log("mentioned!")
+
+    var regex = new RegExp(`@${username}`, 'g' );
+    var count = (message.text.match(regex) || []).length;
+
+    console.log(count)
+
+    var sizeOfMention = `@${username}`.length
+    var startingIndex = 0
+    //style the text
+    for (let i = 0; i < count; i++) {
+      //get where the mention is located
+      var mentionIndex = message.text.indexOf(`@${username}`, startingIndex)
+
+      //insert span 
+      message.text = message.text.slice(0, mentionIndex) + "<span id=\"mention-text\">" + message.text.slice(mentionIndex);
+
+      //update index
+      mentionIndex = message.text.indexOf(`@${username}`, startingIndex)
+      //insert /span 
+      message.text = message.text.slice(0, mentionIndex+sizeOfMention) + "</span>" + message.text.slice(mentionIndex+sizeOfMention);
+
+      startingIndex = mentionIndex+1
+    }
+    isMentioned = true
+  }
 
   //if previous user messaged is same with new user message
   if (message.username === userStored) {
@@ -197,6 +231,11 @@ function renderNewMessage(message) {
 
     $messages.insertAdjacentHTML("beforeend", html);
     messageNew();
+  }
+
+  //add css to mentioned message
+  if (isMentioned) {
+    $messages.lastElementChild.classList.add("mentioned-highliter");
   }
 
   autoscroll();
@@ -249,7 +288,6 @@ function getEventTypeUp(key) {
 
   //if key pressed is not control
   if (!(keyCode === 17)) {
-    console.log("not ctrl")
     isHoldingDownCtrl = false;
   }
 }
@@ -303,7 +341,10 @@ $messageForm.addEventListener("submit", e => {
       return console.log(error);
     } else {
       console.log("Message delivered!");
-
+      if (menuOpened) {
+        toggleMenu(theMenuOpened, false)
+      }
+        
       timeLeft = messageCooldown;
       cooldownMSGSend();
     }
@@ -592,15 +633,24 @@ $('body').on('click', 'img', function () {
 
 $toolToggleButton.addEventListener("click", toggleToolBar);
 
+function disableToolButtons(bool) {
+  if (bool)
+      $toolBarDiv.style.top = "-50px"
+    else
+      $toolBarDiv.style.top = "0px";
+}
+
 var toolBarToggled = false
 function toggleToolBar() {
   if (toolBarToggled) {
     $toolBarDiv.style.opacity = "0.0";
     $toolToggleButton.innerHTML = "<i class=\"fa-solid fa-angle-down\"></i>"
+    disableToolButtons(true)
     toolBarToggled = false
   } else {
     $toolBarDiv.style.opacity = "1.0";
     $toolToggleButton.innerHTML = "<i class=\"fa-solid fa-angle-up\"></i>"
+    disableToolButtons(false)
     toolBarToggled = true
   }
 }
@@ -654,6 +704,8 @@ socket.on("tabs", (tabs) => {
   for (let index = 0; index < tabs.length; ++index) {
     addATab(tabs[index][0], tabs[index][1])
   }
+
+  disableToolButtons(true)
 });
 
 //message user stuff below
@@ -710,19 +762,19 @@ $sendMessageButton.onclick = function () {
     //catch errors
     if (error === "User does not exist!") {
 
-      setTimeout(function () { alert("User specified does not exist!"); }, 1);
+      alertAsync("User specified does not exist!")
       $userMessageInput.value = "";
 
       return console.log(error);
     } else if (error === "Message is over 280!") {
 
-      setTimeout(function () { alert("Message is over 280 characters long!"); }, 1);
+      alertAsync("Message is over 280 characters long!")
       $userMessageInput.value = "";
 
       return console.log(error);
     } else {
 
-      setTimeout(function () { alert("Message has been sucessfully sent!"); }, 1);
+      alertAsync("Message has been sucessfully sent!")
 
       console.log("Message delivered!");
     }
@@ -837,6 +889,6 @@ $joinDefaultButton.onclick = function () {
     $roomInput.value = "Typsnd"
     joinDiffRoom()
   } else {
-    setTimeout(function () { alert("You're already in the default room!"); }, 1);
+    alertAsync("You're already in the default room!")
   }
 }

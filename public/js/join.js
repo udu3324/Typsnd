@@ -27,14 +27,26 @@ function joinChat() {
   }
 }
 
-//previous room indicator
-if (!(getCookie("room") === "")) {
-  if (!(getCookie("room") === "Typsnd")) {
+//autoselect input
+$usernameInput.focus();
+$usernameInput.select();
 
-    const para = document.createElement("p");
-    const node = document.createTextNode("Your previous room was \"" + getCookie("room") + "\"");
-    para.style.cssText += 'color:#8fbc8f;padding-top:13px'
-    para.appendChild(node);
-    document.getElementById("centered-form__box").appendChild(para);
-  }
+//set username if it is saved
+if (getCookie("username") != "") {
+  $usernameInput.value = getCookie("username")
+}
+
+//previous room indicator
+if (getCookie("room") != "" && getCookie("room") != "Typsnd") {
+  const para = document.createElement("p");
+  const node = document.createTextNode("Your previous room was \"" + getCookie("room") + "\"");
+  para.style.cssText += 'color:#8fbc8f;padding-top:13px'
+  para.appendChild(node);
+  document.getElementById("centered-form__box").appendChild(para);
+}
+
+//set accent if it is saved
+if (getCookie("accent") != "") {
+  var cssVar = document.querySelector(':root');
+  cssVar.style.setProperty('--accent', getCookie("accent"));
 }
