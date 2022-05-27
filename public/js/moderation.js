@@ -14,6 +14,9 @@ const $banUserButton = document.querySelector("#ban-user-button");
 const $unbanUserInput = document.querySelector("#unban-user-input");
 const $unbanUserButton = document.querySelector("#unban-user-button");
 
+const $alertMessageInput = document.querySelector("#alert-message-input");
+const $sendAlertButton = document.querySelector("#send-alert-button");
+
 $cooldownUpButton.addEventListener("click", function () {
   if (messageCooldown != 9) {
     messageCooldown++;
@@ -131,5 +134,24 @@ function unbanUser() {
       }
     });
     $unbanUserInput.value = "";
+  }
+}
+
+
+
+$sendAlertButton.addEventListener("click", sendAlert)
+$alertMessageInput.addEventListener("keyup", function (event) {
+  if (event.keyCode === 15) {
+    event.preventDefault();
+    sendAlert()
+  }
+})
+function sendAlert() {
+  if ($alertMessageInput.value === "") {
+    alertAsync("You need a message! It can't be empty!")
+  } else {
+    var alert = $alertMessageInput.value
+
+    //todo
   }
 }

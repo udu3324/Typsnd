@@ -257,7 +257,7 @@ input#username-input {
     width: 194px;
 }
 
-button#set-username-button, button#kick-user-button, button#set-cooldown-button, button#ban-user-button, button#unban-user-button {
+button#set-username-button, button#kick-user-button, button#set-cooldown-button, button#ban-user-button, button#unban-user-button, button#send-alert-button {
     border-radius: 0px 4px 4px 0px;
     padding-top: 11px;
 }
@@ -334,7 +334,7 @@ div#cooldown, div#kick, div#ban {
     padding-bottom: 6px;
 }
 
-input#kick-user-input, input#ban-user-input, input#unban-user-input {
+input#kick-user-input, input#ban-user-input, input#unban-user-input, input#alert-message-input {
     color: var(--fontColor);
     background: var(--composeInput);
     border: 1px solid var(--accent);
