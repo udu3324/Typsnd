@@ -257,7 +257,12 @@ input#username-input {
     width: 194px;
 }
 
-button#set-username-button, button#kick-user-button, button#set-cooldown-button, button#ban-user-button, button#unban-user-button, button#send-alert-button {
+button#set-username-button,
+button#kick-user-button,
+button#set-cooldown-button,
+button#ban-user-button,
+button#unban-user-button,
+button#send-alert-button {
     border-radius: 0px 4px 4px 0px;
     padding-top: 11px;
 }
@@ -280,7 +285,8 @@ input.cooldown-int {
     -moz-appearance: textfield;
 }
 
-button#cooldown-up-button, button#cooldown-down-button {
+button#cooldown-up-button,
+button#cooldown-down-button {
     border-radius: 0px 0px 0px 0px;
     padding-top: 11px;
     margin-right: -10px;
@@ -330,11 +336,16 @@ div#admin-panel {
     margin-bottom: 21px;
 }
 
-div#cooldown, div#kick, div#ban {
+div#cooldown,
+div#kick,
+div#ban {
     padding-bottom: 6px;
 }
 
-input#kick-user-input, input#ban-user-input, input#unban-user-input, input#alert-message-input {
+input#kick-user-input,
+input#ban-user-input,
+input#unban-user-input,
+input#alert-message-input {
     color: var(--fontColor);
     background: var(--composeInput);
     border: 1px solid var(--accent);
@@ -567,11 +578,11 @@ div#tools-bar {
     position: fixed;
     width: 100%;
     display: flex;
-  justify-content: center;
-  transition: 0.5s ease;
-  opacity: 0;
-  z-index: 3;
-  top: -50px;
+    justify-content: center;
+    transition: 0.5s ease;
+    opacity: 0;
+    z-index: 3;
+    top: -50px;
 }
 
 .toolButton {
@@ -706,4 +717,26 @@ button#send-message-button {
 
 a {
     color: var(--accent);
+}
+
+/* Alert Div */
+div#alert-overlay {
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+    color: var(--fontColor);
+    background-color: var(--accent);
+    padding: 6px;
+    font-size: 30px;
+    top: -999px;
+    word-break: break-all;
+}
+
+button#close-alert-overlay {
+    font-size: 30px;
+}
+
+div#alert-overlay a {
+    filter: invert(100%);
 }

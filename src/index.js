@@ -350,6 +350,26 @@ function sockets(socket) {
     }
   });
 
+  socket.on("alert", (message, callback) => {
+    const user = getUser(socket.id);
+
+    // check if user is actually a admin
+    if (adminIPs.some(v => ip.includes(v))) {
+      if (message.length < 3) {
+        callback("short");
+      } else if (message.length > 70) {
+        callback("long");
+      } else {
+        io.to(user.room).emit("alert", message);
+
+        callback("good");
+      }
+    } else {
+      console.log("!!!!! IP: " + ip + " has tried to alert everyone without having Admin !!!!!")
+      callback("bad");
+    }
+  });
+
   socket.on("disconnect", () => {
     const user = removeUser(socket.id);
 

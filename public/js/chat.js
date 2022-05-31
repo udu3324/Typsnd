@@ -58,6 +58,8 @@ const $closeMessageButton = document.querySelector("#close-message");
 
 const $joinDefaultButton = document.querySelector("#join-default-button");
 
+const $alertOverlay = document.querySelector("#alert-overlay");
+
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
 const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML;
@@ -147,6 +149,16 @@ socket.on("ban", (usernameGiven) => {
     location.href = "/ban.html"
   }
 });
+
+socket.on("alert", (message) => {
+  $alertOverlay.firstElementChild.innerHTML = "<i class=\"fa-solid fa-triangle-exclamation\"></i> " + linkify(message)
+  $alertOverlay.style.top = "0px"
+});
+
+$alertOverlay.lastElementChild.addEventListener("click", closeAlert);
+function closeAlert() {
+  $alertOverlay.style.top = "-999px"
+}
 
 // Set message cooldown input
 var messageCooldown;
@@ -782,25 +794,6 @@ $sendMessageButton.onclick = function () {
 };
 
 var userHashed = username
-
-// thank you <3 https://stackoverflow.com/a/3890175/14677066
-function linkify(inputText) {
-  var replacedText, replacePattern1, replacePattern2, replacePattern3;
-
-  //URLs starting with http://, https://, or ftp://
-  replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gim;
-  replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
-
-  //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-  replacePattern2 = /(^|[^/])(www\.[\S]+(\b|$))/gim;
-  replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
-
-  //Change email addresses to mailto:: links.
-  replacePattern3 = /(([a-zA-Z0-9\-_.])+@[a-zA-Z_]+?(\.[a-zA-Z]{2,6})+)/gim;
-  replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
-
-  return replacedText;
-}
 
 //recieve direct messages sent
 socket.on("recieveDirectMessage" + userHashed, (packetOut) => {

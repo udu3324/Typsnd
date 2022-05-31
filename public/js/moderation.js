@@ -141,7 +141,7 @@ function unbanUser() {
 
 $sendAlertButton.addEventListener("click", sendAlert)
 $alertMessageInput.addEventListener("keyup", function (event) {
-  if (event.keyCode === 15) {
+  if (event.keyCode === 13) {
     event.preventDefault();
     sendAlert()
   }
@@ -152,6 +152,19 @@ function sendAlert() {
   } else {
     var alert = $alertMessageInput.value
 
-    //todo
+    socket.emit("alert", alert, error => {
+      if (error === "bad") {
+        window.location.reload();
+        return console.log(error);
+      } else if (error === "short") {
+        alertAsync("The message alert you provided is too short.")
+      } else if (error === "long") {
+        alertAsync("The message alert you provided is too long.")
+      } else {
+        alertAsync("Sucessfully sent a alert to everyone.")
+        console.log("Sent alert successfuly.");
+      }
+    });
+    $alertMessageInput.value = "";
   }
 }
