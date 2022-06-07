@@ -151,7 +151,7 @@ socket.on("ban", (usernameGiven) => {
 });
 
 socket.on("alert", (message) => {
-  $alertOverlay.firstElementChild.innerHTML = "<i class=\"fa-solid fa-triangle-exclamation\"></i> " + linkify(message)
+  $alertOverlay.firstElementChild.innerHTML = linkify(message)
   $alertOverlay.style.top = "0px"
 });
 
@@ -201,30 +201,35 @@ function renderNewMessage(message) {
   userStored = stored.substring(39, stored.indexOf("</span>"));
 
   //for mentioning
-  if (message.text.includes(`@${username}`)) {
+  if (message.text.includes(`@${username}`) || message.text.includes(`@everyone`)) {
+    var usr = username
+
+    if (message.text.includes(`@everyone`))
+      usr = "everyone"
+
     console.log("mentioned!")
 
-    var regex = new RegExp(`@${username}`, 'g' );
+    var regex = new RegExp(`@${usr}`, 'g');
     var count = (message.text.match(regex) || []).length;
 
     console.log(count)
 
-    var sizeOfMention = `@${username}`.length
+    var sizeOfMention = `@${usr}`.length
     var startingIndex = 0
     //style the text
     for (let i = 0; i < count; i++) {
       //get where the mention is located
-      var mentionIndex = message.text.indexOf(`@${username}`, startingIndex)
+      var mentionIndex = message.text.indexOf(`@${usr}`, startingIndex)
 
       //insert span 
       message.text = message.text.slice(0, mentionIndex) + "<span id=\"mention-text\">" + message.text.slice(mentionIndex);
 
       //update index
-      mentionIndex = message.text.indexOf(`@${username}`, startingIndex)
+      mentionIndex = message.text.indexOf(`@${usr}`, startingIndex)
       //insert /span 
-      message.text = message.text.slice(0, mentionIndex+sizeOfMention) + "</span>" + message.text.slice(mentionIndex+sizeOfMention);
+      message.text = message.text.slice(0, mentionIndex + sizeOfMention) + "</span>" + message.text.slice(mentionIndex + sizeOfMention);
 
-      startingIndex = mentionIndex+1
+      startingIndex = mentionIndex + 1
     }
     isMentioned = true
   }
@@ -356,7 +361,7 @@ $messageForm.addEventListener("submit", e => {
       if (menuOpened) {
         toggleMenu(theMenuOpened, false)
       }
-        
+
       timeLeft = messageCooldown;
       cooldownMSGSend();
     }
@@ -647,9 +652,9 @@ $toolToggleButton.addEventListener("click", toggleToolBar);
 
 function disableToolButtons(bool) {
   if (bool)
-      $toolBarDiv.style.top = "-50px"
-    else
-      $toolBarDiv.style.top = "0px";
+    $toolBarDiv.style.top = "-50px"
+  else
+    $toolBarDiv.style.top = "0px";
 }
 
 var toolBarToggled = false

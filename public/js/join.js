@@ -50,3 +50,15 @@ if (getCookie("accent") != "") {
   var cssVar = document.querySelector(':root');
   cssVar.style.setProperty('--accent', getCookie("accent"));
 }
+
+document.addEventListener('keypress', function (e) {
+  if (e.key === 'Enter') {
+    joinChat()
+  }
+});
+
+if (getCookie("dark-mode") === "false") {
+  cssVar.style.setProperty('--messageDiv', "#f7f7f7");
+  cssVar.style.setProperty('--fontColor', "#000000");
+  cssVar.style.setProperty('--composeInput', "#dfdfdf");
+}

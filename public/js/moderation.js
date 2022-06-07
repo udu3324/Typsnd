@@ -163,8 +163,8 @@ function sendAlert() {
       } else {
         alertAsync("Sucessfully sent a alert to everyone.")
         console.log("Sent alert successfuly.");
+        $alertMessageInput.value = "";
       }
     });
-    $alertMessageInput.value = "";
   }
 }

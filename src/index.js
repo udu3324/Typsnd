@@ -5,7 +5,7 @@ const URI = require("urijs");
 const ip = require('ip');
 const { generateMessage } = require("./utils/messages");
 const { addUser, removeUser, getUser, getUsersInRoom, users } = require("./utils/users");
-const { serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle } = require("./config.js");
+const { serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames } = require("./config.js");
 const { encode } = require("html-entities");
 var { msgCooldown } = require("./config.js");
 
@@ -35,6 +35,17 @@ var ipUsernameArray = [];
 
 // array of ips and usernames that are banned
 var banArray = [];
+
+function sendToAllRooms(io, type, string) {
+  var roomsSentTo = [""]
+  for (let index = 0; index < users.length; ++index) {
+    if (!roomsSentTo.includes(users[index].room)) {
+      io.to(users[index].room).emit(type, string);
+
+      roomsSentTo.push(users[index].room)
+    }
+  }
+}
 
 io.on("connection", socket => {
   let ip = getIP(socket);
@@ -221,6 +232,7 @@ function sockets(socket) {
       isAdmin = true
     }
 
+    var userModerationObject;
     // check if user sending to is real
     for (let index = 0; index < users.length; ++index) {
       //remove shield
@@ -228,6 +240,7 @@ function sockets(socket) {
         //check if its not a admin
         if (!(users[index].username.includes(adminIcon, ""))) {
           userExists = true
+          userModerationObject = users[index]
         } else {
           callback("isAdmin");
         }
@@ -235,7 +248,7 @@ function sockets(socket) {
     }
 
     if (userExists && isAdmin) {
-      io.to(user.room).emit("kick", username);
+      io.to(userModerationObject.room).emit("kick", username);
 
       console.log("User: " + username + " has been kicked. (kicked by ip: " + ip + ")")
       io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-xmark fa-lg"></i> ${username} has been kicked.`));
@@ -260,6 +273,7 @@ function sockets(socket) {
       isAdmin = true
     }
 
+    var userModerationObject;
     // check if user sending to is real
     for (let index = 0; index < users.length; ++index) {
       //remove shield
@@ -267,6 +281,7 @@ function sockets(socket) {
         //check if its not a admin
         if (!(users[index].username.includes(adminIcon, ""))) {
           userExists = true
+          userModerationObject = users[index]
         } else {
           callback("isAdmin");
         }
@@ -275,7 +290,10 @@ function sockets(socket) {
 
     if (userExists && isAdmin) {
       //ban them
-      io.to(user.room).emit("ban", username);
+      io.to(userModerationObject.room).emit("ban", username);
+
+      //ban their username from being used
+      blacklistedUsernames.push(username)
 
       //find their ip
       var indexOfIP = ipUsernameArray.indexOf(username) + 1
@@ -297,7 +315,7 @@ function sockets(socket) {
 
   socket.on("unbanUser", (username, callback) => {
     const user = getUser(socket.id);
-    const userKicking = username;
+    const userUnbanning = username;
 
     var isAdmin = false;
     var userExists = false;
@@ -310,17 +328,24 @@ function sockets(socket) {
     // check if user sending to is real
     for (let index = 0; index < banArray.length; ++index) {
       //remove shield
-      if (banArray[index] === userKicking) {
+      if (banArray[index] === userUnbanning) {
         userExists = true
       }
     }
 
     if (userExists && isAdmin) {
 
-      var index = banArray.indexOf(userKicking)
+      //remove user from blacklisted usernames and ban array
+      var index = banArray.indexOf(userUnbanning)
       if (index > -1) {
         banArray.splice(index + 1, 1); //remove ip
         banArray.splice(index, 1); //remove username
+      }
+
+      var index2 = blacklistedUsernames.indexOf(userUnbanning)
+      if (index2 > -1) {
+        blacklistedUsernames.splice(index2 + 1, 1); //remove ip
+        blacklistedUsernames.splice(index2, 1); //remove username
       }
 
       console.log("User: " + username + " has been unbanned. (unbanned by ip: " + ip + ")")
@@ -360,7 +385,7 @@ function sockets(socket) {
       } else if (message.length > 70) {
         callback("long");
       } else {
-        io.to(user.room).emit("alert", message);
+        sendToAllRooms(io, "alert", message)
 
         callback("good");
       }

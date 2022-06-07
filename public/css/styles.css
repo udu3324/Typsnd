@@ -54,15 +54,11 @@ input {
     font-size: 14px;
 }
 
-h1 {
-    margin-bottom: 16px;
-}
-
 label {
     display: block;
     font-size: 14px;
     margin-bottom: 8px;
-    color: #cbcbcb;
+    color: var(--fontColor);
 }
 
 input {
@@ -180,7 +176,7 @@ input:checked+.slider:before {
 
 .centered-form__box {
     color: white;
-    background: #36393f;
+    background: var(--messageDiv);
     padding: 24px;
     width: 340px;
     border-radius: 4px;
@@ -199,12 +195,27 @@ input:checked+.slider:before {
 }
 
 .centered-form input {
-    color: white;
-    background: #40444b;
+    color: var(--fontColor);
+    background: var(--composeInput);
     border: 1px solid var(--accent);
     margin-bottom: 16px;
     width: 100%;
     border-radius: 4px;
+}
+
+h1#title {
+    font-size: 5em;
+    color: var(--fontColor);
+}
+
+span#title-pronounce {
+    font-style: italic;
+    font-weight: normal;
+    font-size: 0.9em;
+    display: inline-block;
+    margin-bottom: 20px;
+    color: var(--fontColor);
+    filter: brightness(55%);
 }
 
 /* Chat Page Layout */
@@ -257,18 +268,26 @@ input#username-input {
     width: 194px;
 }
 
-button#set-username-button,
-button#kick-user-button,
-button#set-cooldown-button,
-button#ban-user-button,
-button#unban-user-button,
-button#send-alert-button {
-    border-radius: 0px 4px 4px 0px;
+button#set-cooldown-button {
+    width: 217px;
+    border-radius: 0px 4px 0px 0px;
     padding-top: 11px;
+    text-align: left;
 }
 
-p#warningConfig {
-    padding-top: 8px;
+button#ban-user-button,
+button#kick-user-button,
+button#unban-user-button {
+    width: 120px;
+    border-radius: 0px;
+    padding-top: 11px;
+    text-align: left;
+}
+
+button#set-username-button {
+    border-radius: 0px 4px 4px 0px;
+    padding-top: 11px;
+    text-align: left;
 }
 
 input.cooldown-int {
@@ -336,25 +355,54 @@ div#admin-panel {
     margin-bottom: 21px;
 }
 
-div#cooldown,
-div#kick,
-div#ban {
-    padding-bottom: 6px;
+input#cooldown-input {
+    border-radius: 4px 0px 0px 0px;
+    color: var(--fontColor);
+    background: var(--composeInput);
+    border: 1px solid var(--accent);
 }
 
 input#kick-user-input,
 input#ban-user-input,
-input#unban-user-input,
-input#alert-message-input {
+input#unban-user-input {
+    color: var(--fontColor);
+    background: var(--composeInput);
+    border: 1px solid var(--accent);
+    border-radius: 0px;
+    padding: 12px;
+    margin: 0 -14px 0 0;
+    flex-grow: 1;
+    transition: 0.3s ease;
+    width: 188px;
+}
+
+div#kick,
+div#ban,
+div#unban,
+div#alert {
+    margin-top: -1px;
+}
+
+textarea#alert-message-input {
     color: var(--fontColor);
     background: var(--composeInput);
     border: 1px solid var(--accent);
     padding: 12px;
-    margin: 0 -64px 0 0;
     flex-grow: 1;
-    border-radius: 4px;
     transition: 0.3s ease;
-    width: 253px;
+    width: 304px;
+    margin-bottom: 21px;
+    height: 80px;
+    outline: none;
+    resize: none;
+    border-radius: 0px;
+}
+
+button#send-alert-button {
+    display: block;
+    margin-top: -28px;
+    width: 304px;
+    border-radius: 0px 0px 5px 5px;
 }
 
 p#accent-color-p {
@@ -406,6 +454,7 @@ button#refreshButton {
 div#messages {
     color: var(--fontColor);
     background: var(--messageDiv);
+    padding-bottom: 17px;
 }
 
 .chat__messages {
@@ -725,7 +774,7 @@ div#alert-overlay {
     position: fixed;
     width: 100%;
     z-index: 10;
-    color: var(--fontColor);
+    color: white;
     background-color: var(--accent);
     padding: 6px;
     font-size: 30px;
@@ -735,6 +784,9 @@ div#alert-overlay {
 
 button#close-alert-overlay {
     font-size: 30px;
+    border-style: solid;
+    padding: 0px 10px 0px 10px;
+    border-radius: 13px;
 }
 
 div#alert-overlay a {

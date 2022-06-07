@@ -1,287 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Typsnd</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into."
-    />
-    <link rel="icon" href="/img/favicon.png" />
-    <link rel="stylesheet" href="/css/styles.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-      integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-  </head>
 
-  <body>
-    <div class="chat">
-      <div id="message-bar" style="display: none">
-        <div id="from">
-          <p>
-            <i class="fa-solid fa-message"></i> From
-            <b id="message-user-replace"></b>
-            <button id="close-message">
-              <i class="fa-solid fa-xmark fa-lg"></i> Close
-            </button>
-          </p>
-        </div>
-        <div id="message-to">
-          <p id="message-replace"></p>
-        </div>
-      </div>
+<head>
+  <title>Typsnd</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into." />
+  <link rel="icon" href="/img/favicon.png" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
 
-      <div id="tools-bar">
-        <button class="toolButton" id="roomButton" aria-label="Room">
-          <i class="fa-solid fa-house-chimney"></i> Room
-        </button>
-        <button class="toolButton" id="messageButton" aria-label="Message">
-          <i class="fa-solid fa-message"></i> Message
-        </button>
-      </div>
-      <button class="toggleButton" id="toolToggleButton" aria-label="Toggle">
-        <i class="fa-solid fa-angle-down"></i>
-      </button>
-
-      <div id="message-overlay" style="display: none">
-        <div class="message__box" id="message-box">
-          <h1>Message A User</h1>
-          <div id="message">
-            <p>Username</p>
-            <input
-              id="user-message-input"
-              class="message-input"
-              type="text"
-              name="room"
-              maxlength="19"
-              placeholder="the user that recieves"
-              required
-            />
-            <p>Message (280 character limit)</p>
-            <textarea
-              placeholder="the message that the user recieves"
-              id="message-input"
-              class="message-input"
-              name="room"
-              maxlength="280"
-            ></textarea>
-
-            <br />
-            <button id="send-message-button">Send</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="room-overlay" style="display: none">
-        <div class="room__box" id="room-box">
-          <h1>Join Different Room</h1>
-          <div id="room">
-            <input
-              id="room-input"
-              class="room-input"
-              type="text"
-              name="room"
-              maxlength="9"
-              required
-            />
-            <button id="set-room-button">Join</button>
-            <br />
-            <br />
-            <button id="join-default-button">Join Default Room</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="disconnect-overlay" style="display: none">
-        <div class="disconnect__box">
-          <h1>Disconnected</h1>
-          <h3>Heres Possibly Why -</h3>
-          <p id="kicked">
-            * A constant Wi-Fi connection between the server has been lost
-            <br />
-            * The server is updating or off
-          </p>
-          <h3>How To Fix -</h3>
-          <p id="kicked">
-            * Refresh the page (try first)
-            <br />
-            * Ask for the server to turned back on
-          </p>
-          <button id="refreshButton" aria-label="Refresh">
-            <i class="fa-solid fa-rotate-right"></i> Refresh
+<body>
+  <div class="chat">
+    <div id="message-bar" style="display: none">
+      <div id="from">
+        <p>
+          <i class="fa-solid fa-message"></i> From
+          <b id="message-user-replace"></b>
+          <button id="close-message">
+            <i class="fa-solid fa-xmark fa-lg"></i> Close
           </button>
-        </div>
+        </p>
       </div>
+      <div id="message-to">
+        <p id="message-replace"></p>
+      </div>
+    </div>
 
-      <div id="settings-overlay" style="display: none">
-        <div id="settings-box" class="settings__box">
-          <h1>Settings</h1>
-          <p id="admin-status">if you see this, something went wrong</p>
-          <div id="admin-panel" style="display: none">
-            <p>Restarting will reset things.</p>
-            <p id="warningConfig">Message Cooldown</p>
-            <div id="cooldown">
-              <input
-                type="number"
-                id="cooldown-input"
-                class="cooldown-int"
-                min="0"
-                max="9"
-                disabled
-              />
-              <button id="cooldown-up-button">
-                <i class="fa-solid fa-caret-up"></i>
-              </button>
-              <button id="cooldown-down-button">
-                <i class="fa-solid fa-caret-down"></i>
-              </button>
-              <button id="set-cooldown-button">Set Cooldown</button>
-            </div>
-            <p id="warningConfig">Kick Users</p>
-            <div id="kick">
-              <input
-                id="kick-user-input"
-                class="kick-user-input"
-                type="text"
-                name="kick-user"
-                placeholder="username kick"
-                maxlength="19"
-                required
-              />
-              <button id="kick-user-button">Kick User</button>
-            </div>
-            <p id="warningConfig">Ban Users</p>
-            <div id="ban">
-              <input
-                id="ban-user-input"
-                class="ban-user-input"
-                type="text"
-                name="ban-user"
-                placeholder="username ban"
-                maxlength="19"
-                required
-              />
-              <button id="ban-user-button">Ban User</button>
-            </div>
-            <div id="unban">
-              <input
-                id="unban-user-input"
-                class="unban-user-input"
-                type="text"
-                name="unban-user"
-                placeholder="username unban"
-                maxlength="19"
-                required
-              />
-              <button id="unban-user-button">Unban User</button>
-            </div>
-            <p id="warningConfig">Alert Everyone</p>
-            <div id="alert">
-              <input
-                id="alert-message-input"
-                class="alert-message-input"
-                type="text"
-                name="alert"
-                placeholder="alert message"
-              />
-              <button id="send-alert-button">Send Alert</button>
-            </div>
-          </div>
+    <div id="tools-bar">
+      <button class="toolButton" id="roomButton" aria-label="Room">
+        <i class="fa-solid fa-house-chimney"></i> Room
+      </button>
+      <button class="toolButton" id="messageButton" aria-label="Message">
+        <i class="fa-solid fa-message"></i> Message
+      </button>
+    </div>
+    <button class="toggleButton" id="toolToggleButton" aria-label="Toggle">
+      <i class="fa-solid fa-angle-down"></i>
+    </button>
 
-          <div id="username">
-            <input
-              id="username-input"
-              class="username-input"
-              type="text"
-              name="username"
-              maxlength="19"
-              required
-            />
-            <button id="set-username-button">Set Username</button>
-          </div>
+    <div id="message-overlay" style="display: none">
+      <div class="message__box" id="message-box">
+        <h1>Message A User</h1>
+        <div id="message">
+          <p>Username</p>
+          <input id="user-message-input" class="message-input" type="text" name="room" maxlength="19"
+            placeholder="the user that recieves" required />
+          <p>Message (280 character limit)</p>
+          <textarea placeholder="the message that the user recieves" id="message-input" class="message-input"
+            name="room" maxlength="280"></textarea>
 
           <br />
-          <p id="accent-color-p">
-            <input
-              type="color"
-              id="accent-color-picker"
-              name="head"
-              value="#8FBC8F"
-            />
-            Accent Color
-          </p>
-          <div class="dark-mode-div">
-            <label class="switch">
-              <input id="dark-mode-switch" type="checkbox" />
-              <span class="slider round"></span>
-            </label>
-            <p class="dark-mode-p">Dark Mode</p>
-          </div>
-        </div>
-      </div>
-
-      <div id="alert-overlay">
-        <p style="display: inline-block;"></p>
-        <button id="close-alert-overlay"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <emoji-picker></emoji-picker>
-
-      <div class="sidebar__main">
-        <div id="sidebar" class="users__sidebar"></div>
-
-        <div class="user__sidebar">
-          <h id="user-replace" style="margin-right: 16px; align-self: center"
-            >temp</h
-          >
-          <button
-            id="settingsButton"
-            aria-label="Settings"
-            style="margin-left: auto; margin-right: 0"
-          >
-            <i class="fa-solid fa-gear fa-lg"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="chat__main">
-        <div id="messages" class="chat__messages">
-          <button id="scrollDownMSG" aria-label="Scroll Down Msg">
-            <i class="fa-solid fa-arrow-down"></i>
-          </button>
-        </div>
-
-        <div class="compose">
-          <button id="sendImageButton" aria-label="Send Image">
-            <i class="fa-solid fa-circle-plus fa-lg"></i>
-          </button>
-          <form id="message-form" action="">
-            <input
-              maxlength="3000"
-              name="message"
-              type="text"
-              placeholder="Message"
-              required
-              autocomplete="off"
-              oninvalid="this.setCustomValidity('Please enter a message to send.')"
-              oninput="setCustomValidity('')"
-            />
-            <button aria-label="Send Message">
-              <i class="fa-solid fa-paper-plane fa-lg"></i>
-            </button>
-          </form>
-          <button id="insertEmojiButton" aria-label="Insert Emoji">
-            <i class="fa-solid fa-icons fa-lg"></i>
-          </button>
+          <button id="send-message-button">Send</button>
         </div>
       </div>
     </div>
 
-    <script id="message-template" type="text/html">
+    <div id="room-overlay" style="display: none">
+      <div class="room__box" id="room-box">
+        <h1>Join Different Room</h1>
+        <div id="room">
+          <input id="room-input" class="room-input" type="text" name="room" maxlength="9" required />
+          <button id="set-room-button">Join</button>
+          <br />
+          <br />
+          <button id="join-default-button">Join Default Room</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="disconnect-overlay" style="display: none">
+      <div class="disconnect__box">
+        <h1>Disconnected</h1>
+        <h3>Heres Possibly Why -</h3>
+        <p id="kicked">
+          * A constant Wi-Fi connection between the server has been lost
+          <br />
+          * The server is updating or off
+        </p>
+        <h3>How To Fix -</h3>
+        <p id="kicked">
+          * Refresh the page (try first)
+          <br />
+          * Ask for the server to turned back on
+        </p>
+        <button id="refreshButton" aria-label="Refresh">
+          <i class="fa-solid fa-rotate-right"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+    <div id="settings-overlay" style="display: none">
+      <div id="settings-box" class="settings__box">
+        <h1>Settings</h1>
+        <p id="admin-status">if you see this, something went wrong</p>
+        <div id="admin-panel" style="display: none">
+          <p>Restarting will reset things.</p>
+          <div id="cooldown">
+            <input type="number" id="cooldown-input" class="cooldown-int" min="0" max="9" disabled />
+            <button id="cooldown-up-button">
+              <i class="fa-solid fa-caret-up"></i>
+            </button>
+            <button id="cooldown-down-button">
+              <i class="fa-solid fa-caret-down"></i>
+            </button>
+            <button id="set-cooldown-button">Set Cooldown</button>
+          </div>
+          <div id="kick">
+            <input id="kick-user-input" class="kick-user-input" type="text" name="kick-user" placeholder="username kick"
+              maxlength="19" required />
+            <button id="kick-user-button">Kick User</button>
+          </div>
+          <div id="ban">
+            <input id="ban-user-input" class="ban-user-input" type="text" name="ban-user" placeholder="username ban"
+              maxlength="19" required />
+            <button id="ban-user-button">Ban User</button>
+          </div>
+          <div id="unban">
+            <input id="unban-user-input" class="unban-user-input" type="text" name="unban-user"
+              placeholder="username unban" maxlength="19" required />
+            <button id="unban-user-button">Unban User</button>
+          </div>
+          <div id="alert">
+            <textarea id="alert-message-input" class="alert-message-input" name="alert" placeholder="alert message"
+              maxlength="70"></textarea>
+            <button id="send-alert-button">Send Alert</button>
+          </div>
+        </div>
+
+        <div id="username">
+          <input id="username-input" class="username-input" type="text" name="username" maxlength="19" required />
+          <button id="set-username-button">Set Username</button>
+        </div>
+
+        <br />
+        <p id="accent-color-p">
+          <input type="color" id="accent-color-picker" name="head" value="#8FBC8F" />
+          Accent Color
+        </p>
+        <div class="dark-mode-div">
+          <label class="switch">
+            <input id="dark-mode-switch" type="checkbox" />
+            <span class="slider round"></span>
+          </label>
+          <p class="dark-mode-p">Dark Mode</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="alert-overlay">
+      <p style="display: inline-block;"></p>
+      <button id="close-alert-overlay"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <emoji-picker></emoji-picker>
+
+    <div class="sidebar__main">
+      <div id="sidebar" class="users__sidebar"></div>
+
+      <div class="user__sidebar">
+        <h id="user-replace" style="margin-right: 16px; align-self: center">temp</h>
+        <button id="settingsButton" aria-label="Settings" style="margin-left: auto; margin-right: 0">
+          <i class="fa-solid fa-gear fa-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="chat__main">
+      <div id="messages" class="chat__messages">
+        <button id="scrollDownMSG" aria-label="Scroll Down Msg">
+          <i class="fa-solid fa-arrow-down"></i>
+        </button>
+      </div>
+
+      <div class="compose">
+        <button id="sendImageButton" aria-label="Send Image">
+          <i class="fa-solid fa-circle-plus fa-lg"></i>
+        </button>
+        <form id="message-form" action="">
+          <input maxlength="3000" name="message" type="text" placeholder="Message" required autocomplete="off"
+            oninvalid="this.setCustomValidity('Please enter a message to send.')" oninput="setCustomValidity('')" />
+          <button aria-label="Send Message">
+            <i class="fa-solid fa-paper-plane fa-lg"></i>
+          </button>
+        </form>
+        <button id="insertEmojiButton" aria-label="Insert Emoji">
+          <i class="fa-solid fa-icons fa-lg"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script id="message-template" type="text/html">
       <div id="message-div" class="message">
         <p>
           <span class="message__name">{{{username}}}</span>
@@ -308,7 +221,7 @@
       </div>
     </script>
 
-    <script id="sidebar-template" type="text/html">
+  <script id="sidebar-template" type="text/html">
       <h2 class="room-title">{{room}}</h2>
       <h3 class="list-title">Users</h3>
       <ul class="users">
@@ -318,23 +231,21 @@
       </ul>
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.8.0/qs.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"
-    ></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/cookie.js"></script>
-    <script src="/js/functions.js"></script>
-    <script src="/js/moderation.js"></script>
-    <script src="/js/chat.js"></script>
-    <script src="/js/adminstatus.js"></script>
-    <script src="/js/disconnect.js"></script>
-    <script src="/js/emoji.js"></script>
-    <script src="/js/imgpaste.js"></script>
-    <script src="/js/message.js"></script>
-  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.8.0/qs.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/cookie.js"></script>
+  <script src="/js/functions.js"></script>
+  <script src="/js/moderation.js"></script>
+  <script src="/js/chat.js"></script>
+  <script src="/js/adminstatus.js"></script>
+  <script src="/js/disconnect.js"></script>
+  <script src="/js/emoji.js"></script>
+  <script src="/js/imgpaste.js"></script>
+  <script src="/js/message.js"></script>
+</body>
+
 </html>
