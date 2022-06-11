@@ -715,14 +715,21 @@ function addATab(name, url) {
   $toolBarDiv.appendChild(a);
 }
 
-socket.on("tabs", (tabs) => {
+socket.on("starting-data", array => {
+  //array[tabs0, msgCooldown1, htmlTitle2]
 
-  //for each tab in array, create one
-  for (let index = 0; index < tabs.length; ++index) {
-    addATab(tabs[index][0], tabs[index][1])
+  //tabs
+  for (let index = 0; index < array[0].length; ++index) {
+    addATab(array[0][index][0], array[0][index][1])
   }
-
   disableToolButtons(true)
+
+  //msg cooldown
+  messageCooldown = array[1];
+  $cooldownInput.value = `${messageCooldown}`;
+
+  //title
+  document.title = array[2];
 });
 
 //message user stuff below
@@ -875,10 +882,6 @@ function dragElement(elmnt) {
 }
 
 //recieve direct messages sent
-socket.on("html-title", htmlTitleSent => {
-  document.title = htmlTitleSent;
-});
-
 $joinDefaultButton.onclick = function () {
   var currentRoom = getCookie("room");
 
