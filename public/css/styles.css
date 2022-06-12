@@ -1,14 +1,10 @@
 /* Custom Font */
-@font-face {
-    font-family: JetBrainsMonoRegular;
-    src: url(JetBrainsMono-Regular.woff2);
-    font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
 
 body {
     line-height: 1.4;
     color: #2C2F33;
-    font-family: JetBrainsMonoRegular;
+    font-family: 'JetBrains Mono', monospace;
 }
 
 /* Editable Color */
@@ -35,7 +31,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'JetBrainsMonoRegular';
+    font-family: 'JetBrains Mono', monospace;
 }
 
 img {
@@ -761,7 +757,7 @@ div#message-to {
 
 button#close-message {
     padding: 0px 0px 0px 4px;
-    font-family: 'JetBrainsMonoRegular';
+    font-family: 'JetBrains Mono', monospace;
 }
 
 p#message-replace {
