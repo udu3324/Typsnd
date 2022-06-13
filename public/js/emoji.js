@@ -14,11 +14,9 @@ var onEmojiBox = true;
 // emoji box
 $emojiBox.onmouseover = function () {
   onEmojiBox = false
-  $messageFormInput.blur()
 }
 $emojiBox.onmouseout = function () {
   onEmojiBox = true
-  $messageFormInput.focus()
 }
 
 // On Emoji Click

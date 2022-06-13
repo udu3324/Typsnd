@@ -33,14 +33,20 @@ const Color = {
     }
 };
 
+//prints out startingText (color) text
 const cLog = (color, text, startingText) => {
     if (!startingText)
         startingText = ""
-    
+
     console.log(startingText + `${color}%s${Color.reset}`, text);
 };
 
+const time = () => {
+    return "[" + new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false }) + "]"
+}
+
 module.exports = {
     Color,
-    cLog
+    cLog,
+    time
 };

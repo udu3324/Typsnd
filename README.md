@@ -12,7 +12,7 @@ Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that peop
 ## Sample Server
 You can try out Typsnd using this link: [https://Typsnd.potatochips3.repl.co](https://Typsnd.potatochips3.repl.co)
 
-## What it Looks Like
+## What it Looks Like (old screenshots)
 ![1](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/1.png)
 ![2](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/2.png)
 ![3](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/3.png)

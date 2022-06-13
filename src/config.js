@@ -1,15 +1,15 @@
 
-// Server/Moderation Config
+// Server / Moderation Config
 var serverPort = 3000;
 var adminIPs = ["localhost"];
 var adminIcon = "<i class=\"fa-solid fa-shield\"></i> ";
 var altDetection = true;
 var blacklistedIPs = [];
 var msgCooldown = "2";
-//filter is ignored if user is admin
+// Filter is ignored if user is admin + not case sensitive
 var blacklistedUsernames = ["admin", "mod", "staff", "server", "typsnd", "code", "system"];
 
-// Chat Addons/Functionality
+// Chat Addons / Functionality
 var htmlTitle = "Typsnd";
 var msgGreet = "";
 var multipleRooms = true;

@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+      |\__/,|   (`\
+    _.|o o  |_   ) )
+    -(((---(((--------
+    i love inspect element
+  -->
 
 <head>
   <title>Typsnd</title>
@@ -18,30 +24,24 @@
     <div id="message-bar" style="display: none">
       <div id="from">
         <p>
-          <i class="fa-solid fa-message"></i> From
-          <b id="message-user-replace"></b>
+          <i class="fa-solid fa-message"></i> From <b id="message-user-replace"></b>
           <button id="close-message">
-            <i class="fa-solid fa-xmark fa-lg"></i> Close
-          </button>
+            <i class="fa-solid fa-xmark fa-lg"></i> Close </button>
         </p>
       </div>
       <div id="message-to">
         <p id="message-replace"></p>
       </div>
     </div>
-
     <div id="tools-bar">
       <button class="toolButton" id="roomButton" aria-label="Room">
-        <i class="fa-solid fa-house-chimney"></i> Room
-      </button>
+        <i class="fa-solid fa-house-chimney"></i> Room </button>
       <button class="toolButton" id="messageButton" aria-label="Message">
-        <i class="fa-solid fa-message"></i> Message
-      </button>
+        <i class="fa-solid fa-message"></i> Message </button>
     </div>
     <button class="toggleButton" id="toolToggleButton" aria-label="Toggle">
       <i class="fa-solid fa-angle-down"></i>
     </button>
-
     <div id="message-overlay" style="display: none">
       <div class="message__box" id="message-box">
         <h1>Message A User</h1>
@@ -52,13 +52,11 @@
           <p>Message (280 character limit)</p>
           <textarea placeholder="the message that the user recieves" id="message-input" class="message-input"
             name="room" maxlength="280"></textarea>
-
           <br />
           <button id="send-message-button">Send</button>
         </div>
       </div>
     </div>
-
     <div id="room-overlay" style="display: none">
       <div class="room__box" id="room-box">
         <h1>Join Different Room</h1>
@@ -71,28 +69,18 @@
         </div>
       </div>
     </div>
-
     <div id="disconnect-overlay" style="display: none">
       <div class="disconnect__box">
         <h1>Disconnected</h1>
         <h3>Heres Possibly Why -</h3>
-        <p id="kicked">
-          * A constant Wi-Fi connection between the server has been lost
-          <br />
-          * The server is updating or off
-        </p>
+        <p id="kicked"> * A constant Wi-Fi connection between the server has been lost <br /> * The server is updating
+          or off </p>
         <h3>How To Fix -</h3>
-        <p id="kicked">
-          * Refresh the page (try first)
-          <br />
-          * Ask for the server to turned back on
-        </p>
+        <p id="kicked"> * Refresh the page (try first) <br /> * Ask for the server to turned back on </p>
         <button id="refreshButton" aria-label="Refresh">
-          <i class="fa-solid fa-rotate-right"></i> Refresh
-        </button>
+          <i class="fa-solid fa-rotate-right"></i> Refresh </button>
       </div>
     </div>
-
     <div id="settings-overlay" style="display: none">
       <div id="settings-box" class="settings__box">
         <h1>Settings</h1>
@@ -101,28 +89,28 @@
           <p>Restarting will reset things.</p>
           <div id="cooldown">
             <input type="number" id="cooldown-input" class="cooldown-int" min="0" max="9" disabled />
-            <button id="cooldown-up-button">
+            <button id="cooldown-up-button" aria-label="Cooldown Up">
               <i class="fa-solid fa-caret-up"></i>
             </button>
-            <button id="cooldown-down-button">
+            <button id="cooldown-down-button" aria-label="Cooldown Down">
               <i class="fa-solid fa-caret-down"></i>
             </button>
-            <button id="set-cooldown-button">Set Cooldown</button>
+            <button id="set-cooldown-button" aria-label="Set Cooldown">Set Cooldown</button>
           </div>
           <div id="kick">
             <input id="kick-user-input" class="kick-user-input" type="text" name="kick-user" placeholder="username kick"
               maxlength="19" required />
-            <button id="kick-user-button">Kick User</button>
+            <button id="kick-user-button" aria-label="Kick User">Kick User</button>
           </div>
           <div id="ban">
             <input id="ban-user-input" class="ban-user-input" type="text" name="ban-user" placeholder="username ban"
               maxlength="19" required />
-            <button id="ban-user-button">Ban User</button>
+            <button id="ban-user-button" aria-label="Ban User">Ban User</button>
           </div>
           <div id="unban">
             <input id="unban-user-input" class="unban-user-input" type="text" name="unban-user"
               placeholder="username unban" maxlength="19" required />
-            <button id="unban-user-button">Unban User</button>
+            <button id="unban-user-button" aria-label="Unban User">Unban User</button>
           </div>
           <div id="alert">
             <textarea id="alert-message-input" class="alert-message-input" name="alert" placeholder="alert message"
@@ -130,16 +118,13 @@
             <button id="send-alert-button">Send Alert</button>
           </div>
         </div>
-
         <div id="username">
           <input id="username-input" class="username-input" type="text" name="username" maxlength="19" required />
           <button id="set-username-button">Set Username</button>
         </div>
-
         <br />
         <p id="accent-color-p">
-          <input type="color" id="accent-color-picker" name="head" value="#8FBC8F" />
-          Accent Color
+          <input type="color" id="accent-color-picker" name="head" value="#8FBC8F" /> Accent Color
         </p>
         <div class="dark-mode-div">
           <label class="switch">
@@ -150,17 +135,15 @@
         </div>
       </div>
     </div>
-
     <div id="alert-overlay">
       <p style="display: inline-block;"></p>
-      <button id="close-alert-overlay"><i class="fa-solid fa-xmark"></i></button>
+      <button id="close-alert-overlay" aria-label="Close Alert">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
     </div>
-
     <emoji-picker></emoji-picker>
-
     <div class="sidebar__main">
       <div id="sidebar" class="users__sidebar"></div>
-
       <div class="user__sidebar">
         <h id="user-replace" style="margin-right: 16px; align-self: center">temp</h>
         <button id="settingsButton" aria-label="Settings" style="margin-left: auto; margin-right: 0">
@@ -168,21 +151,19 @@
         </button>
       </div>
     </div>
-
     <div class="chat__main">
       <div id="messages" class="chat__messages">
         <button id="scrollDownMSG" aria-label="Scroll Down Msg">
           <i class="fa-solid fa-arrow-down"></i>
         </button>
       </div>
-
       <div class="compose">
         <button id="sendImageButton" aria-label="Send Image">
           <i class="fa-solid fa-circle-plus fa-lg"></i>
         </button>
         <form id="message-form" action="">
           <input maxlength="3000" name="message" type="text" placeholder="Message" required autocomplete="off"
-            oninvalid="this.setCustomValidity('Please enter a message to send.')" oninput="setCustomValidity('')" />
+            oninput="setCustomValidity('')" />
           <button aria-label="Send Message">
             <i class="fa-solid fa-paper-plane fa-lg"></i>
           </button>
@@ -193,44 +174,37 @@
       </div>
     </div>
   </div>
-
   <script id="message-template" type="text/html">
       <div id="message-div" class="message">
         <p>
           <span class="message__name">{{{username}}}</span>
           <span class="message__meta">{{createdAt}}</span>
         </p>
-        <button id="message-options" class="message-options">
+        <button id="message-options" aria-label="Message Options" class="message-options">
           <i class="fa-solid fa-ellipsis"></i>
         </button>
         <div id="message-options-div">
-          <button id="menu-mention-button" class="message-options-buttons" style="border-radius: 4px 4px 0px 0px;">
-            <i class="fa-solid fa-quote-right"></i> Mention
-          </button>
-          <button id="menu-kick-button" class="message-options-buttons">
-            <i class="fa-solid fa-user-large-slash"></i> Kick
-          </button>
-          <button id="menu-ban-button" class="message-options-buttons">
-            <i class="fa-solid fa-gavel"></i> Ban
-          </button>
-          <button id="menu-close-button" class="message-options-buttons" style="border-radius: 0px 0px 4px 4px;">
-            <i class="fa-solid fa-xmark"></i> Close
-          </button>
+          <button id="menu-mention-button" aria-label="Mention" class="message-options-buttons" style="border-radius: 4px 4px 0px 0px;">
+            <i class="fa-solid fa-quote-right"></i> Mention </button>
+          <button id="menu-kick-button" aria-label="Kick" class="message-options-buttons">
+            <i class="fa-solid fa-user-large-slash"></i> Kick </button>
+          <button id="menu-ban-button" aria-label="Ban" class="message-options-buttons">
+            <i class="fa-solid fa-gavel"></i> Ban </button>
+          <button id="menu-close-button" aria-label="Close" class="message-options-buttons" style="border-radius: 0px 0px 4px 4px;">
+            <i class="fa-solid fa-xmark"></i> Close </button>
         </div>
         <p id="message__container">{{{message}}}</p>
       </div>
     </script>
-
   <script id="sidebar-template" type="text/html">
       <h2 class="room-title">{{room}}</h2>
       <h3 class="list-title">Users</h3>
       <ul class="users">
         {{#users}}
-        <li>{{{username}}}</li>
+          <li>{{{username}}}</li>
         {{/users}}
       </ul>
     </script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.8.0/qs.min.js"></script>

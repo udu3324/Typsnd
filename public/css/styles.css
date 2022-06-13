@@ -251,6 +251,10 @@ span#title-pronounce {
 }
 
 /* Settings Overlay */
+p#admin-status {
+    padding-bottom: 15px;
+}
+
 .dark-mode-div {
     padding-top: 3px;
 }
@@ -393,7 +397,7 @@ textarea#alert-message-input {
     padding: 12px;
     flex-grow: 1;
     transition: 0.3s ease;
-    width: 304px;
+    width: 303px;
     margin-bottom: 21px;
     height: 80px;
     outline: none;
@@ -404,7 +408,7 @@ textarea#alert-message-input {
 button#send-alert-button {
     display: block;
     margin-top: -28px;
-    width: 304px;
+    width: 303px;
     border-radius: 0px 0px 5px 5px;
 }
 

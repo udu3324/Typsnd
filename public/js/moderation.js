@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 const $cooldownSetButton = document.querySelector("#set-cooldown-button");
 const $cooldownInput = document.querySelector("#cooldown-input");
 const $cooldownUpButton = document.querySelector("#cooldown-up-button");
@@ -42,9 +40,6 @@ $cooldownSetButton.addEventListener("click", function () {
   });
 });
 
-
-
-
 $kickUserButton.addEventListener("click", kickUser);
 $kickUserInput.addEventListener("keyup", function (event) {
   if (event.keyCode === 13) { //13 = enter
@@ -74,9 +69,6 @@ function kickUser() {
     $kickUserInput.value = "";
   }
 }
-
-
-
 
 $banUserButton.addEventListener("click", banUser);
 $banUserInput.addEventListener("keyup", function (event) {
@@ -136,8 +128,6 @@ function unbanUser() {
     $unbanUserInput.value = "";
   }
 }
-
-
 
 $sendAlertButton.addEventListener("click", sendAlert)
 $alertMessageInput.addEventListener("keyup", function (event) {

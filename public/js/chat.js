@@ -151,7 +151,7 @@ socket.on("ban", (usernameGiven) => {
 });
 
 socket.on("alert", (message) => {
-  $alertOverlay.firstElementChild.innerHTML = linkify(message)
+  $alertOverlay.firstElementChild.innerHTML = message
   $alertOverlay.style.top = "0px"
 });
 
@@ -200,7 +200,7 @@ function renderNewMessage(message) {
   var stored = $messages.lastElementChild.firstElementChild.innerHTML
   userStored = stored.substring(39, stored.indexOf("</span>"));
 
-  //for mentioning
+  //handle mentions
   if (message.text.includes(`@${username}`) || message.text.includes(`@everyone`)) {
     var usr = username
 
@@ -216,7 +216,7 @@ function renderNewMessage(message) {
 
     var sizeOfMention = `@${usr}`.length
     var startingIndex = 0
-    //style the text
+    //style all the mentions
     for (let i = 0; i < count; i++) {
       //get where the mention is located
       var mentionIndex = message.text.indexOf(`@${usr}`, startingIndex)
@@ -226,6 +226,7 @@ function renderNewMessage(message) {
 
       //update index
       mentionIndex = message.text.indexOf(`@${usr}`, startingIndex)
+
       //insert /span 
       message.text = message.text.slice(0, mentionIndex + sizeOfMention) + "</span>" + message.text.slice(mentionIndex + sizeOfMention);
 
@@ -810,9 +811,6 @@ var userHashed = username
 //recieve direct messages sent
 socket.on("recieveDirectMessage" + userHashed, (packetOut) => {
   //alert(packetOut[0] + "\n" + packetOut[1])
-
-  //make links
-  packetOut[1] = linkify(packetOut[1])
 
   $fromReplace.innerHTML = packetOut[0]
   $messageReplace.innerHTML = packetOut[1]

@@ -1,9 +1,8 @@
 const path = require("path");
 const http = require("http");
 const express = require("express");
-const URI = require("urijs");
 const ip = require('ip');
-const { generateMessage } = require("./utils/messages");
+const { generateMessage, linkify } = require("./utils/messages");
 const { addUser, removeUser, getUser, getUsersInRoom, users } = require("./utils/users");
 const { serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames } = require("./config.js");
 const { encode } = require("html-entities");
@@ -11,7 +10,7 @@ var { msgCooldown } = require("./config.js");
 
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
-const { cLog, Color } = require("./utils/logging");
+const { cLog, Color, time } = require("./utils/logging");
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -47,19 +46,19 @@ io.on("connection", socket => {
   //filter connection
   if (isAlt && altDetection) {
     socket.emit("alt-kick")
-    cLog(Color.bg.blue, "CONNECTION × IP.ALT: " + ip)
+    cLog(Color.bg.red, `${time()} CONNECTION × IP.ALT: ${ip}`)
     return;
   }
 
   if (isBlacklisted) {
     socket.emit("blacklisted-ip-kick")
-    cLog(Color.bg.blue, "CONNECTION × IP.BLACKLISTED: " + ip);
+    cLog(Color.bg.red, `${time()} CONNECTION × IP.BLACKLISTED: ${ip}`)
     return;
   }
 
   if (isBanned) {
     socket.emit("ban", "authenticatedFromSocketServer")
-    cLog(Color.bg.blue, "CONNECTION × IP.BANNED: " + ip);
+    cLog(Color.bg.red, `${time()} CONNECTION × IP.BANNED: ${ip}`)
     return;
   }
 
@@ -67,13 +66,16 @@ io.on("connection", socket => {
   sockets(socket);
 
   if (isAlt && !altDetection)
-    cLog(Color.bg.yellow, "CONNECTION ✓ IP.ALT: " + ip);
+    cLog(Color.bg.green, `${time()} CONNECTION ✓ IP.ALT: ${ip}`);
   else
-    cLog(Color.bg.green, "CONNECTION ✓ IP: " + ip)
+    cLog(Color.bg.green, `${time()} CONNECTION ✓ IP: ${ip}`);
 });
 
 function sockets(socket) {
-  let ip = getIP(socket);
+  //get ip and if they're an admin
+  const ip = getIP(socket);
+  const admin = adminIPs.some(v => ip.includes(v));
+   
 
   socket.on("join", (options, callback) => {
     const { error, user } = addUser({ ip, id: socket.id, ...options });
@@ -81,7 +83,7 @@ function sockets(socket) {
       return callback(error);
     } else {
       socket.join(user.room);
-      cLog(Color.bg.green, `JOIN -> USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+      cLog(Color.bg.green, `${time()} JOIN -> USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
 
       //join and welcome message
       socket.emit("message", generateMessage(`${adminIcon}Admin`, `Welcome, ${user.username}! ${msgGreet}`));
@@ -111,35 +113,33 @@ function sockets(socket) {
 
   socket.on("sendMessage", (message, callback) => {
     const user = getUser(socket.id);
+    var msg = message;
 
     // removes unsafe tags and attributes from html
-    var msg = DOMPurify.sanitize(message);
-    if (msg === "") {
-      cLog(Color.bg.red, `Message from ${getUsername(user)} has been blocked due to XSS.`);
-      msg = `Hi, I'm ${getUsername(user)} and just tried to do XSS.`;
+    if (!admin) {
+      msg = DOMPurify.sanitize(msg);
+      if (msg === "") {
+        cLog(Color.bg.red, `${time()} Message from ${getUsername(user)} has been blocked due to XSS.`);
+        msg = `Hi, I'm ${getUsername(user)} and just tried to do XSS.`;
+      }
+  
+      // convert &, <, >, ", ' into entities
+      msg = encode(msg).replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
     }
 
     // check if msg is over 3000 characters
     if (msg.length > 3000) {
-      cLog(Color.bg.red, `Message from ${getUsername(user)} has been blocked due to character limit.`);
+      cLog(Color.bg.red, `${time()} Message from ${getUsername(user)} has been blocked due to character limit.`);
       msg = `Hi, I'm ${getUsername(user)} and just tried to go over the 3000 character limit.`;
     }
 
-    // convert &, <, >, ", ' into entities
-    msg = encode(msg);
-
-    //fix < and >
-    msg = msg.replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;")
-
     // creates href clickable links for links in the msg
-    msg = URI.withinString(msg, function (url) {
-      return "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>";
-    });
+    msg = linkify(msg)
 
     socket.emit("message-cooldown", msgCooldown);
     io.to(user.room).emit("message", generateMessage(user.username, msg));
 
-    console.log(`MESSAGE -> USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+    cLog(Color.bright, `${time()} MESSAGE > USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
     callback();
   });
 
@@ -151,7 +151,7 @@ function sockets(socket) {
     socket.emit("message-cooldown", msgCooldown);
     io.to(user.room).emit("image", generateMessage(user.username, element));
 
-    console.log(`IMAGE -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+    cLog(Color.bright, `${time()} IMAGE > User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
     callback();
   });
 
@@ -174,7 +174,7 @@ function sockets(socket) {
 
     //check if message is over 280
     if (userMessage.length > 280) {
-      cLog(Color.bg.red, "IP: " + ip + " has tried to bypass the 280 character limit!")
+      cLog(Color.bg.red, `${time()} IP: ${ip} has tried to bypass the 280 character limit!`)
       return callback("Message is over 280!");
     }
 
@@ -185,41 +185,37 @@ function sockets(socket) {
       //send to that user
       var userSendingTo = getUser(userID)
 
-      var packetOut = [userSentFrom.username, userMessage]
+      var packetOut = [userSentFrom.username, linkify(userMessage)]
       io.to(userSendingTo.room).emit("recieveDirectMessage" + userSendTo, packetOut);
 
-      console.log("DM -> FROM: " + getUsername(userSentFrom) + " | TO: " + userSendTo)
+      cLog(Color.bright, `${time()} DM > FROM: ${getUsername(userSentFrom)} | TO: ${userSendTo}`)
       callback();
     }
   });
 
   socket.on("setCooldown", (seconds) => {
-    const user = getUser(socket.id);
-
-    if (!isAdmin(ip)) {
-      cLog(Color.bg.red, "IP: " + ip + " has tried to set cooldown without having admin!")
+    if (!admin) {
+      cLog(Color.bg.red, `${time()} IP: ${ip} has tried to set cooldown without having admin!`)
       return;
     }
 
     msgCooldown = seconds;
     socket.emit("message-cooldown", msgCooldown);
 
-    cLog(Color.bright, "New message cooldown is " + msgCooldown + " seconds. (set by ip: " + ip + ")")
+    cLog(Color.bright, `${time()} New message cooldown is ${msgCooldown} second(s). (set by ip: ${ip})`)
 
     sendToAllRooms(io, "message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-stopwatch fa-lg"></i> The message cooldown has been set to ${seconds} second(s).`))
   });
 
   socket.on("kickUser", (username, callback) => {
-    const user = getUser(socket.id);
-    const userKicking = username;
-
-    if (!isAdmin(ip)) {
-      cLog(Color.bg.red, "!!!!! IP: " + ip + " has tried to kick someone without having Admin !!!!!")
+    if (!admin) {
+      cLog(Color.bg.red, `${time()} !!!!! IP: ${ip} has tried to kick someone without having Admin !!!!!`)
       return callback("bad");
     }
 
-    var userExists = false;
+    const userKicking = username;
 
+    var userExists = false;
     var userModerationObject;
     // check if user sending to is real
     for (let index = 0; index < users.length; ++index) {
@@ -241,22 +237,20 @@ function sockets(socket) {
 
     io.to(userModerationObject.room).emit("kick", username);
 
-    cLog(Color.bright, "User: " + username + " has been kicked. (kicked by ip: " + ip + ")")
+    cLog(Color.bright, `${time()} User: ${username} has been kicked. (kicked by ip: ${ip})`)
     sendToAllRooms(io, "message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-xmark fa-lg"></i> ${username} has been kicked.`));
     callback("good");
   });
 
   socket.on("banUser", (username, callback) => {
-    const user = getUser(socket.id);
-    const userKicking = username;
-
-    if (!isAdmin(ip)) {
-      cLog(Color.bg.red, "!!!!! IP: " + ip + " has tried to ban someone without having Admin !!!!!")
+    if (!admin) {
+      cLog(Color.bg.red, `${time()} !!!!! IP: ${ip} has tried to ban someone without having Admin !!!!!`)
       return callback("bad");
     }
 
-    var userExists = false;
+    const userKicking = username;
 
+    var userExists = false;
     var userModerationObject;
     // check if user sending to is real
     for (let index = 0; index < users.length; ++index) {
@@ -289,26 +283,23 @@ function sockets(socket) {
     banArray.push(username)
     banArray.push(ipUsernameArray[indexOfIP])
 
-    cLog(Color.bright, "User: " + username + " has been banned. (banned by ip: " + ip + ")")
+    cLog(Color.bright, `${time()} User: ${username} has been banned. (banned by ip: ${ip})`)
     sendToAllRooms(io, "message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been banned.`));
 
     callback("good");
   });
 
   socket.on("unbanUser", (username, callback) => {
-    const user = getUser(socket.id);
-    const userUnbanning = username;
-
-    if (!isAdmin(ip)) {
-      cLog(Color.bg.red, "!!!!! IP: " + ip + " has tried to unban someone without having Admin !!!!!")
+    if (!admin) {
+      cLog(Color.bg.red, `${time()} !!!!! IP: ${ip} has tried to unban someone without having Admin !!!!!`)
       return callback("bad");
     }
 
-    var userExists = false;
+    const userUnbanning = username;
 
+    var userExists = false;
     // check if user sending to is real
     for (let index = 0; index < banArray.length; ++index) {
-      //remove shield
       if (banArray[index] === userUnbanning) {
         userExists = true
       }
@@ -345,17 +336,15 @@ function sockets(socket) {
       blacklistedUsernames.splice(index2, 1); //remove username
     }
 
-    cLog(Color.bright, "User: " + username + " has been unbanned. (unbanned by ip: " + ip + ")")
+    cLog(Color.bright, `${time()} User: ${username} has been unbanned. (unbanned by ip: ${ip})`)
     sendToAllRooms(io, "message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been unbanned.`));
 
     callback("good");
   });
 
   socket.on("alert", (message, callback) => {
-    // check if user is actually a admin
-
-    if (!isAdmin(ip)) {
-      cLog(Color.bg.red, "!!!!! IP: " + ip + " has tried to alert everyone without having Admin !!!!!")
+    if (!admin) {
+      cLog(Color.bg.red, `${time()} !!!!! IP: ${ip} has tried to alert everyone without having Admin !!!!!`)
       return callback("bad");
     }
 
@@ -368,8 +357,10 @@ function sockets(socket) {
       return callback("long");
     }
 
+    message = linkify(message)
+
     sendToAllRooms(io, "alert", message)
-    cLog(Color.bright, "IP: " + ip + " has sent a alert to everyone. ALERT = " + message)
+    cLog(Color.bright, `${time()} IP: ${ip} has sent a alert to everyone. ALERT = ${message}`)
 
     callback("good");
   });
@@ -387,7 +378,7 @@ function sockets(socket) {
         ipUsernameArray.splice(index - 1, 1); //remove username
       }
 
-      cLog(Color.bg.red, `LEFT -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+      cLog(Color.bg.blue, `${time()} LEFT -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
 
       io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-large-slash fa-lg"></i> ${user.username} has left!`));
 
@@ -410,13 +401,6 @@ function sendToAllRooms(io, type, string) {
   }
 }
 
-function isAdmin(ip) {
-  if (adminIPs.some(v => ip.includes(v)))
-    return true;
-  else
-    return false;
-}
-
 function getIP(socket) {
   let ip = socket.handshake.address.substring(7);
   if (ip === "" || ip === "127.0.0.1") {
@@ -436,8 +420,8 @@ function getUsername(user) {
 server.listen(port, () => { //credits n stuff
   process.stdout.write('\033c');
 
-  console.log("\n Typsnd is running at:");
-  cLog(Color.fg.cyan, 'http://localhost:' + port, " - Local:    ")
-  cLog(Color.fg.cyan, 'http://' + ip.address() + ":" + port, " - Network:  ")
+  console.log("\n Typsnd is running at: \n");
+  cLog(Color.fg.cyan, `http://localhost:${port}`, ` - Local:   `)
+  cLog(Color.fg.cyan, `http://${ip.address()}:${port}`, ` - Network: `)
   cLog(Color.fg.green, "http://github.com/udu3324 \n", "\n Have fun using Typsnd! Check out\n more of my projects on GitHub! \n ")
 });
