@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "eslint": "^8.14.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.17"
   },
   "repository": {
     "type": "git",
