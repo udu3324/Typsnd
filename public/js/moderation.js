@@ -15,6 +15,41 @@ const $unbanUserButton = document.querySelector("#unban-user-button");
 const $alertMessageInput = document.querySelector("#alert-message-input");
 const $sendAlertButton = document.querySelector("#send-alert-button");
 
+var isAnAdmin = false;
+
+// handle moderation
+socket.on("message-cooldown", msgCooldown => {
+  messageCooldown = msgCooldown;
+  $cooldownInput.value = `${messageCooldown}`;
+});
+
+socket.on("kick", (usernameGiven) => {
+  if (username === usernameGiven) {
+    location.href = "/kick.html"
+  }
+});
+
+socket.on("alt-kick", () => {
+  location.href = "/alt-kick.html";
+});
+
+socket.on("blacklisted-ip-kick", () => {
+  location.href = "/blacklisted-ip-kick.html";
+});
+
+socket.on("ban", (usernameGiven) => {
+  if (username === usernameGiven) {
+    location.href = "/ban.html"
+  } else if (usernameGiven === "authenticatedFromSocketServer") {
+    location.href = "/ban.html"
+  }
+});
+
+socket.on("alert", (message) => {
+  $alertOverlay.firstElementChild.innerHTML = message
+  $alertOverlay.style.top = "0px"
+});
+
 $cooldownUpButton.addEventListener("click", function () {
   if (messageCooldown != 9) {
     messageCooldown++;
@@ -158,3 +193,27 @@ function sendAlert() {
     });
   }
 }
+
+//set admin status and reveal admin panel
+
+socket.on("admin-status", isAdmin => {
+  if (isAdmin[0]) {
+
+    isAnAdmin = true;
+
+    userHashed = isAdmin[1] + username
+
+    adminPanelStyle = true;
+    $adminStatus.innerHTML = "<i class=\"fa-solid fa-lock-open\"></i> You are a Admin!";
+
+    $adminStatus.style.backgroundColor = 'var(--messages)';
+    $adminStatus.style.borderRadius = '4px 4px 0px 0px';
+    $adminStatus.style.paddingTop = '4px';
+    $adminStatus.style.paddingLeft = '4px';
+    $adminStatus.style.paddingRight = '4px';
+    $adminPanel.style.display = "flex";
+  } else {
+    adminPanelStyle = false;
+    $adminStatus.innerHTML = "<i class=\"fa-solid fa-lock\"></i> You aren't a Admin!";
+  }
+});

@@ -4,15 +4,11 @@ var theMenuOpened;
 var timeOut1
 var timeOut2
 var timeOut3
-var timeOut4
-var timeOut5
 
 function stopAnimation() {
     clearTimeout(timeOut1)
     clearTimeout(timeOut2)
     clearTimeout(timeOut3)
-    clearTimeout(timeOut4)
-    clearTimeout(timeOut5)
 }
 
 function toggleMenu(menu, bool) {
@@ -50,7 +46,7 @@ function createMessageOptions(div) {
     var close = div.querySelector("#menu-close-button");
 
     var username = div.firstElementChild.firstElementChild.innerHTML
-    
+
     var user = username;
     if (user.includes("</i>")) {
         user = user.substring(username.indexOf("</i>") + 5)
@@ -58,7 +54,7 @@ function createMessageOptions(div) {
 
     //Menu Div
 
-    mention.onclick = function() {
+    mention.onclick = function () {
         console.log("mentioned!")
 
         if (username.includes("</i>")) {
@@ -69,7 +65,7 @@ function createMessageOptions(div) {
         toggleMenu(menu, false)
     };
 
-    kick.onclick = function() {
+    kick.onclick = function () {
         console.log("kick attempted!")
         if (isAnAdmin) {
             $kickUserInput.value = user
@@ -80,7 +76,7 @@ function createMessageOptions(div) {
         toggleMenu(menu, false)
     };
 
-    ban.onclick = function() {
+    ban.onclick = function () {
         console.log("ban attempted!")
         if (isAnAdmin) {
             $banUserInput.value = user
@@ -91,7 +87,7 @@ function createMessageOptions(div) {
         toggleMenu(menu, false)
     };
 
-    close.onclick = function() {
+    close.onclick = function () {
         console.log("closed!")
         toggleMenu(menu, false)
     };
@@ -99,29 +95,24 @@ function createMessageOptions(div) {
 
     //Message Div
 
-    button.onclick = function() {
+    button.onclick = function () {
         console.log("clicked!")
         if (!menuOpened) {
             toggleMenu(menu, true)
 
             //close menu automatically after 5s
-            if (close.innerHTML.includes(")")) {
-                close.innerHTML = close.innerHTML.substring(0, close.innerHTML.indexOf(")")-4) + " (3)"
-            } else {
-                close.innerHTML += " (3)"
-            }
+            close.innerHTML = "<i class=\"fa-solid fa-xmark\"></i> Close (3)"
 
-            timeOut1 = setTimeout(function(){
-                close.innerHTML = close.innerHTML.substring(0, close.innerHTML.indexOf(")")-4) + " (2)"
+            timeOut1 = setTimeout(function () {
+                close.innerHTML = "<i class=\"fa-solid fa-xmark\"></i> Close (2)"
             }, 1000);
-            timeOut2 = setTimeout(function(){
-                close.innerHTML = close.innerHTML.substring(0, close.innerHTML.indexOf(")")-4) + " (1)"
+            timeOut2 = setTimeout(function () {
+                close.innerHTML = "<i class=\"fa-solid fa-xmark\"></i> Close (1)"
             }, 2000);
-            timeOut5 = setTimeout(function(){
-                if (menuOpened) {
-                    toggleMenu(menu, false)
-                    close.innerHTML = close.innerHTML.substring(0, close.innerHTML.indexOf(")")-4)
-                }
+            timeOut3 = setTimeout(function () {
+                if (!menuOpened) return
+                toggleMenu(menu, false)
+                close.innerHTML = "<i class=\"fa-solid fa-xmark\"></i> Close"
             }, 3000);
         } else {
             //check if there are any other menus opened
@@ -153,7 +144,7 @@ function createMessageOptions(div) {
         } else {
             button.style.pointerEvents = "none"
         }
-            
+
     };
     div.onmouseout = function () {
         this.mouseIsOver = false;
@@ -161,7 +152,7 @@ function createMessageOptions(div) {
             //check if there are any other menus opened
             if (!(document.body.contains(theMenuOpened) && theMenuOpened.style.opacity > 0.1)) {
                 button.style.opacity = 1.0;
-                
+
             }
         } else {
             button.style.opacity = 0.0;

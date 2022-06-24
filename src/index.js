@@ -46,20 +46,17 @@ io.on("connection", socket => {
   //filter connection
   if (isAlt && altDetection) {
     socket.emit("alt-kick")
-    cLog(Color.bg.red, `${time()} CONNECTION × IP.ALT: ${ip}`)
-    return;
+    return cLog(Color.bg.red, `${time()} CONNECTION × IP.ALT: ${ip}`);
   }
 
   if (isBlacklisted) {
     socket.emit("blacklisted-ip-kick")
-    cLog(Color.bg.red, `${time()} CONNECTION × IP.BLACKLISTED: ${ip}`)
-    return;
+    return cLog(Color.bg.red, `${time()} CONNECTION × IP.BLACKLISTED: ${ip}`);
   }
 
   if (isBanned) {
     socket.emit("ban", "authenticatedFromSocketServer")
-    cLog(Color.bg.red, `${time()} CONNECTION × IP.BANNED: ${ip}`)
-    return;
+    return cLog(Color.bg.red, `${time()} CONNECTION × IP.BANNED: ${ip}`);
   }
 
   //allow them to connect
@@ -75,40 +72,38 @@ function sockets(socket) {
   //get ip and if they're an admin
   const ip = getIP(socket);
   const admin = adminIPs.some(v => ip.includes(v));
-   
 
   socket.on("join", (options, callback) => {
     const { error, user } = addUser({ ip, id: socket.id, ...options });
-    if (error) {
-      return callback(error);
-    } else {
-      socket.join(user.room);
-      cLog(Color.bg.green, `${time()} JOIN -> USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+    if (error)
+      return callback(error)
 
-      //join and welcome message
-      socket.emit("message", generateMessage(`${adminIcon}Admin`, `Welcome, ${user.username}! ${msgGreet}`));
-      socket.broadcast.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-check fa-lg"></i> ${user.username} has joined!`));
+    socket.join(user.room);
+    cLog(Color.bg.green, `${time()} JOIN -> USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
 
-      //send new room data
-      io.to(user.room).emit("roomData", {
-        room: user.room,
-        users: getUsersInRoom(user.room)
-      });
+    //join and welcome message
+    socket.emit("message", generateMessage(`${adminIcon}Admin`, `Welcome, ${user.username}! ${msgGreet}`));
+    socket.broadcast.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-check fa-lg"></i> ${user.username} has joined!`));
 
-      //add ip to arrays
-      ipArray.push(ip);
+    //send new room data
+    io.to(user.room).emit("roomData", {
+      room: user.room,
+      users: getUsersInRoom(user.room)
+    });
 
-      ipUsernameArray.push(user.username)
-      ipUsernameArray.push(ip)
+    //add ip to arrays
+    ipArray.push(ip);
 
-      //send user if they're an admin and what the admin icon is
-      var adminArr = [adminIPs.some(v => ip.includes(v)), adminIcon]
-      socket.emit("admin-status", adminArr)
+    ipUsernameArray.push(user.username)
+    ipUsernameArray.push(ip)
 
-      socket.emit("starting-data", [tabs, msgCooldown, htmlTitle])
+    //send user if they're an admin and what the admin icon is
+    var adminArr = [adminIPs.some(v => ip.includes(v)), adminIcon]
+    socket.emit("admin-status", adminArr)
 
-      callback();
-    }
+    socket.emit("starting-data", [tabs, msgCooldown, htmlTitle])
+
+    callback();
   });
 
   socket.on("sendMessage", (message, callback) => {
@@ -122,7 +117,7 @@ function sockets(socket) {
         cLog(Color.bg.red, `${time()} Message from ${getUsername(user)} has been blocked due to XSS.`);
         msg = `Hi, I'm ${getUsername(user)} and just tried to do XSS.`;
       }
-  
+
       // convert &, <, >, ", ' into entities
       msg = encode(msg).replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
     }
@@ -169,6 +164,7 @@ function sockets(socket) {
       if (users[index].username.replace(adminIcon, "") === userSendTo) {
         userID = users[index].id;
         userExists = true
+        break;
       }
     }
 
@@ -194,10 +190,8 @@ function sockets(socket) {
   });
 
   socket.on("setCooldown", (seconds) => {
-    if (!admin) {
-      cLog(Color.bg.red, `${time()} IP: ${ip} has tried to set cooldown without having admin!`)
-      return;
-    }
+    if (!admin)
+      return cLog(Color.bg.red, `${time()} IP: ${ip} has tried to set cooldown without having admin!`)
 
     msgCooldown = seconds;
     socket.emit("message-cooldown", msgCooldown);
@@ -231,9 +225,8 @@ function sockets(socket) {
       }
     }
 
-    if (!userExists) {
-      return callback("notExistingUser");
-    }
+    if (!userExists)
+      return callback("notExistingUser")
 
     io.to(userModerationObject.room).emit("kick", username);
 
@@ -260,6 +253,7 @@ function sockets(socket) {
         if (!(users[index].username.includes(adminIcon, ""))) {
           userExists = true
           userModerationObject = users[index]
+          break;
         } else {
           return callback("isAdmin");
         }
@@ -302,6 +296,7 @@ function sockets(socket) {
     for (let index = 0; index < banArray.length; ++index) {
       if (banArray[index] === userUnbanning) {
         userExists = true
+        break;
       }
     }
 
@@ -403,18 +398,17 @@ function sendToAllRooms(io, type, string) {
 
 function getIP(socket) {
   let ip = socket.handshake.address.substring(7);
-  if (ip === "" || ip === "127.0.0.1") {
+  if (ip === "" || ip === "127.0.0.1")
     ip = "localhost";
-  }
+
   return ip;
 }
 
 function getUsername(user) {
-  if (user.username === undefined) {
+  if (user.username === undefined)
     return user.replace(`${adminIcon}`, "(admin) ");
-  } else {
+  else
     return user.username.replace(`${adminIcon}`, "(admin) ");
-  }
 }
 
 server.listen(port, () => { //credits n stuff

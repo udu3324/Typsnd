@@ -2,8 +2,6 @@
 /* eslint-disable no-undef */
 const socket = io();
 
-var isAnAdmin = false;
-
 // CSS
 var cssVar = document.querySelector(':root');
 cssVar.style.setProperty('--accent', getCookie("accent"));
@@ -73,6 +71,8 @@ if (room === "") {
   room = "Typsnd"
 }
 
+var messageCooldown;
+
 //set username on bottom left corner
 $user.innerHTML = username;
 
@@ -127,45 +127,41 @@ $scrollDownButton.addEventListener("click", function () {
   $scrollDownButton.style.visibility = "hidden";
 });
 
-// socket server kick below
-socket.on("kick", (usernameGiven) => {
-  if (username === usernameGiven) {
-    location.href = "/kick.html"
+// show disconnect div when lost connection to socketio
+socket.on('disconnect', function () {
+  console.log("Disconnected from client!")
+  $settingsOverlay.style.display = "none";
+  $emojiBox.style.display = "none";
+  $disconnectOverlay.style.display = "flex";
+
+  $(':button').prop('disabled', true);
+  $refreshButton.disabled = false;
+  
+  setInterval(refreshLoop(), 11000);
+});
+
+function delay(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
+
+//very long func that just animates it lol
+async function refreshLoop() {
+  for (let index = 0; index < 10; ++index) {
+    $refreshButton.innerHTML = "<i class=\"fa-solid fa-rotate-right\"></i> Refreshing in " + (10 - index)
+    await delay(1000);
   }
-});
+  refreshPage()
+}
 
-socket.on("alt-kick", () => {
-  location.href = "/alt-kick.html";
-});
-
-socket.on("blacklisted-ip-kick", () => {
-  location.href = "/blacklisted-ip-kick.html";
-});
-
-socket.on("ban", (usernameGiven) => {
-  if (username === usernameGiven) {
-    location.href = "/ban.html"
-  } else if (usernameGiven === "authenticatedFromSocketServer") {
-    location.href = "/ban.html"
-  }
-});
-
-socket.on("alert", (message) => {
-  $alertOverlay.firstElementChild.innerHTML = message
-  $alertOverlay.style.top = "0px"
-});
+$refreshButton.addEventListener("click", refreshPage);
+function refreshPage() {
+  location.reload();
+}
 
 $alertOverlay.lastElementChild.addEventListener("click", closeAlert);
 function closeAlert() {
   $alertOverlay.style.top = "-999px"
 }
-
-// Set message cooldown input
-var messageCooldown;
-socket.on("message-cooldown", msgCooldown => {
-  messageCooldown = msgCooldown;
-  $cooldownInput.value = `${messageCooldown}`;
-});
 
 // message animate opacity
 function messageNew() {
@@ -891,3 +887,62 @@ $joinDefaultButton.onclick = function () {
     alertAsync("You're already in the default room!")
   }
 }
+
+// Insert Emoji
+$insertEmojiButton.addEventListener("click", function () {
+  console.log("Insert Emoji button has been clicked on.");
+  if (boolClickedOn) {
+    $emojiBox.style.display = "none"
+    boolClickedOn = false;
+  } else {
+    $emojiBox.style.display = "flex"
+    boolClickedOn = true;
+  }
+});
+
+var onEmojiBox = true;
+// emoji box
+$emojiBox.onmouseover = function () {
+  onEmojiBox = false
+}
+$emojiBox.onmouseout = function () {
+  onEmojiBox = true
+}
+
+// On Emoji Click
+$emojiBox.addEventListener('emoji-click', event => sendEmoji(event.detail));
+function sendEmoji(detail) {
+  $messageFormInput.value = $messageFormInput.value + detail.unicode;
+}
+
+// Send Images with CTRL + V
+document.onpaste = function (event) {
+  var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+  console.log(JSON.stringify(items)); // might give you mime types
+  for (var index in items) {
+    var item = items[index];
+    if (item.kind === 'file') {
+      var blob = item.getAsFile();
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        //emit new message
+
+        if (pasteEnabled) {
+          pasteEnabled = false;
+          socket.emit("sendImage", event.target.result, error => {
+            if (error == "Refresh the page!") {
+              window.location.reload();
+              return console.log(error);
+            } else {
+              console.log("Message delivered!");
+
+              timeLeft = messageCooldown;
+              cooldownMSGSend();
+            }
+          });
+        }
+      };
+      reader.readAsDataURL(blob);
+    }
+  }
+};

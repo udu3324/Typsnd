@@ -1,200 +1,187 @@
-/* Custom Font */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+@import url(https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap);
 
 body {
     line-height: 1.4;
-    color: #2C2F33;
-    font-family: 'JetBrains Mono', monospace;
+    color: #2c2f33;
+    font-family: "JetBrains Mono",monospace
 }
 
-/* Editable Color */
 :root {
     --accent: #8FBC8F;
-
     --messageDiv: #36393f;
     --messages: #313338;
     --compose: #40444b;
     --composeInput: #40444b;
-
     --userSidebar: #1d1f22;
     --sidebar: #202225;
     --roomTitle: #2c2f3a;
     --fontColor: #ffffff;
-
     --scrollbarTrack: #2E3338;
-    --scrollbarThumb: #202225;
+    --scrollbarThumb: #202225
 }
-
-/* General Styles */
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "JetBrains Mono",monospace
 }
 
 img {
-    border-radius: 4px;
+    border-radius: 4px
 }
 
 p#kicked {
-    color: #cdcdcd;
+    color: #cdcdcd
 }
 
 html {
-    font-size: 16px;
+    font-size: 16px
+}
+
+input,label {
+    font-size: 14px
 }
 
 input {
-    font-size: 14px;
+    border: 1px solid #eee;
+    padding: 12px;
+    outline: 0
 }
 
 label {
     display: block;
-    font-size: 14px;
     margin-bottom: 8px;
-    color: var(--fontColor);
+    color: var(--fontColor)
 }
 
-input {
-    border: 1px solid #eeeeee;
-    padding: 12px;
-    outline: none;
-}
-
-/* Scrollbar Styles */
 ::-webkit-scrollbar {
     min-width: 10px;
     max-width: 10px;
     min-height: 10px;
-    max-height: 10px;
+    max-height: 10px
 }
 
 ::-webkit-scrollbar-corner {
-    background: var(--scrollbarTrack);
+    background: var(--scrollbarTrack)
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--scrollbarTrack);
+    background: var(--scrollbarTrack)
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--scrollbarThumb);
-    border-radius: 10px;
+    border-radius: 10px
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: var(--scrollbarThumb);
+::-webkit-scrollbar-thumb,::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbarThumb)
 }
 
-/* Button Styles */
 button {
     cursor: pointer;
     padding: 12px;
     background: var(--accent);
-    border: none;
-    color: white;
+    border: 0;
+    color: #fff;
     font-size: 16px;
-    transition: 0.3s ease;
-    border-radius: 4px;
+    transition: .3s ease;
+    border-radius: 4px
 }
 
 button:hover {
-    filter: brightness(85%);
+    filter: brightness(85%)
 }
 
 button:disabled {
-    filter: brightness(75%);
+    filter: brightness(75%)
 }
 
-/* The switch - the box around the slider */
 .switch {
     position: relative;
     display: inline-block;
     width: 30px;
-    height: 17px;
+    height: 17px
 }
 
-/* Hide default HTML checkbox */
 .switch input {
     opacity: 0;
     width: 0;
-    height: 0;
+    height: 0
 }
 
-/* The slider */
-.slider {
+.slider,.slider:before {
     position: absolute;
+    -webkit-transition: .4s;
+    transition: .4s
+}
+
+.slider {
     cursor: pointer;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #17d337;
-    -webkit-transition: .4s;
-    transition: .4s;
+    background-color: #17d337
 }
 
 .slider:before {
-    position: absolute;
     content: "";
     height: 13px;
     width: 13px;
     left: 2px;
     bottom: 2px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
+    background-color: #fff
 }
 
 input:checked+.slider {
-    background-color: #ad1313;
+    background-color: #ad1313
 }
 
 input:checked+.slider:before {
     -webkit-transform: translateX(13px);
     -ms-transform: translateX(13px);
-    transform: translateX(13px);
+    transform: translateX(13px)
 }
 
-/* Rounded sliders */
 .slider.round {
-    border-radius: 34px;
+    border-radius: 34px
 }
 
 .slider.round:before {
-    border-radius: 50%;
+    border-radius: 50%
 }
 
-/* Join Page Styles */
+#settings-overlay,.centered-form {
+    justify-content: center;
+    align-items: center
+}
+
 .centered-form {
-    background: -webkit-linear-gradient(bottom left, #2662B3, #66CB2F);
+    background: -webkit-linear-gradient(bottom left,#2662b3,#66cb2f);
     width: 100vw;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex
 }
 
 .centered-form__box {
-    color: white;
+    color: #fff;
     background: var(--messageDiv);
     padding: 24px;
     width: 340px;
-    border-radius: 4px;
+    border-radius: 4px
 }
 
 .centered-form__box2 {
-    color: white;
+    color: #fff;
     background: #36393f;
     padding: 24px;
     width: 570px;
-    border-radius: 4px;
+    border-radius: 4px
 }
 
 .centered-form button {
-    width: 100%;
+    width: 100%
 }
 
 .centered-form input {
@@ -203,32 +190,30 @@ input:checked+.slider:before {
     border: 1px solid var(--accent);
     margin-bottom: 16px;
     width: 100%;
-    border-radius: 4px;
+    border-radius: 4px
 }
 
-h1#title {
+h1#title,span#title-pronounce {
     font-size: 5em;
-    color: var(--fontColor);
+    color: var(--fontColor)
 }
 
 span#title-pronounce {
     font-style: italic;
-    font-weight: normal;
-    font-size: 0.9em;
+    font-weight: 400;
+    font-size: .9em;
     display: inline-block;
     margin-bottom: 20px;
-    color: var(--fontColor);
-    filter: brightness(55%);
+    filter: brightness(55%)
 }
 
-/* Chat Page Layout */
 .chat {
-    display: flex;
+    display: flex
 }
 
 .users__sidebar {
     height: 100vh;
-    overflow-y: auto;
+    overflow-y: auto
 }
 
 .user__sidebar {
@@ -236,7 +221,7 @@ span#title-pronounce {
     display: flex;
     flex-shrink: 0;
     padding: 24px;
-    font-size: .742em;
+    font-size: .742em
 }
 
 .sidebar__main {
@@ -247,54 +232,59 @@ span#title-pronounce {
     flex-direction: column;
     max-height: 100vh;
     min-width: 242px;
-    max-width: 242px;
+    max-width: 242px
 }
 
-/* Settings Overlay */
 p#admin-status {
-    padding-bottom: 15px;
+    padding-bottom: 15px
 }
 
 .dark-mode-div {
-    padding-top: 3px;
+    padding-top: 3px
 }
 
 p.dark-mode-p {
-    display: inline;
+    display: inline
+}
+
+.settings__box,input#username-input {
+    color: var(--fontColor);
+    border-radius: 4px
 }
 
 input#username-input {
-    color: var(--fontColor);
     background: var(--composeInput);
     border: 1px solid var(--accent);
     padding: 12px;
-    margin: 0 -28px 0 0;
+    margin: 0-28px 0 0;
     flex-grow: 1;
-    border-radius: 4px;
-    transition: 0.3s ease;
-    width: 194px;
+    transition: .3s ease;
+    width: 194px
 }
 
 button#set-cooldown-button {
     width: 217px;
-    border-radius: 0px 4px 0px 0px;
+    border-radius: 0 4px 0 0;
     padding-top: 11px;
-    text-align: left;
+    text-align: left
 }
 
-button#ban-user-button,
-button#kick-user-button,
-button#unban-user-button {
+button#ban-user-button,button#kick-user-button,button#unban-user-button {
     width: 120px;
-    border-radius: 0px;
+    border-radius: 0;
     padding-top: 11px;
-    text-align: left;
+    text-align: left
 }
 
 button#set-username-button {
-    border-radius: 0px 4px 4px 0px;
+    border-radius: 0 4px 4px 0;
     padding-top: 11px;
-    text-align: left;
+    text-align: left
+}
+
+input.cooldown-int,input[type=color] {
+    -webkit-appearance: none;
+    border-radius: 4px
 }
 
 input.cooldown-int {
@@ -302,172 +292,152 @@ input.cooldown-int {
     background: var(--composeInput);
     border: 1px solid var(--accent);
     padding: 12px;
-    margin: 0 -20px 0 0;
+    margin: 0-20px 0 0;
     flex-grow: 1;
-    border-radius: 4px;
-    transition: 0.3s ease;
+    transition: .3s ease;
     width: 50px;
-    -webkit-appearance: none;
-    -moz-appearance: textfield;
+    -moz-appearance: textfield
 }
 
-button#cooldown-up-button,
-button#cooldown-down-button {
-    border-radius: 0px 0px 0px 0px;
+button#cooldown-down-button,button#cooldown-up-button {
+    border-radius: 0 0 0 0;
     padding-top: 11px;
     margin-right: -10px;
     padding-left: 7px;
-    padding-right: 7px;
+    padding-right: 7px
 }
 
 .settings__box {
-    color: var(--fontColor);
     background: var(--messageDiv);
-    padding: 24px;
-    border-radius: 4px;
+    padding: 24px
 }
 
 #settings-overlay {
-    background-color: rgba(0, 0, 0, 0.301);
+    background-color: rgba(0,0,0,.301);
     position: fixed;
     width: 100%;
     height: 100%;
-    justify-content: center;
-    align-items: center;
-    z-index: 4;
+    z-index: 4
 }
 
-input[type="color"] {
-    -webkit-appearance: none;
-    border: none;
+input[type=color] {
+    border: 0;
     width: 12px;
     height: 12px;
-    padding: 0px;
-    border-radius: 4px;
+    padding: 0
 }
 
-input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 0;
+input[type=color]::-webkit-color-swatch-wrapper {
+    padding: 0
 }
 
-input[type="color"]::-webkit-color-swatch {
-    border: none;
+input[type=color]::-webkit-color-swatch {
+    border: 0
 }
 
 div#admin-panel {
     padding: 4px;
     background-color: var(--messages);
-    border-radius: 0px 0px 4px 4px;
+    border-radius: 0 0 4px 4px;
     flex-direction: column;
-    margin-bottom: 21px;
+    margin-bottom: 21px
 }
 
 input#cooldown-input {
-    border-radius: 4px 0px 0px 0px;
+    border-radius: 4px 0 0 0;
     color: var(--fontColor);
     background: var(--composeInput);
-    border: 1px solid var(--accent);
+    border: 1px solid var(--accent)
 }
 
-input#kick-user-input,
-input#ban-user-input,
-input#unban-user-input {
+input#ban-user-input,input#kick-user-input,input#unban-user-input {
+    border-radius: 0;
+    margin: 0-14px 0 0;
+    width: 188px
+}
+
+div#alert,div#ban,div#kick,div#unban {
+    margin-top: -1px
+}
+
+.compose input,input#ban-user-input,input#kick-user-input,input#room-input,input#unban-user-input,input#user-message-input,textarea#alert-message-input,textarea#message-input {
     color: var(--fontColor);
     background: var(--composeInput);
     border: 1px solid var(--accent);
-    border-radius: 0px;
     padding: 12px;
-    margin: 0 -14px 0 0;
     flex-grow: 1;
-    transition: 0.3s ease;
-    width: 188px;
-}
-
-div#kick,
-div#ban,
-div#unban,
-div#alert {
-    margin-top: -1px;
+    transition: .3s ease
 }
 
 textarea#alert-message-input {
-    color: var(--fontColor);
-    background: var(--composeInput);
-    border: 1px solid var(--accent);
-    padding: 12px;
-    flex-grow: 1;
-    transition: 0.3s ease;
     width: 303px;
     margin-bottom: 21px;
     height: 80px;
-    outline: none;
+    outline: 0;
     resize: none;
-    border-radius: 0px;
+    border-radius: 0
 }
 
 button#send-alert-button {
     display: block;
     margin-top: -28px;
     width: 303px;
-    border-radius: 0px 0px 5px 5px;
+    border-radius: 0 0 5px 5px
 }
 
 p#accent-color-p {
-    padding-bottom: 11px;
+    padding-bottom: 11px
 }
 
-/* Emoji Picker */
 emoji-picker {
     position: fixed;
     bottom: 0;
     right: 0;
     margin-bottom: 80px;
     margin-right: 80px;
-    display: none;
+    display: none
 }
 
-/* Disconnect Overlay */
 .disconnect__box {
     color: var(--fontColor);
     background: #b72a2a;
     padding: 24px;
     width: 420px;
-    border-radius: 4px;
+    border-radius: 4px
 }
 
 #disconnect-overlay {
-    background-color: rgba(0, 0, 0, 0.301);
+    background-color: rgba(0,0,0,.301);
     position: fixed;
     width: 100%;
     height: 100%;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 100
 }
 
 button#refreshButton {
     margin-top: 14px;
-    background: #7e1c1c;
+    background: #7e1c1c
 }
 
-/* Chat styles */
 .chat__main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     max-height: 100vh;
-    min-width: 242px;
+    min-width: 242px
 }
 
 div#messages {
     color: var(--fontColor);
     background: var(--messageDiv);
-    padding-bottom: 17px;
+    padding-bottom: 17px
 }
 
 .chat__messages {
     flex-grow: 1;
-    overflow-y: auto;
+    overflow-y: auto
 }
 
 button#scrollDownMSG {
@@ -478,38 +448,34 @@ button#scrollDownMSG {
     margin-right: 24px;
     border-radius: 27px;
     visibility: hidden;
-    z-index: 3;
+    z-index: 3
 }
 
-/* Message Styles */
-
 .message {
-    margin-bottom: 16px;
     background: var(--messages);
     border-radius: 4px;
     padding: 10px;
-    margin: 17px 17px 0 17px;
+    margin: 17px 17px 0
 }
 
 .message__name {
     font-weight: 600;
     font-size: 18px;
-    margin-right: 8px;
+    margin-right: 8px
 }
 
 p#message__container {
     padding-top: 3px;
-    word-break: break-word;
-    margin-top: -151px;
+    margin-top: -151px
 }
 
 .message__meta {
     color: var(--fontColor);
-    font-size: 14px;
+    font-size: 14px
 }
 
-.message a {
-    color: var(--accent);
+.message a,a {
+    color: var(--accent)
 }
 
 button#message-options {
@@ -517,9 +483,9 @@ button#message-options {
     top: -48px;
     right: 22px;
     font-size: 18px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    opacity: 0.0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0
 }
 
 div#message-options-div {
@@ -529,23 +495,23 @@ div#message-options-div {
     position: relative;
     top: -45px;
     right: 22px;
-    z-index: 3;
+    z-index: 3
 }
 
 button.message-options-buttons {
     width: 100%;
-    border-radius: 0px;
+    border-radius: 0;
     text-align: left;
     padding-top: 5px;
-    padding-bottom: 5px;
+    padding-bottom: 5px
 }
 
 span#mention-text {
     background-color: #5373ec;
-    color: #ffffff;
+    color: #fff;
     border-radius: 3px;
     margin-right: 3px;
-    padding: 0px 3px 0px 3px;
+    padding: 0 3px
 }
 
 .mentioned-highliter {
@@ -553,188 +519,138 @@ span#mention-text {
     border-color: var(--messageDiv);
     border-left: 17px solid var(--accent);
     border-right: 17px solid var(--userSidebar);
-    background: var(--userSidebar);
+    background: var(--userSidebar)
 }
-
-/* Message Composition Styles */
 
 .compose {
     background: var(--compose);
     display: flex;
     flex-shrink: 0;
-    padding: 24px;
+    padding: 24px
 }
 
 .compose form {
     display: flex;
-    flex-grow: 1;
+    flex-grow: 1
 }
 
-.compose input {
-    color: var(--fontColor);
-    background: var(--composeInput);
-    border: 1px solid var(--accent);
+.compose input,input#room-input,input#user-message-input,textarea#message-input {
     width: 100%;
-    padding: 12px;
-    flex-grow: 1;
-    border-radius: 0px 0px 0px 0px;
-    transition: 0.3s ease;
+    border-radius: 0 0 0 0
 }
 
 .compose button {
     font-size: 14px;
-    border-radius: 0px 0px 0px 0px;
+    border-radius: 0 0 0 0
 }
 
 button#sendImageButton {
-    border-radius: 4px 0px 0px 4px;
+    border-radius: 4px 0 0 4px
 }
 
 button#insertEmojiButton {
-    border-radius: 0px 3px 3px 0px;
+    border-radius: 0 3px 3px 0
 }
-
-/* Chat Sidebar Styles */
 
 .room-title {
     font-weight: 400;
     font-size: 30px;
     background: var(--roomTitle);
-    padding: 24px;
+    padding: 24px
 }
 
 .list-title {
     font-weight: 500;
     font-size: 20px;
     margin-bottom: 4px;
-    padding: 12px 24px 0 24px;
+    padding: 12px 24px 0
 }
 
 .users {
     list-style-type: none;
     font-weight: 300;
-    padding: 12px 24px 0 24px;
-    word-break: break-all;
+    padding: 12px 24px 0;
+    word-break: break-all
 }
 
-/* Uploaded Image */
 img#uploaded-image {
     border-radius: 4px;
     max-width: 75%;
-    height: auto;
+    height: auto
 }
 
 img#uploaded-image:hover {
     cursor: pointer;
     filter: brightness(70%);
-    transition: .2s;
+    transition: .2s
 }
 
-/* Tools Bar */
-div#tools-bar {
+#message-overlay,#room-overlay,div#tools-bar {
     position: fixed;
     width: 100%;
+    justify-content: center
+}
+
+div#tools-bar {
     display: flex;
-    justify-content: center;
-    transition: 0.5s ease;
+    transition: .5s ease;
     opacity: 0;
     z-index: 3;
-    top: -50px;
+    top: -50px
 }
 
 .toolButton {
-    border-radius: 0px 0px 20px 20px;
+    border-radius: 0 0 20px 20px;
     margin-left: 7px;
-    margin-right: 7px;
+    margin-right: 7px
 }
 
 .toggleButton {
-    border-radius: 0px 0px 30px 30px;
+    border-radius: 0 0 30px 30px;
     margin-right: 6px;
     position: absolute;
     right: 0;
     padding-left: 15px;
     padding-right: 15px;
-    z-index: 3;
+    z-index: 3
 }
 
-/* Room Overlay */
-.room__box {
+.message__box,.room__box {
     color: var(--fontColor);
     background: var(--messageDiv);
     padding: 24px;
-    border-radius: 4px;
+    border-radius: 4px
 }
 
-#room-overlay {
-    background-color: rgba(0, 0, 0, 0.301);
-    position: fixed;
-    width: 100%;
+#message-overlay,#room-overlay {
+    background-color: rgba(0,0,0,.301);
     height: 100%;
-    justify-content: center;
     align-items: center;
-    z-index: 4;
+    z-index: 4
+}
+
+input#room-input,input#user-message-input,textarea#message-input {
+    border-radius: 4px;
+    width: 286px
 }
 
 input#room-input {
-    color: var(--fontColor);
-    background: var(--composeInput);
-    border: 1px solid var(--accent);
-    padding: 12px;
-    margin: 0 16px 0 0;
-    flex-grow: 1;
-    border-radius: 4px;
-    transition: 0.3s ease;
-    width: 286px;
+    margin: 0 16px 0 0
 }
 
 button#join-default-button {
-    width: 365px;
+    width: 365px
 }
 
-/* Message Overlay */
-.message__box {
-    color: var(--fontColor);
-    background: var(--messageDiv);
-    padding: 24px;
-    border-radius: 4px;
-}
-
-#message-overlay {
-    background-color: rgba(0, 0, 0, 0.301);
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    z-index: 4;
-}
-
-input#user-message-input {
-    color: var(--fontColor);
-    background: var(--composeInput);
-    border: 1px solid var(--accent);
-    padding: 12px;
-    flex-grow: 1;
-    border-radius: 4px;
-    transition: 0.3s ease;
-    width: 286px;
-    margin-bottom: 21px;
+input#user-message-input,textarea#message-input {
+    margin-bottom: 21px
 }
 
 textarea#message-input {
-    color: var(--fontColor);
-    background: var(--composeInput);
-    border: 1px solid var(--accent);
-    padding: 12px;
-    flex-grow: 1;
-    border-radius: 4px;
     transition: 0s ease;
-    width: 286px;
-    margin-bottom: 21px;
     height: 164px;
-    outline: none;
-    resize: none;
+    outline: 0;
+    resize: none
 }
 
 div#message-bar {
@@ -744,59 +660,54 @@ div#message-bar {
     top: 50%;
     left: 50%;
     border-radius: 10px;
-    box-shadow: 0px 8px 15px rgb(0 0 0 / 22%);
+    box-shadow: 0 8px 15px rgb(0 0 0/22%);
     z-index: 5;
-    max-width: 509px;
+    max-width: 509px
 }
 
 div#from {
-    padding: 9px 9px 3px 9px;
+    padding: 9px 9px 3px;
     background-color: var(--accent);
-    border-radius: 10px;
+    border-radius: 10px
 }
 
 div#message-to {
-    padding: 3px 9px 9px 9px;
+    padding: 3px 9px 9px
 }
 
 button#close-message {
-    padding: 0px 0px 0px 4px;
-    font-family: 'JetBrains Mono', monospace;
+    padding: 0 0 0 4px;
+    font-family: "JetBrains Mono",monospace
 }
 
-p#message-replace {
-    word-break: break-word;
+p#message-replace,p#message__container {
+    word-break: break-word
 }
 
 button#send-message-button {
-    width: 286px;
+    width: 286px
 }
 
-a {
-    color: var(--accent);
-}
-
-/* Alert Div */
 div#alert-overlay {
     text-align: center;
     position: fixed;
     width: 100%;
     z-index: 10;
-    color: white;
+    color: #fff;
     background-color: var(--accent);
     padding: 6px;
     font-size: 30px;
     top: -999px;
-    word-break: break-all;
+    word-break: break-all
 }
 
 button#close-alert-overlay {
     font-size: 30px;
     border-style: solid;
-    padding: 0px 10px 0px 10px;
-    border-radius: 13px;
+    padding: 0 10px;
+    border-radius: 13px
 }
 
 div#alert-overlay a {
-    filter: invert(100%);
+    filter: invert(100%)
 }

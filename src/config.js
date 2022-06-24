@@ -6,7 +6,7 @@ var adminIcon = "<i class=\"fa-solid fa-shield\"></i> ";
 var altDetection = true;
 var blacklistedIPs = [];
 var msgCooldown = "2";
-// Filter is ignored if user is admin + not case sensitive
+// Filter is not case sensitive & doesn't apply to admins
 var blacklistedUsernames = ["admin", "mod", "staff", "server", "typsnd", "code", "system"];
 
 // Chat Addons / Functionality
