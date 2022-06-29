@@ -48,18 +48,14 @@ function createMessageOptions(div) {
     var username = div.firstElementChild.firstElementChild.innerHTML
 
     var user = username;
-    if (user.includes("</i>")) {
+    if (user.includes("</i>"))
         user = user.substring(username.indexOf("</i>") + 5)
-    }
 
     //Menu Div
 
     mention.onclick = function () {
-        console.log("mentioned!")
-
-        if (username.includes("</i>")) {
+        if (username.includes("</i>"))
             username = username.substring(username.indexOf("</i>") + 5);
-        }
 
         $messageFormInput.value += "@" + username + " "
         toggleMenu(menu, false)
@@ -139,12 +135,10 @@ function createMessageOptions(div) {
     div.onmouseover = function () {
         this.mouseIsOver = true;
         //reveal the messages options button if menu is closed
-        if (!menuOpened) {
+        if (!menuOpened)
             button.style.opacity = 1.0;
-        } else {
+        else
             button.style.pointerEvents = "none"
-        }
-
     };
     div.onmouseout = function () {
         this.mouseIsOver = false;

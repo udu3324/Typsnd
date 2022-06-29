@@ -2,22 +2,17 @@ const $cooldownSetButton = document.querySelector("#set-cooldown-button");
 const $cooldownInput = document.querySelector("#cooldown-input");
 const $cooldownUpButton = document.querySelector("#cooldown-up-button");
 const $cooldownDownButton = document.querySelector("#cooldown-down-button");
-
 const $kickUserInput = document.querySelector("#kick-user-input");
 const $kickUserButton = document.querySelector("#kick-user-button");
-
 const $banUserInput = document.querySelector("#ban-user-input");
 const $banUserButton = document.querySelector("#ban-user-button");
-
 const $unbanUserInput = document.querySelector("#unban-user-input");
 const $unbanUserButton = document.querySelector("#unban-user-button");
-
 const $alertMessageInput = document.querySelector("#alert-message-input");
 const $sendAlertButton = document.querySelector("#send-alert-button");
 
 var isAnAdmin = false;
 
-// handle moderation
 socket.on("message-cooldown", msgCooldown => {
   messageCooldown = msgCooldown;
   $cooldownInput.value = `${messageCooldown}`;
@@ -38,11 +33,8 @@ socket.on("blacklisted-ip-kick", () => {
 });
 
 socket.on("ban", (usernameGiven) => {
-  if (username === usernameGiven) {
+  if (username === usernameGiven || usernameGiven === "authenticatedFromSocketServer")
     location.href = "/ban.html"
-  } else if (usernameGiven === "authenticatedFromSocketServer") {
-    location.href = "/ban.html"
-  }
 });
 
 socket.on("alert", (message) => {
@@ -83,26 +75,23 @@ $kickUserInput.addEventListener("keyup", function (event) {
   }
 });
 function kickUser() {
-  if ($kickUserInput.value === "") {
-    window.alert("You need a username! It can't be empty.");
-  } else {
-    // send msg alerting change of username
-    var kickingUsername = $kickUserInput.value
-    socket.emit("kickUser", kickingUsername, error => {
-      if (error === "bad") {
-        window.location.reload();
-        return console.log(error);
-      } else if (error === "notExistingUser") {
-        alertAsync("The user you tried to kick doesn't exist!")
-      } else if (error === "isAdmin") {
-        alertAsync("The user you tried to kick is a admin!")
-      } else {
-        alertAsync("Sucessfully kicked the user.")
-        console.log("Kicked user successfuly.");
-      }
-    });
-    $kickUserInput.value = "";
-  }
+  if ($kickUserInput.value === "")
+    return alertAsync("You need a username! It can't be empty.");
+
+  // send msg alerting change of username
+  var kickingUsername = $kickUserInput.value
+  socket.emit("kickUser", kickingUsername, error => {
+    if (error === "bad")
+      return window.location.reload();
+    if (error === "notExistingUser")
+      return alertAsync("The user you tried to kick doesn't exist!")
+    if (error === "isAdmin")
+      return alertAsync("The user you tried to kick is a admin!")
+
+    alertAsync("Sucessfully kicked the user.")
+    console.log("Kicked user successfuly.");
+  });
+  $kickUserInput.value = "";
 }
 
 $banUserButton.addEventListener("click", banUser);
@@ -113,26 +102,21 @@ $banUserInput.addEventListener("keyup", function (event) {
   }
 });
 function banUser() {
-  if ($banUserInput.value === "") {
-    window.alert("You need a username! It can't be empty.");
-  } else {
-    var banningUsername = $banUserInput.value
+  if ($banUserInput.value === "")
+    return alertAsync("You need a username! It can't be empty.");
 
-    socket.emit("banUser", banningUsername, error => {
-      if (error === "bad") {
-        window.location.reload();
-        return console.log(error);
-      } else if (error === "notExistingUser") {
-        alertAsync("The user you tried to ban doesn't exist!")
-      } else if (error === "isAdmin") {
-        alertAsync("The user you tried to ban is a admin!")
-      } else {
-        alertAsync("Sucessfully banned the user.")
-        console.log("Banned user successfuly.");
-      }
-    });
-    $banUserInput.value = "";
-  }
+  socket.emit("banUser", $banUserInput.value, error => {
+    if (error === "bad")
+      return window.location.reload();
+    if (error === "notExistingUser")
+      return alertAsync("The user you tried to ban doesn't exist!")
+    if (error === "isAdmin")
+      return alertAsync("The user you tried to ban is a admin!")
+
+    alertAsync("Sucessfully banned the user.")
+    console.log("Banned user successfuly.");
+  });
+  $banUserInput.value = "";
 }
 
 $unbanUserButton.addEventListener("click", unbanUser);
@@ -143,25 +127,20 @@ $unbanUserInput.addEventListener("keyup", function (event) {
   }
 });
 function unbanUser() {
-  if ($unbanUserInput.value === "") {
-    window.alert("You need a username! It can't be empty.");
-  } else {
-    var unbanningUsername = $unbanUserInput.value
+  if ($unbanUserInput.value === "")
+    return alertAsync("You need a username! It can't be empty.");
 
-    socket.emit("unbanUser", unbanningUsername, error => {
-      if (error === "bad") {
-        window.location.reload();
-        return console.log(error);
-      } else if (error.includes("User provided was invalid.")) {
-        alertAsync(error)
-      } else {
-        alertAsync("Sucessfully unbanned the user.")
-        console.log("Unbanned user successfuly.");
-        console.log(error[0]);
-      }
-    });
-    $unbanUserInput.value = "";
-  }
+  socket.emit("unbanUser", $unbanUserInput.value, error => {
+    if (error === "bad")
+      return window.location.reload();
+    if (error.includes("User provided was invalid."))
+      return alertAsync(error)
+
+    alertAsync("Sucessfully unbanned the user.")
+    console.log("Unbanned user successfuly.");
+    console.log(error[0]);
+  });
+  $unbanUserInput.value = "";
 }
 
 $sendAlertButton.addEventListener("click", sendAlert)
@@ -172,48 +151,41 @@ $alertMessageInput.addEventListener("keyup", function (event) {
   }
 })
 function sendAlert() {
-  if ($alertMessageInput.value === "") {
-    alertAsync("You need a message! It can't be empty!")
-  } else {
-    var alert = $alertMessageInput.value
+  if ($alertMessageInput.value === "")
+    return alertAsync("You need a message! It can't be empty!")
 
-    socket.emit("alert", alert, error => {
-      if (error === "bad") {
-        window.location.reload();
-        return console.log(error);
-      } else if (error === "short") {
-        alertAsync("The message alert you provided is too short.")
-      } else if (error === "long") {
-        alertAsync("The message alert you provided is too long.")
-      } else {
-        alertAsync("Sucessfully sent a alert to everyone.")
-        console.log("Sent alert successfuly.");
-        $alertMessageInput.value = "";
-      }
-    });
-  }
+  var alert = $alertMessageInput.value
+
+  socket.emit("alert", alert, error => {
+    if (error === "bad")
+      return window.location.reload();
+    if (error === "short")
+      return alertAsync("The message alert you provided is too short.")
+    if (error === "long")
+      return alertAsync("The message alert you provided is too long.")
+
+    alertAsync("Sucessfully sent a alert to everyone.")
+    console.log("Sent alert successfuly.");
+    $alertMessageInput.value = "";
+  });
 }
 
 //set admin status and reveal admin panel
-
 socket.on("admin-status", isAdmin => {
-  if (isAdmin[0]) {
-
-    isAnAdmin = true;
-
-    userHashed = isAdmin[1] + username
-
-    adminPanelStyle = true;
-    $adminStatus.innerHTML = "<i class=\"fa-solid fa-lock-open\"></i> You are a Admin!";
-
-    $adminStatus.style.backgroundColor = 'var(--messages)';
-    $adminStatus.style.borderRadius = '4px 4px 0px 0px';
-    $adminStatus.style.paddingTop = '4px';
-    $adminStatus.style.paddingLeft = '4px';
-    $adminStatus.style.paddingRight = '4px';
-    $adminPanel.style.display = "flex";
-  } else {
+  if (!isAdmin[0]) {
     adminPanelStyle = false;
     $adminStatus.innerHTML = "<i class=\"fa-solid fa-lock\"></i> You aren't a Admin!";
+    return;
   }
+  isAnAdmin = true;
+  adminPanelStyle = true;
+  userHashed = isAdmin[1] + username
+
+  $adminStatus.innerHTML = "<i class=\"fa-solid fa-lock-open\"></i> You are a Admin!";
+  $adminStatus.style.backgroundColor = 'var(--messages)';
+  $adminStatus.style.borderRadius = '4px 4px 0px 0px';
+  $adminStatus.style.paddingTop = '4px';
+  $adminStatus.style.paddingLeft = '4px';
+  $adminStatus.style.paddingRight = '4px';
+  $adminPanel.style.display = "flex";
 });

@@ -26,7 +26,6 @@ const publicDirectoryPath = path.join(__dirname, "../public");
 
 app.use(express.static(publicDirectoryPath));
 
-
 // array of ips used to detect alts
 var ipArray = [];
 
@@ -128,11 +127,8 @@ function sockets(socket) {
       msg = `Hi, I'm ${getUsername(user)} and just tried to go over the 3000 character limit.`;
     }
 
-    // creates href clickable links for links in the msg
-    msg = linkify(msg)
-
     socket.emit("message-cooldown", msgCooldown);
-    io.to(user.room).emit("message", generateMessage(user.username, msg));
+    io.to(user.room).emit("message", generateMessage(user.username, linkify(msg)));
 
     cLog(Color.bright, `${time()} MESSAGE > USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
     callback();
@@ -174,19 +170,17 @@ function sockets(socket) {
       return callback("Message is over 280!");
     }
 
-    if (!userExists) {
+    if (!userExists)
       return callback("User does not exist!");
-    } else {
 
-      //send to that user
-      var userSendingTo = getUser(userID)
+    //send to that user
+    var userSendingTo = getUser(userID)
 
-      var packetOut = [userSentFrom.username, linkify(userMessage)]
-      io.to(userSendingTo.room).emit("recieveDirectMessage" + userSendTo, packetOut);
+    var packetOut = [userSentFrom.username, linkify(userMessage)]
+    io.to(userSendingTo.room).emit("recieveDirectMessage" + userSendTo, packetOut);
 
-      cLog(Color.bright, `${time()} DM > FROM: ${getUsername(userSentFrom)} | TO: ${userSendTo}`)
-      callback();
-    }
+    cLog(Color.bright, `${time()} DM > FROM: ${getUsername(userSentFrom)} | TO: ${userSendTo}`)
+    callback();
   });
 
   socket.on("setCooldown", (seconds) => {
@@ -260,9 +254,8 @@ function sockets(socket) {
       }
     }
 
-    if (!userExists) {
+    if (!userExists)
       return callback("notExistingUser");
-    }
 
     //ban them
     io.to(userModerationObject.room).emit("ban", username);
@@ -305,15 +298,12 @@ function sockets(socket) {
       var listOfBannedPeople = "User provided was invalid. See list below for unbannable people! \n\nList of Banned Users:\n"
 
       //write a list of banned people (not their ips) only if there are any
-      if (banArray.length != 0) {
-
+      if (banArray.length != 0)
         for (let index = 0; index < banArray.length; index = index + 2) {
           listOfBannedPeople = listOfBannedPeople + banArray[index] + "\n"
         }
-
-      } else {
+      else
         listOfBannedPeople = listOfBannedPeople + "none"
-      }
 
       return callback(listOfBannedPeople);
     }
@@ -344,17 +334,13 @@ function sockets(socket) {
     }
 
     //filter msg length
-    if (message.length < 3) {
+    if (message.length < 3)
       return callback("short");
-    }
 
-    if (message.length > 70) {
+    if (message.length > 70)
       return callback("long");
-    }
 
-    message = linkify(message)
-
-    sendToAllRooms(io, "alert", message)
+    sendToAllRooms(io, "alert", linkify(message))
     cLog(Color.bright, `${time()} IP: ${ip} has sent a alert to everyone. ALERT = ${message}`)
 
     callback("good");
@@ -363,36 +349,37 @@ function sockets(socket) {
   socket.on("disconnect", () => {
     const user = removeUser(socket.id);
 
-    if (user) {
-      //remove ip from list when they leave
-      ipArray = ipArray.filter(e => e !== getIP(socket));
+    if (!user)
+      return;
 
-      var index = ipUsernameArray.indexOf(getIP(socket))
-      if (index > -1) {
-        ipUsernameArray.splice(index, 1); //remove ip
-        ipUsernameArray.splice(index - 1, 1); //remove username
-      }
+    //remove ip from list when they leave
+    ipArray = ipArray.filter(e => e !== getIP(socket));
 
-      cLog(Color.bg.blue, `${time()} LEFT -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
-
-      io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-large-slash fa-lg"></i> ${user.username} has left!`));
-
-      io.to(user.room).emit("roomData", {
-        room: user.room,
-        users: getUsersInRoom(user.room)
-      });
+    var index = ipUsernameArray.indexOf(getIP(socket))
+    if (index > -1) {
+      ipUsernameArray.splice(index, 1); //remove ip
+      ipUsernameArray.splice(index - 1, 1); //remove username
     }
+
+    cLog(Color.bg.blue, `${time()} LEFT -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+
+    io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-large-slash fa-lg"></i> ${user.username} has left!`));
+
+    io.to(user.room).emit("roomData", {
+      room: user.room,
+      users: getUsersInRoom(user.room)
+    });
   });
 }
 
-function sendToAllRooms(io, type, string) {
+function sendToAllRooms(io, event, string) {
   var roomsSentTo = [""]
   for (let index = 0; index < users.length; ++index) {
-    if (!roomsSentTo.includes(users[index].room)) {
-      io.to(users[index].room).emit(type, string);
+    if (roomsSentTo.includes(users[index].room))
+      return;
 
-      roomsSentTo.push(users[index].room)
-    }
+    io.to(users[index].room).emit(event, string);
+    roomsSentTo.push(users[index].room)
   }
 }
 
@@ -412,10 +399,7 @@ function getUsername(user) {
 }
 
 server.listen(port, () => { //credits n stuff
-  process.stdout.write('\033c');
-
   console.log("\n Typsnd is running at: \n");
   cLog(Color.fg.cyan, `http://localhost:${port}`, ` - Local:   `)
-  cLog(Color.fg.cyan, `http://${ip.address()}:${port}`, ` - Network: `)
-  cLog(Color.fg.green, "http://github.com/udu3324 \n", "\n Have fun using Typsnd! Check out\n more of my projects on GitHub! \n ")
+  cLog(Color.fg.cyan, `http://${ip.address()}:${port} \n`, ` - Network: `)
 });

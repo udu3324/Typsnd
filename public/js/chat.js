@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 const socket = io();
 
 // CSS
@@ -28,34 +26,24 @@ const $darkModeSwitch = document.querySelector("#dark-mode-switch");
 const $usernameInput = document.querySelector("#username-input");
 const $setUsernameButton = document.querySelector("#set-username-button");
 const $refreshButton = document.querySelector("#refreshButton");
-
 const $roomInput = document.querySelector("#room-input");
 const $setRoomButton = document.querySelector("#set-room-button");
-
 const $roomButton = document.querySelector("#roomButton");
 const $roomOverlay = document.querySelector("#room-overlay");
 const $roomBox = document.querySelector("#room-box");
-
 const $toolToggleButton = document.querySelector("#toolToggleButton");
 const $toolBarDiv = document.querySelector("#tools-bar");
-
 const $messageButton = document.querySelector("#messageButton");
 const $messageOverlay = document.querySelector("#message-overlay");
 const $messageBox = document.querySelector("#message-box");
-
 const $userMessageInput = document.querySelector("#user-message-input");
 const $messageInput = document.querySelector("#message-input");
 const $sendMessageButton = document.querySelector("#send-message-button");
-
 const $messageBar = document.querySelector("#message-bar");
-
 const $fromReplace = document.querySelector("#message-user-replace");
 const $messageReplace = document.querySelector("#message-replace");
-
 const $closeMessageButton = document.querySelector("#close-message");
-
 const $joinDefaultButton = document.querySelector("#join-default-button");
-
 const $alertOverlay = document.querySelector("#alert-overlay");
 
 // Templates
@@ -136,13 +124,9 @@ socket.on('disconnect', function () {
 
   $(':button').prop('disabled', true);
   $refreshButton.disabled = false;
-  
+
   setInterval(refreshLoop(), 11000);
 });
-
-function delay(time) {
-  return new Promise(resolve => setTimeout(resolve, time));
-}
 
 //very long func that just animates it lol
 async function refreshLoop() {
@@ -231,26 +215,23 @@ function renderNewMessage(message) {
     isMentioned = true
   }
 
-  //if previous user messaged is same with new user message
-  if (message.username === userStored) {
-    //merge it with old one
-    $messages.lastElementChild.lastElementChild.innerHTML += "<br/>" + message.text
-  } else {
-    //dont merge and create a new message
-    const html = Mustache.render(messageTemplate, {
-      username: message.username,
-      message: message.text,
-      createdAt: moment(message.createdAt).format("h:mm a")
-    });
+  //if previous user messaged is same with new user message, merge it
+  if (message.username === userStored)
+    return $messages.lastElementChild.lastElementChild.innerHTML += "<br/>" + message.text
 
-    $messages.insertAdjacentHTML("beforeend", html);
-    messageNew();
-  }
+  //dont merge and create a new message
+  const html = Mustache.render(messageTemplate, {
+    username: message.username,
+    message: message.text,
+    createdAt: moment(message.createdAt).format("h:mm a")
+  });
+
+  $messages.insertAdjacentHTML("beforeend", html);
+  messageNew();
 
   //add css to mentioned message
-  if (isMentioned) {
+  if (isMentioned)
     $messages.lastElementChild.classList.add("mentioned-highliter");
-  }
 
   autoscroll();
 }
@@ -350,18 +331,15 @@ $messageForm.addEventListener("submit", e => {
     $messageFormInput.value = "";
 
     //catch user being undefined
-    if (error == "Refresh the page!") {
-      window.location.reload();
-      return console.log(error);
-    } else {
-      console.log("Message delivered!");
-      if (menuOpened) {
-        toggleMenu(theMenuOpened, false)
-      }
+    if (error == "Refresh the page!")
+      return window.location.reload()
 
-      timeLeft = messageCooldown;
-      cooldownMSGSend();
-    }
+    console.log("Message delivered!");
+    if (menuOpened)
+      toggleMenu(theMenuOpened, false)
+
+    timeLeft = messageCooldown;
+    cooldownMSGSend();
   });
 });
 
@@ -383,31 +361,28 @@ $usernameInput.addEventListener("keyup", function (event) {
 });
 
 function joinChat() {
-  if ($usernameInput.value === "") {
-    window.alert("You need a username! It can't be empty.");
-  } else {
-    // send msg alerting change of username
-    var alertUsernameChange = "I'm changing my username from \"" + username + "\" to \"" + $usernameInput.value + "\".";
-    socket.emit("sendMessage", alertUsernameChange, error => {
-      $messageFormInput.value = "";
+  if ($usernameInput.value === "")
+    return alertAsync("You need a username! It can't be empty.");
 
-      //catch user being undefined
-      if (error == "Refresh the page!") {
-        window.location.reload();
-        return console.log(error);
-      } else {
-        console.log("Message delivered!");
+  // send msg alerting change of username
+  var alertUsernameChange = "I'm changing my username from \"" + username + "\" to \"" + $usernameInput.value + "\".";
+  socket.emit("sendMessage", alertUsernameChange, error => {
+    $messageFormInput.value = "";
 
-        timeLeft = messageCooldown;
-        cooldownMSGSend();
-      }
-    });
+    //catch user being undefined
+    if (error == "Refresh the page!")
+      return window.location.reload()
 
-    // do login
-    console.log("Username is " + $usernameInput.value);
-    setCookie("username", $usernameInput.value, 9999999999);
-    location.href = "/chat.html";
-  }
+    console.log("Message delivered!");
+
+    timeLeft = messageCooldown;
+    cooldownMSGSend();
+  });
+
+  // do login
+  console.log("Username is " + $usernameInput.value);
+  setCookie("username", $usernameInput.value, 9999999999);
+  location.href = "/chat.html";
 }
 
 // set room button event
@@ -420,31 +395,28 @@ $roomInput.addEventListener("keyup", function (event) {
 });
 
 function joinDiffRoom() {
-  if ($roomInput.value === "") {
-    window.alert("You need a room! It can't be empty.");
-  } else {
-    // send msg alerting change of username
-    var alertRoomChange = "I'm leaving this room to join another one. ";
-    socket.emit("sendMessage", alertRoomChange, error => {
-      $messageFormInput.value = "";
+  if ($roomInput.value === "")
+    return alertAsync("You need a room! It can't be empty.");
 
-      //catch user being undefined
-      if (error == "Refresh the page!") {
-        window.location.reload();
-        return console.log(error);
-      } else {
-        console.log("Message delivered!");
+  // send msg alerting change of username
+  var alertRoomChange = "I'm leaving this room to join another one. ";
+  socket.emit("sendMessage", alertRoomChange, error => {
+    $messageFormInput.value = "";
 
-        timeLeft = messageCooldown;
-        cooldownMSGSend();
-      }
-    });
+    //catch user being undefined
+    if (error == "Refresh the page!")
+      return window.location.reload();
 
-    // do login
-    console.log("Room is " + $roomInput.value);
-    setCookie("room", $roomInput.value, 9999999999);
-    location.href = "/chat.html";
-  }
+    console.log("Message delivered!");
+
+    timeLeft = messageCooldown;
+    cooldownMSGSend();
+  });
+
+  // do login
+  console.log("Room is " + $roomInput.value);
+  setCookie("room", $roomInput.value, 9999999999);
+  location.href = "/chat.html";
 }
 
 // dark mode stuff
@@ -566,23 +538,15 @@ $imageSendButton.addEventListener("click", function () {
   openFileDialog();
 });
 
-function openFileDialog(callback) {  // this function must be called from  a user
-  // activation event (ie an onclick event)
+function openFileDialog(callback) {
 
-  // Create an input element
   const inputElement = document.createElement("input");
 
-  // Set its type to file
   inputElement.type = "file";
-
-  // Set accept to the file types you want the user to select.
-  // Include both the file extension and the mime type
   inputElement.accept = "image/png, image/jpeg, image/gif, image/apng, image/svg, image/bmp, image/ico";
 
-  // set onchange event to call callback when user has selected file
   inputElement.addEventListener("change", handleFiles, callback)
 
-  // dispatch a click event to open the file dialog
   inputElement.dispatchEvent(new MouseEvent("click"));
 }
 
@@ -598,15 +562,13 @@ function handleFiles() {
 
       //emit new message
       socket.emit("sendImage", base64.target.result, error => {
-        if (error == "Refresh the page!") {
-          window.location.reload();
-          return console.log(error);
-        } else {
-          console.log("Message delivered!");
+        if (error == "Refresh the page!")
+          return window.location.reload();
 
-          timeLeft = messageCooldown;
-          cooldownMSGSend();
-        }
+        console.log("Message delivered!");
+
+        timeLeft = messageCooldown;
+        cooldownMSGSend();
       });
     }
     reader.readAsDataURL(file);
@@ -636,10 +598,9 @@ $('body').on('click', 'img', function () {
 
     byteArrays.push(byteArray);
   }
-  const blob = new Blob(byteArrays, { type: contentType });
-  const blobUrl = URL.createObjectURL(blob);
 
-  window.open(blobUrl, '_blank');
+  const blob = new Blob(byteArrays, { type: contentType });
+  window.open(URL.createObjectURL(blob), '_blank');
 })
 // image select and view stuff above
 
@@ -700,11 +661,10 @@ $roomOverlay.addEventListener("click", function () {
   }
 });
 
-
 function addATab(name, url) {
   // create the anchor element with the href attribute
   const a = document.createElement('button');
-  a.setAttribute('onclick', "window.open('" + url + "','_blank');");
+  a.setAttribute('onclick', `window.open('${url}','_blank');`);
   a.innerHTML = name;
   a.className = "toolButton"
 
@@ -713,8 +673,6 @@ function addATab(name, url) {
 }
 
 socket.on("starting-data", array => {
-  //array[tabs0, msgCooldown1, htmlTitle2]
-
   //tabs
   for (let index = 0; index < array[0].length; ++index) {
     addATab(array[0][index][0], array[0][index][1])
@@ -782,23 +740,18 @@ $sendMessageButton.onclick = function () {
 
     //catch errors
     if (error === "User does not exist!") {
-
       alertAsync("User specified does not exist!")
       $userMessageInput.value = "";
 
       return console.log(error);
     } else if (error === "Message is over 280!") {
-
       alertAsync("Message is over 280 characters long!")
       $userMessageInput.value = "";
 
       return console.log(error);
-    } else {
-
-      alertAsync("Message has been sucessfully sent!")
-
-      console.log("Message delivered!");
     }
+    alertAsync("Message has been sucessfully sent!")
+    console.log("Message delivered!");
   });
 };
 
@@ -828,10 +781,8 @@ dragElement($messageBar);
 function dragElement(elmnt) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   if (document.getElementById(elmnt.id + "header")) {
-    // if present, the header is where you move the DIV from:
     document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
   } else {
-    // otherwise, move the DIV from anywhere inside the DIV:
     elmnt.onmousedown = dragMouseDown;
   }
 
@@ -839,11 +790,9 @@ function dragElement(elmnt) {
     if ($("#from:hover").length != 0) {
       e = e || window.event;
       e.preventDefault();
-      // get the mouse cursor position at startup:
       pos3 = e.clientX;
       pos4 = e.clientY;
       document.onmouseup = closeDragElement;
-      // call a function whenever the cursor moves:
       document.onmousemove = elementDrag;
     }
   }
@@ -851,12 +800,10 @@ function dragElement(elmnt) {
   function elementDrag(e) {
     e = e || window.event;
     e.preventDefault();
-    // calculate the new cursor position:
     pos1 = pos3 - e.clientX;
     pos2 = pos4 - e.clientY;
     pos3 = e.clientX;
     pos4 = e.clientY;
-    // set the element's new position:
     var int1 = elmnt.offsetTop - pos2
     if (int1 > 0 && int1 < ($(window).height() - 30)) {
       elmnt.style.top = int1 + "px";
@@ -869,7 +816,6 @@ function dragElement(elmnt) {
   }
 
   function closeDragElement() {
-    // stop moving when mouse button is released:
     document.onmouseup = null;
     document.onmousemove = null;
   }
@@ -910,39 +856,33 @@ $emojiBox.onmouseout = function () {
 }
 
 // On Emoji Click
-$emojiBox.addEventListener('emoji-click', event => sendEmoji(event.detail));
-function sendEmoji(detail) {
-  $messageFormInput.value = $messageFormInput.value + detail.unicode;
-}
+$emojiBox.addEventListener('emoji-click', event => sendEmoji($messageFormInput.value = $messageFormInput.value + event.detail.unicode));
 
 // Send Images with CTRL + V
 document.onpaste = function (event) {
   var items = (event.clipboardData || event.originalEvent.clipboardData).items;
-  console.log(JSON.stringify(items)); // might give you mime types
+
   for (var index in items) {
-    var item = items[index];
-    if (item.kind === 'file') {
-      var blob = item.getAsFile();
-      var reader = new FileReader();
-      reader.onload = function (event) {
-        //emit new message
+    if (items[index].kind !== 'file')
+      return;
 
-        if (pasteEnabled) {
-          pasteEnabled = false;
-          socket.emit("sendImage", event.target.result, error => {
-            if (error == "Refresh the page!") {
-              window.location.reload();
-              return console.log(error);
-            } else {
-              console.log("Message delivered!");
+    var blob = item.getAsFile();
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      if (!pasteEnabled)
+        return;
 
-              timeLeft = messageCooldown;
-              cooldownMSGSend();
-            }
-          });
-        }
-      };
-      reader.readAsDataURL(blob);
-    }
+      pasteEnabled = false;
+      socket.emit("sendImage", event.target.result, error => {
+        if (error == "Refresh the page!")
+          return window.location.reload();
+
+        console.log("Message delivered!");
+
+        timeLeft = messageCooldown;
+        cooldownMSGSend();
+      });
+    };
+    reader.readAsDataURL(blob);
   }
 };
