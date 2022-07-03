@@ -111,8 +111,7 @@ function sockets(socket) {
 
     // removes unsafe tags and attributes from html
     if (!admin) {
-      msg = DOMPurify.sanitize(msg);
-      if (msg === "") {
+      if (DOMPurify.sanitize(msg) !== message) {
         cLog(Color.bg.red, `${time()} Message from ${getUsername(user)} has been blocked due to XSS.`);
         msg = `Hi, I'm ${getUsername(user)} and just tried to do XSS.`;
       }
@@ -137,10 +136,13 @@ function sockets(socket) {
   socket.on("sendImage", (base64, callback) => {
     const user = getUser(socket.id);
 
-    var element = "<img id=\"uploaded-image\" alt=\"image\" src=\"" + base64 + "\">";
+    if (DOMPurify.sanitize(base64) !== base64) {
+      cLog(Color.bg.red, `${time()} Message from ${getUsername(user)} has been blocked due to XSS.`);
+      return callback("Refresh the page!")
+    }
 
     socket.emit("message-cooldown", msgCooldown);
-    io.to(user.room).emit("image", generateMessage(user.username, element));
+    io.to(user.room).emit("image", generateMessage(user.username, "<img id=\"uploaded-image\" alt=\"image\" src=\"" + base64 + "\">"));
 
     cLog(Color.bright, `${time()} IMAGE > User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
     callback();

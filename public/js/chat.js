@@ -55,9 +55,8 @@ const username = getCookie("username");
 
 // set room from cookies
 var room = getCookie("room");
-if (room === "") {
+if (room === "")
   room = "Typsnd"
-}
 
 var messageCooldown;
 
@@ -101,9 +100,8 @@ $(document).ready(function () {
 });
 function chk_scroll(e) {
   var elem = $(e.currentTarget);
-  if (elem[0].scrollHeight - elem.scrollTop() == elem.outerHeight()) {
+  if (elem[0].scrollHeight - elem.scrollTop() == elem.outerHeight())
     $scrollDownButton.style.visibility = "hidden";
-  }
 }
 
 // scroll down button below
@@ -160,7 +158,6 @@ function messageNew() {
     }
   }
   messageAnimate();
-
   createMessageOptions($msg);
 }
 
@@ -187,7 +184,7 @@ function renderNewMessage(message) {
     if (message.text.includes(`@everyone`))
       usr = "everyone"
 
-    console.log("mentioned!")
+    console.log("Mentioned!")
 
     var regex = new RegExp(`@${usr}`, 'g');
     var count = (message.text.match(regex) || []).length;
@@ -282,9 +279,8 @@ function getEventTypeUp(key) {
   var keyCode = key.keyCode;
 
   //if key pressed is not control
-  if (!(keyCode === 17)) {
+  if (!(keyCode === 17))
     isHoldingDownCtrl = false;
-  }
 }
 document.addEventListener('keyup', getEventTypeUp, false);
 
@@ -316,6 +312,34 @@ function cooldownMSGSend() {
   }
 }
 
+function sendMessage(message) {
+  socket.emit("sendMessage", message, error => {
+    $messageFormInput.value = "";
+
+    //catch user being undefined
+    if (error == "Refresh the page!")
+      return window.location.reload()
+    if (menuOpened)
+      toggleMenu(theMenuOpened, false)
+
+    console.log("Message delivered!")
+    timeLeft = messageCooldown;
+    cooldownMSGSend();
+  });
+}
+
+function sendImage(base64) {
+  socket.emit("sendImage", event.target.result, error => {
+    if (error == "Refresh the page!")
+      return window.location.reload();
+
+    console.log("Image delivered!");
+
+    timeLeft = messageCooldown;
+    cooldownMSGSend();
+  });
+}
+
 $messageForm.addEventListener("submit", e => {
   e.preventDefault();
 
@@ -325,22 +349,7 @@ $messageForm.addEventListener("submit", e => {
   $emojiBox.style.display = "none"
   boolClickedOn = false;
 
-  const message = e.target.elements.message.value;
-
-  socket.emit("sendMessage", message, error => {
-    $messageFormInput.value = "";
-
-    //catch user being undefined
-    if (error == "Refresh the page!")
-      return window.location.reload()
-
-    console.log("Message delivered!");
-    if (menuOpened)
-      toggleMenu(theMenuOpened, false)
-
-    timeLeft = messageCooldown;
-    cooldownMSGSend();
-  });
+  sendMessage(e.target.elements.message.value)
 });
 
 var boolClickedOn = false;
@@ -365,19 +374,7 @@ function joinChat() {
     return alertAsync("You need a username! It can't be empty.");
 
   // send msg alerting change of username
-  var alertUsernameChange = "I'm changing my username from \"" + username + "\" to \"" + $usernameInput.value + "\".";
-  socket.emit("sendMessage", alertUsernameChange, error => {
-    $messageFormInput.value = "";
-
-    //catch user being undefined
-    if (error == "Refresh the page!")
-      return window.location.reload()
-
-    console.log("Message delivered!");
-
-    timeLeft = messageCooldown;
-    cooldownMSGSend();
-  });
+  sendMessage("I'm changing my username from \"" + username + "\" to \"" + $usernameInput.value + "\".")
 
   // do login
   console.log("Username is " + $usernameInput.value);
@@ -399,19 +396,7 @@ function joinDiffRoom() {
     return alertAsync("You need a room! It can't be empty.");
 
   // send msg alerting change of username
-  var alertRoomChange = "I'm leaving this room to join another one. ";
-  socket.emit("sendMessage", alertRoomChange, error => {
-    $messageFormInput.value = "";
-
-    //catch user being undefined
-    if (error == "Refresh the page!")
-      return window.location.reload();
-
-    console.log("Message delivered!");
-
-    timeLeft = messageCooldown;
-    cooldownMSGSend();
-  });
+  sendMessage("I'm leaving this room to join another one.")
 
   // do login
   console.log("Room is " + $roomInput.value);
@@ -473,11 +458,10 @@ function updateFirst(event) {
   setCookie("accent", event.target.value, 9999999999);
 }
 
-if (getCookie("accent") == "") {
-  $accentColorPicker.value = "#8FBC8F";
-} else {
-  $accentColorPicker.value = getCookie("accent");
-}
+if (getCookie("accent") == "")
+  $accentColorPicker.value = "#8FBC8F"
+else
+  $accentColorPicker.value = getCookie("accent")
 
 var opacityInt;
 function opacityUp() {
@@ -539,14 +523,12 @@ $imageSendButton.addEventListener("click", function () {
 });
 
 function openFileDialog(callback) {
-
   const inputElement = document.createElement("input");
 
   inputElement.type = "file";
   inputElement.accept = "image/png, image/jpeg, image/gif, image/apng, image/svg, image/bmp, image/ico";
 
   inputElement.addEventListener("change", handleFiles, callback)
-
   inputElement.dispatchEvent(new MouseEvent("click"));
 }
 
@@ -557,19 +539,7 @@ function handleFiles() {
     const file = fileList[i];
     var reader = new FileReader()
     reader.onload = function (base64) {
-
-      console.log(base64.target.result);
-
-      //emit new message
-      socket.emit("sendImage", base64.target.result, error => {
-        if (error == "Refresh the page!")
-          return window.location.reload();
-
-        console.log("Message delivered!");
-
-        timeLeft = messageCooldown;
-        cooldownMSGSend();
-      });
+      sendImage(base64.target.result)
     }
     reader.readAsDataURL(file);
   }
@@ -605,7 +575,6 @@ $('body').on('click', 'img', function () {
 // image select and view stuff above
 
 // tools bar below
-
 $toolToggleButton.addEventListener("click", toggleToolBar);
 
 function disableToolButtons(bool) {
@@ -645,7 +614,6 @@ function roomUIToggle() {
 }
 
 var onRoomBox = true;
-// settings box
 $roomBox.onmouseover = function () {
   onRoomBox = false
 }
@@ -723,14 +691,10 @@ $sendMessageButton.onclick = function () {
   var message = $messageInput.value
 
   //make sure all inputs are provided
-  if (user === "") {
-    alert("No user provided!")
-    return;
-  }
-  if (message === "") {
-    alert("No message provided!")
-    return;
-  }
+  if (user === "")
+    return alert("No user provided!")
+  if (message === "")
+    return alert("No message provided!")
 
   var packet = [user, message]
 
@@ -756,7 +720,6 @@ $sendMessageButton.onclick = function () {
 };
 
 var userHashed = username
-
 //recieve direct messages sent
 socket.on("recieveDirectMessage" + userHashed, (packetOut) => {
   //alert(packetOut[0] + "\n" + packetOut[1])
@@ -780,11 +743,10 @@ dragElement($messageBar);
 //tysm w3schools <3 https://www.w3schools.com/howto/howto_js_draggable.asp
 function dragElement(elmnt) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id + "header")) {
+  if (document.getElementById(elmnt.id + "header"))
     document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-  } else {
+  else
     elmnt.onmousedown = dragMouseDown;
-  }
 
   function dragMouseDown(e) {
     if ($("#from:hover").length != 0) {
@@ -805,14 +767,12 @@ function dragElement(elmnt) {
     pos3 = e.clientX;
     pos4 = e.clientY;
     var int1 = elmnt.offsetTop - pos2
-    if (int1 > 0 && int1 < ($(window).height() - 30)) {
+    if (int1 > 0 && int1 < ($(window).height() - 30))
       elmnt.style.top = int1 + "px";
-    }
 
     var int2 = elmnt.offsetLeft - pos1
-    if (int2 > 0 && int2 < ($(window).width() - 30)) {
+    if (int2 > 0 && int2 < ($(window).width() - 30))
       elmnt.style.left = int2 + "px";
-    }
   }
 
   function closeDragElement() {
@@ -863,6 +823,7 @@ document.onpaste = function (event) {
   var items = (event.clipboardData || event.originalEvent.clipboardData).items;
 
   for (var index in items) {
+    var item = items[index]
     if (items[index].kind !== 'file')
       return;
 
@@ -873,15 +834,7 @@ document.onpaste = function (event) {
         return;
 
       pasteEnabled = false;
-      socket.emit("sendImage", event.target.result, error => {
-        if (error == "Refresh the page!")
-          return window.location.reload();
-
-        console.log("Message delivered!");
-
-        timeLeft = messageCooldown;
-        cooldownMSGSend();
-      });
+      sendImage(event.target.result)
     };
     reader.readAsDataURL(blob);
   }
