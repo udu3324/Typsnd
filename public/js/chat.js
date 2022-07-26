@@ -45,6 +45,7 @@ const $messageReplace = document.querySelector("#message-replace");
 const $closeMessageButton = document.querySelector("#close-message");
 const $joinDefaultButton = document.querySelector("#join-default-button");
 const $alertOverlay = document.querySelector("#alert-overlay");
+const $usersTyping = document.querySelector("#users-typing-p");
 
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
@@ -66,25 +67,16 @@ $user.innerHTML = username;
 let onSettingsBox = true;
 
 // autoscroll div down when user is looking at latest msgs
-const autoscroll = () => {
-  // New message element
-  const $newMessage = $messages.lastElementChild;
-
-  // Height of the new message
-  const newMessageStyles = getComputedStyle($newMessage);
-  const newMessageMargin = parseInt(newMessageStyles.marginBottom);
-  const newMessageHeight = $newMessage.offsetHeight + newMessageMargin;
-
-  // Visible height
-  const visibleHeight = $messages.offsetHeight;
-
-  // Height of messages container
-  const containerHeight = $messages.scrollHeight;
-
-  // How far have I scrolled?
-  const scrollOffset = $messages.scrollTop + visibleHeight;
-
-  if (containerHeight - newMessageHeight <= scrollOffset) {
+var startingScroll = $messages.scrollHeight
+var lookingAtEnd = true
+setInterval(function () {
+  if ($messages.scrollTop + startingScroll === $messages.scrollHeight)
+    lookingAtEnd = true
+  else
+    lookingAtEnd = false
+}, 20)
+function autoscroll() {
+  if (lookingAtEnd) {
     $('#messages').animate({
       scrollTop: $messages.scrollHeight - $messages.clientHeight
     }, 125);
@@ -213,22 +205,23 @@ function renderNewMessage(message) {
   }
 
   //if previous user messaged is same with new user message, merge it
-  if (message.username === userStored)
-    return $messages.lastElementChild.lastElementChild.innerHTML += "<br/>" + message.text
+  if (message.username === userStored) {
+    $messages.lastElementChild.lastElementChild.innerHTML += "<br/>" + message.text
+  } else {
+    //dont merge and create a new message
+    const html = Mustache.render(messageTemplate, {
+      username: message.username,
+      message: message.text,
+      createdAt: moment(message.createdAt).format("h:mm a")
+    });
 
-  //dont merge and create a new message
-  const html = Mustache.render(messageTemplate, {
-    username: message.username,
-    message: message.text,
-    createdAt: moment(message.createdAt).format("h:mm a")
-  });
+    $messages.insertAdjacentHTML("beforeend", html);
+    messageNew();
 
-  $messages.insertAdjacentHTML("beforeend", html);
-  messageNew();
-
-  //add css to mentioned message
-  if (isMentioned)
-    $messages.lastElementChild.classList.add("mentioned-highliter");
+    //add css to mentioned message
+    if (isMentioned)
+      $messages.lastElementChild.classList.add("mentioned-highliter");
+  }
 
   autoscroll();
 }
@@ -255,6 +248,9 @@ socket.emit("join", { username, room }, error => {
   }
 });
 
+socket.on("users-typing", string => {
+  $usersTyping.innerHTML = string
+});
 
 // Message Send Stuff Below
 // Autoselect message send input when key is pressed
@@ -264,10 +260,12 @@ function getEventTypeDown(key) {
 
   //if key pressed is not control
   if (!(keyCode === 17) && !isHoldingDownCtrl) {
-    if (!($messageFormInput === document.activeElement) && onSettingsBox && onEmojiBox && !roomUIIsToggled && !messageUIIsToggled) {
+    if ($messageFormInput !== document.activeElement && onSettingsBox && onEmojiBox && !roomUIIsToggled && !messageUIIsToggled) {
       console.log("Selected input automatically.");
       $messageFormInput.focus();
     }
+    if (onSettingsBox && onEmojiBox && !roomUIIsToggled && !messageUIIsToggled)
+      socket.emit("typing");
   } else {
     console.log("holding ctrl")
     isHoldingDownCtrl = true;

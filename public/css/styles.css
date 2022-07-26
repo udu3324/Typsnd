@@ -432,7 +432,7 @@ button#refreshButton {
 div#messages {
     color: var(--fontColor);
     background: var(--messageDiv);
-    padding-bottom: 17px
+    padding-bottom: 17px;
 }
 
 .chat__messages {
@@ -522,11 +522,19 @@ span#mention-text {
     background: var(--userSidebar)
 }
 
+.is-typing-div {
+    color: var(--fontColor);
+    font-size: 16px;
+    background: var(--compose);
+    height: 24px;
+    padding: 2px 24px 0px 24px;
+}
+
 .compose {
     background: var(--compose);
     display: flex;
     flex-shrink: 0;
-    padding: 24px
+    padding: 0px 24px 24px 24px
 }
 
 .compose form {

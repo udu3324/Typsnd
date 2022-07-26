@@ -157,20 +157,25 @@
           <i class="fa-solid fa-arrow-down"></i>
         </button>
       </div>
-      <div class="compose">
-        <button id="sendImageButton" aria-label="Send Image">
-          <i class="fa-solid fa-circle-plus fa-lg"></i>
-        </button>
-        <form id="message-form" action="">
-          <input maxlength="3000" name="message" type="text" placeholder="Message" required autocomplete="off"
-            oninput="setCustomValidity('')" />
-          <button aria-label="Send Message">
-            <i class="fa-solid fa-paper-plane fa-lg"></i>
+      <div id="message-sender">
+        <div class="is-typing-div">
+          <p id="users-typing-p"></p>
+        </div>
+        <div class="compose">
+          <button id="sendImageButton" aria-label="Send Image">
+            <i class="fa-solid fa-circle-plus fa-lg"></i>
           </button>
-        </form>
-        <button id="insertEmojiButton" aria-label="Insert Emoji">
-          <i class="fa-solid fa-icons fa-lg"></i>
-        </button>
+          <form id="message-form" action="">
+            <input maxlength="3000" name="message" type="text" placeholder="Message" required autocomplete="off"
+              oninput="setCustomValidity('')" />
+            <button aria-label="Send Message">
+              <i class="fa-solid fa-paper-plane fa-lg"></i>
+            </button>
+          </form>
+          <button id="insertEmojiButton" aria-label="Insert Emoji">
+            <i class="fa-solid fa-icons fa-lg"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>

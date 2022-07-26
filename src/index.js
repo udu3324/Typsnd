@@ -26,14 +26,42 @@ const publicDirectoryPath = path.join(__dirname, "../public");
 
 app.use(express.static(publicDirectoryPath));
 
-// array of ips used to detect alts
 var ipArray = [];
-
-// array of ips and usernames to ban and unban people
 var ipUsernameArray = [];
 
-// array of ips and usernames that are banned
 var banArray = [];
+
+var usersTypingArray = [];
+
+function dots() {
+  var result = '';
+
+  for (i = 0; i < Math.floor(Math.random() * 3) + 1; ++i) {
+    result = result + '.';
+  }
+
+  return result;
+}
+
+setInterval(function () {
+  //for each room
+  for (let index = 0; index < usersTypingArray.length; ++index) {
+    //send packet for specific amount
+    var room = usersTypingArray[index][0]
+    if (usersTypingArray[index].length >= 7) {
+      sendToSpecificRoom(io, room, "users-typing", `${usersTypingArray[index].length} users are currently typing${dots()}`)
+    } else if ((usersTypingArray[index].length >= 4)) {
+      var stringOfUsers = usersTypingArray[index].toString().replace(/,([^,]*)$/, ' and $1').replaceAll(",", ", ").substring(usersTypingArray[index].toString().indexOf(",") + 2)
+      sendToSpecificRoom(io, room, "users-typing", `${stringOfUsers} are typing${dots()}`)
+    } else if ((usersTypingArray[index].length === 3)) {
+      sendToSpecificRoom(io, room, "users-typing", `${usersTypingArray[index][1]} and ${usersTypingArray[index][2]} are typing${dots()}`)
+    } else if ((usersTypingArray[index].length === 2)) {
+      sendToSpecificRoom(io, room, "users-typing", `${usersTypingArray[index][1]} is typing${dots()}`)
+    } else if ((usersTypingArray[index].length === 1)) {
+      sendToSpecificRoom(io, room, "users-typing", ``)
+    }
+  }
+}, 500)
 
 io.on("connection", socket => {
   let ip = getIP(socket);
@@ -93,6 +121,17 @@ function sockets(socket) {
     //add ip to arrays
     ipArray.push(ip);
 
+    var alreadyHas = false
+    //add room to usersTypingArray
+    for (let index = 0; index < usersTypingArray.length; ++index) {
+      if (usersTypingArray[index][0] === user.room) {
+        alreadyHas = true
+        break
+      }
+    }
+    if (!alreadyHas)
+      usersTypingArray.push([user.room])
+
     ipUsernameArray.push(user.username)
     ipUsernameArray.push(ip)
 
@@ -131,6 +170,33 @@ function sockets(socket) {
 
     cLog(Color.bright, `${time()} MESSAGE > USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
     callback();
+  });
+
+  socket.on("typing", () => {
+    const user = getUser(socket.id);
+
+    //get index of room in usersTypingArray and return if not found
+    var indexOfRoom = -1
+    for (let index = 0; index < usersTypingArray.length; ++index) {
+      if (usersTypingArray[index][0] === user.room) {
+        indexOfRoom = index
+        break
+      }
+    }
+
+    if (indexOfRoom === -1)
+      return cLog(Color.bg.red, `${time()} Room ${user.room} cant be found! Error is from ${getUsername(user)}`)
+
+    //if user is not in typing array, add it and delete in 2 seconds 
+    if (usersTypingArray[indexOfRoom].indexOf(user.username, 1) !== -1)
+      return
+
+    usersTypingArray[indexOfRoom].push(user.username)
+
+    setTimeout(
+      function () {
+        usersTypingArray[indexOfRoom].splice(usersTypingArray[indexOfRoom].indexOf(user.username), 1);
+      }, 1000);
   });
 
   socket.on("sendImage", (base64, callback) => {
@@ -382,6 +448,15 @@ function sendToAllRooms(io, event, string) {
 
     io.to(users[index].room).emit(event, string);
     roomsSentTo.push(users[index].room)
+  }
+}
+
+function sendToSpecificRoom(io, room, event, string) {
+  for (let index = 0; index < users.length; ++index) {
+    if (users[index].room === room) {
+      io.to(users[index].room).emit(event, string)
+      break
+    }
   }
 }
 
