@@ -455,7 +455,8 @@ button#scrollDownMSG {
     background: var(--messages);
     border-radius: 4px;
     padding: 10px;
-    margin: 17px 17px 0
+    margin: 17px 17px 0;
+    width: fit-content;
 }
 
 .message__name {
@@ -583,7 +584,7 @@ button#insertEmojiButton {
 
 img#uploaded-image {
     border-radius: 4px;
-    max-width: 75%;
+    max-width: 100%;
     height: auto
 }
 
@@ -604,13 +605,15 @@ div#tools-bar {
     transition: .5s ease;
     opacity: 0;
     z-index: 3;
-    top: -50px
+    top: -50px;
+    pointer-events: none;
 }
 
 .toolButton {
     border-radius: 0 0 20px 20px;
     margin-left: 7px;
-    margin-right: 7px
+    margin-right: 7px;
+    pointer-events: all;
 }
 
 .toggleButton {
@@ -676,16 +679,18 @@ div#message-bar {
 div#from {
     padding: 9px 9px 3px;
     background-color: var(--accent);
-    border-radius: 10px
+    border-radius: 10px;
+    display: flex;
 }
 
 div#message-to {
     padding: 3px 9px 9px
 }
 
-button#close-message {
-    padding: 0 0 0 4px;
-    font-family: "JetBrains Mono",monospace
+
+.dm-options-btn {
+    margin-top: 8px;
+    padding: 2px 5px 2px 5px;
 }
 
 p#message-replace,p#message__container {

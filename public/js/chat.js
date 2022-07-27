@@ -43,6 +43,7 @@ const $messageBar = document.querySelector("#message-bar");
 const $fromReplace = document.querySelector("#message-user-replace");
 const $messageReplace = document.querySelector("#message-replace");
 const $closeMessageButton = document.querySelector("#close-message");
+const $replyMessageButton = document.querySelector("#reply-to-msg-btn");
 const $joinDefaultButton = document.querySelector("#join-default-button");
 const $alertOverlay = document.querySelector("#alert-overlay");
 const $usersTyping = document.querySelector("#users-typing-p");
@@ -181,8 +182,6 @@ function renderNewMessage(message) {
     var regex = new RegExp(`@${usr}`, 'g');
     var count = (message.text.match(regex) || []).length;
 
-    console.log(count)
-
     var sizeOfMention = `@${usr}`.length
     var startingIndex = 0
     //style all the mentions
@@ -217,11 +216,11 @@ function renderNewMessage(message) {
 
     $messages.insertAdjacentHTML("beforeend", html);
     messageNew();
-
-    //add css to mentioned message
-    if (isMentioned)
-      $messages.lastElementChild.classList.add("mentioned-highliter");
   }
+
+  //add css to mentioned message
+  if (isMentioned)
+    $messages.lastElementChild.classList.add("mentioned-highliter");
 
   autoscroll();
 }
@@ -708,10 +707,12 @@ $sendMessageButton.onclick = function () {
       return console.log(error);
     } else if (error === "Message is over 280!") {
       alertAsync("Message is over 280 characters long!")
-      $userMessageInput.value = "";
+      $messageInput.value = "";
 
       return console.log(error);
-    }
+    } else if (error === "bad")
+      return window.location.reload();
+
     alertAsync("Message has been sucessfully sent!")
     console.log("Message delivered!");
   });
@@ -733,6 +734,19 @@ $closeMessageButton.onclick = function () {
 
   $fromReplace.innerHTML = ""
   $messageReplace.innerHTML = ""
+}
+
+$replyMessageButton.onclick = function () {
+  messageUIToggle()
+
+  //replace user sending to with user that sent from
+  var fromUser = $fromReplace.innerHTML
+  if (fromUser.includes(" "))
+    fromUser = fromUser.substring(fromUser.indexOf(" ") + 1)
+
+  $userMessageInput.value = fromUser
+
+  $messageInput.focus()
 }
 
 // Make the DIV element draggable:
@@ -779,7 +793,7 @@ function dragElement(elmnt) {
   }
 }
 
-//recieve direct messages sent
+//join default room button
 $joinDefaultButton.onclick = function () {
   var currentRoom = getCookie("room");
 

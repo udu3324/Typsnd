@@ -49,16 +49,16 @@ setInterval(function () {
     //send packet for specific amount
     var room = usersTypingArray[index][0]
     if (usersTypingArray[index].length >= 7) {
-      sendToSpecificRoom(io, room, "users-typing", `${usersTypingArray[index].length} users are currently typing${dots()}`)
+      sendToSpecificRoom(room, "users-typing", `${usersTypingArray[index].length} users are currently typing${dots()}`)
     } else if ((usersTypingArray[index].length >= 4)) {
       var stringOfUsers = usersTypingArray[index].toString().replace(/,([^,]*)$/, ' and $1').replaceAll(",", ", ").substring(usersTypingArray[index].toString().indexOf(",") + 2)
-      sendToSpecificRoom(io, room, "users-typing", `${stringOfUsers} are typing${dots()}`)
+      sendToSpecificRoom(room, "users-typing", `${stringOfUsers} are typing${dots()}`)
     } else if ((usersTypingArray[index].length === 3)) {
-      sendToSpecificRoom(io, room, "users-typing", `${usersTypingArray[index][1]} and ${usersTypingArray[index][2]} are typing${dots()}`)
+      sendToSpecificRoom(room, "users-typing", `${usersTypingArray[index][1]} and ${usersTypingArray[index][2]} are typing${dots()}`)
     } else if ((usersTypingArray[index].length === 2)) {
-      sendToSpecificRoom(io, room, "users-typing", `${usersTypingArray[index][1]} is typing${dots()}`)
+      sendToSpecificRoom(room, "users-typing", `${usersTypingArray[index][1]} is typing${dots()}`)
     } else if ((usersTypingArray[index].length === 1)) {
-      sendToSpecificRoom(io, room, "users-typing", ``)
+      sendToSpecificRoom(room, "users-typing", ``)
     }
   }
 }, 500)
@@ -148,7 +148,7 @@ function sockets(socket) {
     const user = getUser(socket.id);
     var msg = message;
 
-    // removes unsafe tags and attributes from html
+    //check for xss and remove unsafe tags if not admin
     if (!admin) {
       if (DOMPurify.sanitize(msg) !== message) {
         cLog(Color.bg.red, `${time()} Message from ${getUsername(user)} has been blocked due to XSS.`);
@@ -168,7 +168,70 @@ function sockets(socket) {
     socket.emit("message-cooldown", msgCooldown);
     io.to(user.room).emit("message", generateMessage(user.username, linkify(msg)));
 
-    cLog(Color.bright, `${time()} MESSAGE > USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+    cLog(Color.reset, `${time()} MESSAGE > USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+    callback();
+  });
+
+  socket.on("sendImage", (base64, callback) => {
+    const user = getUser(socket.id);
+
+    if (DOMPurify.sanitize(base64) !== base64) {
+      cLog(Color.bg.red, `${time()} Message from ${getUsername(user)} has been blocked due to XSS.`);
+      return callback("Refresh the page!")
+    }
+
+    socket.emit("message-cooldown", msgCooldown);
+    io.to(user.room).emit("image", generateMessage(user.username, "<img id=\"uploaded-image\" alt=\"image\" src=\"" + base64 + "\">"));
+
+    cLog(Color.reset, `${time()} IMAGE > User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+    callback();
+  });
+
+  socket.on("sendDirectMessage", (packet, callback) => {
+    const userSentFrom = getUser(socket.id);
+    const userSendTo = packet[0];
+    var userMessage = packet[1];
+
+    //check if user sending to is real
+    var userExists = false;
+    var userID;
+
+    for (let index = 0; index < users.length; ++index) {
+      //remove shield
+      if (users[index].username.replace(adminIcon, "") === userSendTo) {
+        userID = users[index].id;
+        userExists = true
+        break;
+      }
+    }
+
+    //check for xss and remove unsafe tags if not admin
+    if (!admin) {
+      if (DOMPurify.sanitize(userMessage) !== userMessage) {
+        cLog(Color.bg.red, `${time()} Direct Message from ${getUsername(userSentFrom)} to ${userSendTo} has been blocked due to XSS.`);
+        return callback("bad")
+      }
+
+      // convert &, <, >, ", ' into entities
+      userMessage = encode(userMessage).replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
+    }
+
+    //check if message is over 280
+    if (userMessage.length > 280) {
+      cLog(Color.bg.red, `${time()} IP: ${ip} has tried to bypass the 280 character limit!`)
+      return callback("Message is over 280!");
+    }
+
+    if (!userExists)
+      return callback("User does not exist!");
+
+    //send to that user
+    var userSendingTo = getUser(userID)
+
+    var packetOut = [userSentFrom.username, linkify(userMessage)]
+    io.to(userSendingTo.room).emit("recieveDirectMessage" + userSendTo, packetOut);
+
+    cLog(Color.reset, `${time()} DM > FROM: ${getUsername(userSentFrom)} | TO: ${userSendTo}`)
     callback();
   });
 
@@ -187,7 +250,7 @@ function sockets(socket) {
     if (indexOfRoom === -1)
       return cLog(Color.bg.red, `${time()} Room ${user.room} cant be found! Error is from ${getUsername(user)}`)
 
-    //if user is not in typing array, add it and delete in 2 seconds 
+    //if user is not in typing array, add it and delete in 1 second
     if (usersTypingArray[indexOfRoom].indexOf(user.username, 1) !== -1)
       return
 
@@ -199,58 +262,6 @@ function sockets(socket) {
       }, 1000);
   });
 
-  socket.on("sendImage", (base64, callback) => {
-    const user = getUser(socket.id);
-
-    if (DOMPurify.sanitize(base64) !== base64) {
-      cLog(Color.bg.red, `${time()} Message from ${getUsername(user)} has been blocked due to XSS.`);
-      return callback("Refresh the page!")
-    }
-
-    socket.emit("message-cooldown", msgCooldown);
-    io.to(user.room).emit("image", generateMessage(user.username, "<img id=\"uploaded-image\" alt=\"image\" src=\"" + base64 + "\">"));
-
-    cLog(Color.bright, `${time()} IMAGE > User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
-    callback();
-  });
-
-  socket.on("sendDirectMessage", (packet, callback) => {
-    const userSentFrom = getUser(socket.id);
-    const userSendTo = packet[0];
-    const userMessage = packet[1];
-
-    //check if user sending to is real
-    var userExists = false;
-    var userID;
-
-    for (let index = 0; index < users.length; ++index) {
-      //remove shield
-      if (users[index].username.replace(adminIcon, "") === userSendTo) {
-        userID = users[index].id;
-        userExists = true
-        break;
-      }
-    }
-
-    //check if message is over 280
-    if (userMessage.length > 280) {
-      cLog(Color.bg.red, `${time()} IP: ${ip} has tried to bypass the 280 character limit!`)
-      return callback("Message is over 280!");
-    }
-
-    if (!userExists)
-      return callback("User does not exist!");
-
-    //send to that user
-    var userSendingTo = getUser(userID)
-
-    var packetOut = [userSentFrom.username, linkify(userMessage)]
-    io.to(userSendingTo.room).emit("recieveDirectMessage" + userSendTo, packetOut);
-
-    cLog(Color.bright, `${time()} DM > FROM: ${getUsername(userSentFrom)} | TO: ${userSendTo}`)
-    callback();
-  });
-
   socket.on("setCooldown", (seconds) => {
     if (!admin)
       return cLog(Color.bg.red, `${time()} IP: ${ip} has tried to set cooldown without having admin!`)
@@ -260,7 +271,7 @@ function sockets(socket) {
 
     cLog(Color.bright, `${time()} New message cooldown is ${msgCooldown} second(s). (set by ip: ${ip})`)
 
-    sendToAllRooms(io, "message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-stopwatch fa-lg"></i> The message cooldown has been set to ${seconds} second(s).`))
+    sendToAllRooms("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-stopwatch fa-lg"></i> The message cooldown has been set to ${seconds} second(s).`))
   });
 
   socket.on("kickUser", (username, callback) => {
@@ -293,7 +304,7 @@ function sockets(socket) {
     io.to(userModerationObject.room).emit("kick", username);
 
     cLog(Color.bright, `${time()} User: ${username} has been kicked. (kicked by ip: ${ip})`)
-    sendToAllRooms(io, "message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-xmark fa-lg"></i> ${username} has been kicked.`));
+    sendToAllRooms("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-xmark fa-lg"></i> ${username} has been kicked.`));
     callback("good");
   });
 
@@ -339,7 +350,7 @@ function sockets(socket) {
     banArray.push(ipUsernameArray[indexOfIP])
 
     cLog(Color.bright, `${time()} User: ${username} has been banned. (banned by ip: ${ip})`)
-    sendToAllRooms(io, "message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been banned.`));
+    sendToAllRooms("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been banned.`));
 
     callback("good");
   });
@@ -390,7 +401,7 @@ function sockets(socket) {
     }
 
     cLog(Color.bright, `${time()} User: ${username} has been unbanned. (unbanned by ip: ${ip})`)
-    sendToAllRooms(io, "message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been unbanned.`));
+    sendToAllRooms("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been unbanned.`));
 
     callback("good");
   });
@@ -408,16 +419,16 @@ function sockets(socket) {
     if (message.length > 70)
       return callback("long");
 
-    sendToAllRooms(io, "alert", linkify(message))
+    sendToAllRooms("alert", linkify(message))
     cLog(Color.bright, `${time()} IP: ${ip} has sent a alert to everyone. ALERT = ${message}`)
 
     callback("good");
   });
 
   socket.on("disconnect", () => {
-    const user = removeUser(socket.id);
+    const userRemove = removeUser(socket.id);
 
-    if (!user)
+    if (!userRemove)
       return;
 
     //remove ip from list when they leave
@@ -429,18 +440,18 @@ function sockets(socket) {
       ipUsernameArray.splice(index - 1, 1); //remove username
     }
 
-    cLog(Color.bg.blue, `${time()} LEFT -> User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
+    cLog(Color.bg.blue, `${time()} LEFT -> User: ${getUsername(userRemove)} | ROOM: ${userRemove.room} | IP: ${getIP(socket)}`);
 
-    io.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-large-slash fa-lg"></i> ${user.username} has left!`));
+    io.to(userRemove.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-large-slash fa-lg"></i> ${userRemove.username} has left!`));
 
-    io.to(user.room).emit("roomData", {
-      room: user.room,
-      users: getUsersInRoom(user.room)
+    io.to(userRemove.room).emit("roomData", {
+      room: userRemove.room,
+      users: getUsersInRoom(userRemove.room)
     });
   });
 }
 
-function sendToAllRooms(io, event, string) {
+function sendToAllRooms(event, string) {
   var roomsSentTo = [""]
   for (let index = 0; index < users.length; ++index) {
     if (roomsSentTo.includes(users[index].room))
@@ -451,7 +462,7 @@ function sendToAllRooms(io, event, string) {
   }
 }
 
-function sendToSpecificRoom(io, room, event, string) {
+function sendToSpecificRoom(room, event, string) {
   for (let index = 0; index < users.length; ++index) {
     if (users[index].room === room) {
       io.to(users[index].room).emit(event, string)
