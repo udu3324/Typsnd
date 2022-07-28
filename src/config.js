@@ -1,4 +1,3 @@
-
 // Server / Moderation Config
 var serverPort = 3000;
 var adminIPs = ["localhost"];

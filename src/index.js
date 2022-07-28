@@ -4,13 +4,13 @@ const express = require("express");
 const ip = require('ip');
 const { generateMessage, linkify } = require("./utils/messages");
 const { addUser, removeUser, getUser, getUsersInRoom, users } = require("./utils/users");
-const { serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames } = require("./config.js");
+var { msgCooldown, serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames } = require("./config.js");
 const { encode } = require("html-entities");
-var { msgCooldown } = require("./config.js");
 
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
 const { cLog, Color, time } = require("./utils/logging");
+const { createSave, writeSave, readSave, deleteSave } = require("./utils/writer");
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -28,19 +28,12 @@ app.use(express.static(publicDirectoryPath));
 
 var ipArray = [];
 var ipUsernameArray = [];
-
 var banArray = [];
-
 var usersTypingArray = [];
 
-function dots() {
-  var result = '';
-
-  for (i = 0; i < Math.floor(Math.random() * 3) + 1; ++i) {
-    result = result + '.';
-  }
-
-  return result;
+var dotsNumber = 0
+function dots(){
+  return ".".repeat((dotsNumber++) % 3 + 1)
 }
 
 setInterval(function () {
@@ -267,7 +260,8 @@ function sockets(socket) {
       return cLog(Color.bg.red, `${time()} IP: ${ip} has tried to set cooldown without having admin!`)
 
     msgCooldown = seconds;
-    socket.emit("message-cooldown", msgCooldown);
+    writeSave("cooldown", seconds)
+    sendToAllRooms("message-cooldown", msgCooldown)
 
     cLog(Color.bright, `${time()} New message cooldown is ${msgCooldown} second(s). (set by ip: ${ip})`)
 
@@ -349,6 +343,10 @@ function sockets(socket) {
     banArray.push(username)
     banArray.push(ipUsernameArray[indexOfIP])
 
+    //save to save.txt
+    writeSave("ban-array", JSON.stringify(banArray))
+    writeSave("blacklisted-usernames", JSON.stringify(blacklistedUsernames))
+
     cLog(Color.bright, `${time()} User: ${username} has been banned. (banned by ip: ${ip})`)
     sendToAllRooms("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been banned.`));
 
@@ -399,6 +397,10 @@ function sockets(socket) {
       blacklistedUsernames.splice(index2 + 1, 1); //remove ip
       blacklistedUsernames.splice(index2, 1); //remove username
     }
+
+    //save to save.txt
+    writeSave("ban-array", JSON.stringify(banArray))
+    writeSave("blacklisted-usernames", JSON.stringify(blacklistedUsernames))
 
     cLog(Color.bright, `${time()} User: ${username} has been unbanned. (unbanned by ip: ${ip})`)
     sendToAllRooms("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been unbanned.`));
@@ -490,4 +492,34 @@ server.listen(port, () => { //credits n stuff
   console.log("\n Typsnd is running at: \n");
   cLog(Color.fg.cyan, `http://localhost:${port}`, ` - Local:   `)
   cLog(Color.fg.cyan, `http://${ip.address()}:${port} \n`, ` - Network: `)
+
+  createSave()
+
+  //set variables from save.txt instead of config.js
+  if (readSave("cooldown") !== false) {
+    if (readSave("cooldown") === msgCooldown) {
+      deleteSave("cooldown")
+    } else {
+      console.log(`save.txt | using a cooldown of ${readSave("cooldown")} instead of ${msgCooldown}`)
+      msgCooldown = readSave("cooldown")
+    }
+  }
+
+  if (readSave("blacklisted-usernames") !== false) {
+    if (readSave("blacklisted-usernames") === JSON.stringify(blacklistedUsernames)) {
+      deleteSave("blacklisted-usernames")
+    } else {
+      console.log(`save.txt | using a blacklist-username of ${readSave("blacklisted-usernames")} instead of ${JSON.stringify(blacklistedUsernames)}`)
+      blacklistedUsernames = JSON.parse(readSave("blacklisted-usernames"))
+    }
+  }
+
+  if (readSave("ban-array") !== false) {
+    if (readSave("ban-array") === JSON.stringify(banArray)) {
+      deleteSave("ban-array")
+    } else {
+      banArray = JSON.parse(readSave("ban-array"))
+      console.log(`save.txt | using a ban array of ${readSave("ban-array")} instead of ${JSON.stringify(banArray)}`)
+    }
+  }
 });
