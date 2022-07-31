@@ -52,58 +52,38 @@ const $usersTyping = document.querySelector("#users-typing-p");
 const messageTemplate = document.querySelector("#message-template").innerHTML;
 const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML;
 
+// =============================================================================
+// Handle Username and Room Joining, & More
+// =============================================================================
 // set username from cookies
 const username = getCookie("username");
+$user.innerHTML = username;
 
 // set room from cookies
 var room = getCookie("room");
 if (room === "")
   room = "Typsnd"
 
-var messageCooldown;
-
-//set username on bottom left corner
-$user.innerHTML = username;
-
-let onSettingsBox = true;
-
-// autoscroll div down when user is looking at latest msgs
-var startingScroll = $messages.scrollHeight
-var lookingAtEnd = true
-setInterval(function () {
-  if ($messages.scrollTop + startingScroll === $messages.scrollHeight)
-    lookingAtEnd = true
-  else
-    lookingAtEnd = false
-}, 20)
-function autoscroll() {
-  if (lookingAtEnd) {
-    $('#messages').animate({
-      scrollTop: $messages.scrollHeight - $messages.clientHeight
-    }, 125);
-    $scrollDownButton.style.visibility = "hidden";
-  } else {
-    $scrollDownButton.style.visibility = "visible";
+// Emit join to socket server to join the chat
+socket.emit("join", { username, room }, error => {
+  if (error) {
+    alert(error);
+    location.href = "/";
   }
-};
-
-// check if div has scrolled down to remove scrollDownButton
-$(document).ready(function () {
-  $('#messages').on('scroll', chk_scroll);
 });
-function chk_scroll(e) {
-  var elem = $(e.currentTarget);
-  if (elem[0].scrollHeight - elem.scrollTop() == elem.outerHeight())
-    $scrollDownButton.style.visibility = "hidden";
-}
 
-// scroll down button below
-$scrollDownButton.addEventListener("click", function () {
-  console.log("Scroll down button has been clicked on.");
-  $('#messages').animate({
-    scrollTop: $messages.scrollHeight - $messages.clientHeight
-  }, 300);
-  $scrollDownButton.style.visibility = "hidden";
+// When socket server sends roomData, update sidebar
+socket.on("roomData", ({ room, users }) => {
+
+  const html = Mustache.render(sidebarTemplate, {
+    room,
+    users
+  });
+
+  // set username placeholder
+  $roomInput.placeholder = `${room}`;
+
+  document.querySelector("#sidebar").innerHTML = html;
 });
 
 // show disconnect div when lost connection to socketio
@@ -137,31 +117,54 @@ $alertOverlay.lastElementChild.addEventListener("click", closeAlert);
 function closeAlert() {
   $alertOverlay.style.top = "-999px"
 }
+// =============================================================================
+// End
+// =============================================================================
 
-// message animate opacity
-function messageNew() {
-  var $msg = $messages.lastElementChild;
-  var messageOpacity = 0;
-  function messageAnimate() {
-    $msg.style.opacity = messageOpacity;
-
-    if (messageOpacity < 1) {
-      setTimeout(messageAnimate, 5)
-      messageOpacity = messageOpacity + 0.01;
-    }
-  }
-  messageAnimate();
-  createMessageOptions($msg);
-}
-
-// display message when socket server sends
+// =============================================================================
+// Message & Image Sending
+// =============================================================================
+var messageCooldown;
 socket.on("message", message => {
   renderNewMessage(message)
 });
 
-// display image message when socket server sends
 socket.on("image", message => {
   renderNewMessage(message)
+});
+
+//display the people typing
+socket.on("usr-type", string => {
+  $usersTyping.innerHTML = string
+});
+
+// set lookingAtEnd bool for autoscrolling
+var startingScroll = $messages.scrollHeight
+var lookingAtEnd = true
+setInterval(function () {
+  if ($messages.scrollTop + startingScroll === $messages.scrollHeight)
+    lookingAtEnd = true
+  else
+    lookingAtEnd = false
+}, 20)
+
+// check if div has scrolled down to remove scrollDownButton
+$(document).ready(function () {
+  $('#messages').on('scroll', chk_scroll);
+});
+function chk_scroll(e) {
+  var elem = $(e.currentTarget);
+  if (elem[0].scrollHeight - elem.scrollTop() == elem.outerHeight())
+    $scrollDownButton.style.visibility = "hidden";
+}
+
+// scroll down button below
+$scrollDownButton.addEventListener("click", function () {
+  console.log("Scroll down button has been clicked on.");
+  $('#messages').animate({
+    scrollTop: $messages.scrollHeight - $messages.clientHeight
+  }, 300);
+  $scrollDownButton.style.visibility = "hidden";
 });
 
 var userStored;
@@ -215,44 +218,35 @@ function renderNewMessage(message) {
     });
 
     $messages.insertAdjacentHTML("beforeend", html);
-    messageNew();
+    var $msg = $messages.lastElementChild;
+    var messageOpacity = 0;
+    function messageAnimate() {
+      $msg.style.opacity = messageOpacity;
+
+      if (messageOpacity < 1) {
+        setTimeout(messageAnimate, 5)
+        messageOpacity = messageOpacity + 0.01;
+      }
+    }
+    messageAnimate();
+    createMessageOptions($msg);
   }
 
   //add css to mentioned message
   if (isMentioned)
     $messages.lastElementChild.classList.add("mentioned-highliter");
 
-  autoscroll();
+  //autoscroll if looking at end
+  if (lookingAtEnd) {
+    $('#messages').animate({
+      scrollTop: $messages.scrollHeight - $messages.clientHeight
+    }, 125);
+    $scrollDownButton.style.visibility = "hidden";
+  } else {
+    $scrollDownButton.style.visibility = "visible";
+  }
 }
 
-// When socket server sends roomData, update sidebar
-socket.on("roomData", ({ room, users }) => {
-
-  const html = Mustache.render(sidebarTemplate, {
-    room,
-    users
-  });
-
-  // set username placeholder
-  $roomInput.placeholder = `${room}`;
-
-  document.querySelector("#sidebar").innerHTML = html;
-});
-
-// Emit join to socket server to join the chat
-socket.emit("join", { username, room }, error => {
-  if (error) {
-    alert(error);
-    location.href = "/";
-  }
-});
-
-socket.on("users-typing", string => {
-  $usersTyping.innerHTML = string
-});
-
-// Message Send Stuff Below
-// Autoselect message send input when key is pressed
 var isHoldingDownCtrl = false;
 function getEventTypeDown(key) {
   var keyCode = key.keyCode;
@@ -326,7 +320,7 @@ function sendMessage(message) {
 }
 
 function sendImage(base64) {
-  socket.emit("sendImage", event.target.result, error => {
+  socket.emit("sendImage", base64, error => {
     if (error == "Refresh the page!")
       return window.location.reload();
 
@@ -350,10 +344,43 @@ $messageForm.addEventListener("submit", e => {
 });
 
 var boolClickedOn = false;
-// Message Send Stuff Above
+// =============================================================================
+// End
+// =============================================================================
 
+// =============================================================================
+// Emoji Insert
+// =============================================================================
+$insertEmojiButton.addEventListener("click", function () {
+  console.log("Insert Emoji button has been clicked on.");
+  if (boolClickedOn) {
+    $emojiBox.style.display = "none"
+    boolClickedOn = false;
+  } else {
+    $emojiBox.style.display = "flex"
+    boolClickedOn = true;
+  }
+});
 
-// Settings Stuff Below
+var onEmojiBox = true;
+// emoji box
+$emojiBox.onmouseover = function () {
+  onEmojiBox = false
+}
+$emojiBox.onmouseout = function () {
+  onEmojiBox = true
+}
+
+// On Emoji Click
+$emojiBox.addEventListener('emoji-click', event => $messageFormInput.value += event.detail.unicode);
+// =============================================================================
+// End
+// =============================================================================
+
+// =============================================================================
+// Settings UI & More
+// =============================================================================
+let onSettingsBox = true
 // set username placeholder
 $usernameInput.placeholder = `${username}`;
 
@@ -392,7 +419,6 @@ function joinDiffRoom() {
   if ($roomInput.value === "")
     return alertAsync("You need a room! It can't be empty.");
 
-  // send msg alerting change of username
   sendMessage("I'm leaving this room to join another one.")
 
   // do login
@@ -510,10 +536,14 @@ $settingsOverlay.addEventListener("click", function () {
     opacityDown();
   }
 });
-// Settings Stuff Above
+// =============================================================================
+// End
+// =============================================================================
 
 
-// Image Upload Stuff Below
+// =============================================================================
+// Image File Handling and Upload
+// =============================================================================
 $imageSendButton.addEventListener("click", function () {
   console.log("File Upload button has been clicked on.");
   openFileDialog();
@@ -525,23 +555,42 @@ function openFileDialog(callback) {
   inputElement.type = "file";
   inputElement.accept = "image/png, image/jpeg, image/gif, image/apng, image/svg, image/bmp, image/ico";
 
-  inputElement.addEventListener("change", handleFiles, callback)
+  inputElement.addEventListener("change", function () {
+    console.log("file has been submitted and now being handled.")
+    const fileList = this.files; /* now you can work with the file list */
+    for (let i = 0, numFiles = fileList.length; i < numFiles; i++) {
+      const file = fileList[i];
+      var reader = new FileReader()
+      reader.onload = function (base64) {
+        sendImage(base64.target.result)
+      }
+      reader.readAsDataURL(file);
+    }
+  }, callback)
   inputElement.dispatchEvent(new MouseEvent("click"));
 }
 
-function handleFiles() {
-  console.log("file has been submitted and now being handled.")
-  const fileList = this.files; /* now you can work with the file list */
-  for (let i = 0, numFiles = fileList.length; i < numFiles; i++) {
-    const file = fileList[i];
-    var reader = new FileReader()
-    reader.onload = function (base64) {
-      sendImage(base64.target.result)
-    }
-    reader.readAsDataURL(file);
+// Send Images with CTRL + V
+document.onpaste = function (event) {
+  var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+
+  for (var index in items) {
+    var item = items[index]
+    if (items[index].kind !== 'file')
+      return;
+
+    var blob = item.getAsFile();
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      if (!pasteEnabled)
+        return;
+
+      pasteEnabled = false;
+      sendImage(event.target.result)
+    };
+    reader.readAsDataURL(blob);
   }
-}
-// Image Upload Stuff Above
+};
 
 // Image select and view stuff below
 // tysm <3 https://stackoverflow.com/a/54466127/14677066
@@ -569,9 +618,59 @@ $('body').on('click', 'img', function () {
   const blob = new Blob(byteArrays, { type: contentType });
   window.open(URL.createObjectURL(blob), '_blank');
 })
-// image select and view stuff above
+// =============================================================================
+// End
+// =============================================================================
 
-// tools bar below
+// =============================================================================
+// Tools Bar
+// =============================================================================
+socket.on("starting-data", array => {
+  //tabs
+  for (let index = 0; index < array[0].length; ++index) {
+    addATab(array[0][index][0], array[0][index][1])
+  }
+  disableToolButtons(true)
+
+  //msg cooldown
+  messageCooldown = array[1];
+  $cooldownInput.value = `${messageCooldown}`;
+
+  //title
+  document.title = array[2];
+});
+
+var userHashed = username
+//recieve direct messages sent
+socket.on("recieveDirectMessage" + userHashed, (packetOut) => {
+  //alert(packetOut[0] + "\n" + packetOut[1])
+
+  $fromReplace.innerHTML = packetOut[0]
+  $messageReplace.innerHTML = packetOut[1]
+
+  $messageBar.style.display = "block"
+});
+
+$closeMessageButton.onclick = function () {
+  $messageBar.style.display = "none"
+
+  $fromReplace.innerHTML = ""
+  $messageReplace.innerHTML = ""
+}
+
+$replyMessageButton.onclick = function () {
+  messageUIToggle()
+
+  //replace user sending to with user that sent from
+  var fromUser = $fromReplace.innerHTML
+  if (fromUser.includes(" "))
+    fromUser = fromUser.substring(fromUser.indexOf(" ") + 1)
+
+  $userMessageInput.value = fromUser
+
+  $messageInput.focus()
+}
+
 $toolToggleButton.addEventListener("click", toggleToolBar);
 
 function disableToolButtons(bool) {
@@ -618,7 +717,6 @@ $roomBox.onmouseout = function () {
   onRoomBox = true
 }
 
-// settings overlay
 $roomOverlay.addEventListener("click", function () {
   if (onRoomBox) {
     console.log("Room overlay has been clicked off of.");
@@ -636,21 +734,6 @@ function addATab(name, url) {
   // add the <a> element tree into the div#something
   $toolBarDiv.appendChild(a);
 }
-
-socket.on("starting-data", array => {
-  //tabs
-  for (let index = 0; index < array[0].length; ++index) {
-    addATab(array[0][index][0], array[0][index][1])
-  }
-  disableToolButtons(true)
-
-  //msg cooldown
-  messageCooldown = array[1];
-  $cooldownInput.value = `${messageCooldown}`;
-
-  //title
-  document.title = array[2];
-});
 
 //message user stuff below
 $messageButton.addEventListener("click", messageUIToggle);
@@ -718,37 +801,6 @@ $sendMessageButton.onclick = function () {
   });
 };
 
-var userHashed = username
-//recieve direct messages sent
-socket.on("recieveDirectMessage" + userHashed, (packetOut) => {
-  //alert(packetOut[0] + "\n" + packetOut[1])
-
-  $fromReplace.innerHTML = packetOut[0]
-  $messageReplace.innerHTML = packetOut[1]
-
-  $messageBar.style.display = "block"
-});
-
-$closeMessageButton.onclick = function () {
-  $messageBar.style.display = "none"
-
-  $fromReplace.innerHTML = ""
-  $messageReplace.innerHTML = ""
-}
-
-$replyMessageButton.onclick = function () {
-  messageUIToggle()
-
-  //replace user sending to with user that sent from
-  var fromUser = $fromReplace.innerHTML
-  if (fromUser.includes(" "))
-    fromUser = fromUser.substring(fromUser.indexOf(" ") + 1)
-
-  $userMessageInput.value = fromUser
-
-  $messageInput.focus()
-}
-
 // Make the DIV element draggable:
 dragElement($messageBar);
 
@@ -805,49 +857,6 @@ $joinDefaultButton.onclick = function () {
     alertAsync("You're already in the default room!")
   }
 }
-
-// Insert Emoji
-$insertEmojiButton.addEventListener("click", function () {
-  console.log("Insert Emoji button has been clicked on.");
-  if (boolClickedOn) {
-    $emojiBox.style.display = "none"
-    boolClickedOn = false;
-  } else {
-    $emojiBox.style.display = "flex"
-    boolClickedOn = true;
-  }
-});
-
-var onEmojiBox = true;
-// emoji box
-$emojiBox.onmouseover = function () {
-  onEmojiBox = false
-}
-$emojiBox.onmouseout = function () {
-  onEmojiBox = true
-}
-
-// On Emoji Click
-$emojiBox.addEventListener('emoji-click', event => sendEmoji($messageFormInput.value = $messageFormInput.value + event.detail.unicode));
-
-// Send Images with CTRL + V
-document.onpaste = function (event) {
-  var items = (event.clipboardData || event.originalEvent.clipboardData).items;
-
-  for (var index in items) {
-    var item = items[index]
-    if (items[index].kind !== 'file')
-      return;
-
-    var blob = item.getAsFile();
-    var reader = new FileReader();
-    reader.onload = function (event) {
-      if (!pasteEnabled)
-        return;
-
-      pasteEnabled = false;
-      sendImage(event.target.result)
-    };
-    reader.readAsDataURL(blob);
-  }
-};
+// =============================================================================
+// End
+// =============================================================================

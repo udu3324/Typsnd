@@ -44,7 +44,7 @@ function writeSave(config, value) {
     }
 }
 
-//deleteSave("cooldown", 2)
+//deleteSave("cooldown")
 function deleteSave(config) {
     //if config exists, delete it
     if (readSave(config) !== false) {

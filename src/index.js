@@ -42,16 +42,16 @@ setInterval(function () {
     //send packet for specific amount
     var room = usersTypingArray[index][0]
     if (usersTypingArray[index].length >= 7) {
-      sendToSpecificRoom(room, "users-typing", `${usersTypingArray[index].length} users are currently typing${dots()}`)
+      sendToSpecificRoom(room, "usr-type", `${usersTypingArray[index].length} users are currently typing${dots()}`)
     } else if ((usersTypingArray[index].length >= 4)) {
       var stringOfUsers = usersTypingArray[index].toString().replace(/,([^,]*)$/, ' and $1').replaceAll(",", ", ").substring(usersTypingArray[index].toString().indexOf(",") + 2)
-      sendToSpecificRoom(room, "users-typing", `${stringOfUsers} are typing${dots()}`)
+      sendToSpecificRoom(room, "usr-type", `${stringOfUsers} are typing${dots()}`)
     } else if ((usersTypingArray[index].length === 3)) {
-      sendToSpecificRoom(room, "users-typing", `${usersTypingArray[index][1]} and ${usersTypingArray[index][2]} are typing${dots()}`)
+      sendToSpecificRoom(room, "usr-type", `${usersTypingArray[index][1]} and ${usersTypingArray[index][2]} are typing${dots()}`)
     } else if ((usersTypingArray[index].length === 2)) {
-      sendToSpecificRoom(room, "users-typing", `${usersTypingArray[index][1]} is typing${dots()}`)
+      sendToSpecificRoom(room, "usr-type", `${usersTypingArray[index][1]} is typing${dots()}`)
     } else if ((usersTypingArray[index].length === 1)) {
-      sendToSpecificRoom(room, "users-typing", ``)
+      sendToSpecificRoom(room, "usr-type", ``)
     }
   }
 }, 500)
