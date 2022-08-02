@@ -116,7 +116,7 @@ function runCommand(io, socket, user, message, admin) {
 
         if (gameExists) {
             ticTacToeGame.splice(gameIndex, 1)
-            sendPrivateMessage(socket, true, `Sucessfully ended the game.`)
+            io.to(user.room).emit("message", generateMessage(`${botIcon}Bot`, `${user.username} ended the Tic Tac Toe game forcefully.`));
             cLog(Color.bright, `${time()} ${user.username} has force ended the tic tac toe game.`)
         } else {
             sendPrivateMessage(socket, true, `There are currently no Tic Tac Toe game to end.`)
