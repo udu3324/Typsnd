@@ -33,12 +33,12 @@ function runCommand(io, socket, user, message, admin) {
             /end-tictactoe - end tictactoe game forcefully<br>
             /sudo (user) (message) - sudo a person
             `)
-        cLog(Color.bright, `${time()} ${user.username} has looked at the command help.`)
+        cLog(Color.bright, `${time()} ${getUsername(user)} has looked at the command help.`)
     } else if (/^\/credits$/.test(message)) {
         sendPrivateMessage(socket, true, `<h1>Credits</h1>
             <a href="https://github.com/udu3324" target="_blank">udu3324</a> - created website<br>
             <a href="https://fontawesome.com" target="_blank">fontawesome</a> - created icons`)
-        cLog(Color.bright, `${time()} ${user.username} has looked at the credits. (thank you)`)
+        cLog(Color.bright, `${time()} ${getUsername(user)} has looked at the credits. (thank you)`)
     } else if (/^\/tictactoe/.test(message)) {
         if (message.length <= 11)
             return sendPrivateMessage(socket, true, `No user mentioned in command!`)
@@ -101,7 +101,7 @@ function runCommand(io, socket, user, message, admin) {
         io.to(userSendingTo.room).emit("message-split" + userSendTo, generateMessage(`${botIcon}Bot`, `${user.username} invited you to play Tic Tac Toe.
             <br><button onclick="javascript:socket.emit(\`tic-tac-toe\`, \`${user.room}|accept\`)">Accept</button>
             ${botStr}`));
-        cLog(Color.bright, `${time()} ${user.username} has invited ${userSendingTo.username} to a tic tac toe game.`)
+        cLog(Color.bright, `${time()} ${getUsername(user)} has invited ${getUsername(userSendingTo)} to a tic tac toe game.`)
     } else if (/^\/end-tictactoe$/.test(message)) {
         if (!admin) return sendPrivateMessage(socket, true, `Only admins can run this command!`)
 
@@ -117,7 +117,7 @@ function runCommand(io, socket, user, message, admin) {
         if (gameExists) {
             ticTacToeGame.splice(gameIndex, 1)
             io.to(user.room).emit("message", generateMessage(`${botIcon}Bot`, `${user.username} ended the Tic Tac Toe game forcefully.`));
-            cLog(Color.bright, `${time()} ${user.username} has force ended the tic tac toe game.`)
+            cLog(Color.bright, `${time()} ${getUsername(user)} has force ended the tic tac toe game.`)
         } else {
             sendPrivateMessage(socket, true, `There are currently no Tic Tac Toe game to end.`)
         }
@@ -150,9 +150,16 @@ function runCommand(io, socket, user, message, admin) {
         if (userSudoing.username.includes(adminIcon, "")) return sendPrivateMessage(socket, true, `The user you wanted to sudo is a admin!`)
 
         io.to(user.room).emit("message", generateMessage(userSudoing.username, messageSudoing));
-        cLog(Color.bright, `${time()} ${userSudoing.username} has been sudoed. (by user: ${user.username})`)
+        cLog(Color.bright, `${time()} ${getUsername(userSudoing)} has been sudoed. (by user: ${getUsername(user)})`)
     }
 }
+
+function getUsername(user) {
+    if (user.username === undefined)
+      return user.replace(`${adminIcon}`, "(admin) ");
+    else
+      return user.username.replace(`${adminIcon}`, "(admin) ");
+  }
 
 function sendPrivateMessage(socket, split, message) {
     if (split)
