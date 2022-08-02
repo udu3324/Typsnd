@@ -4,13 +4,14 @@ const express = require("express");
 const ip = require('ip');
 const { generateMessage, linkify } = require("./utils/messages");
 const { addUser, removeUser, getUser, getUsersInRoom, users } = require("./utils/users");
-var { msgCooldown, serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames } = require("./config.js");
+var { msgCooldown, serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames, botIcon } = require("./config.js");
 const { encode } = require("html-entities");
 
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
 const { cLog, Color, time } = require("./utils/logging");
 const { createSave, writeSave, readSave, deleteSave } = require("./utils/writer");
+const { runCommand, ticTacToeGame, generateNewTTTBoard, indexOf2dArray, checkWin, checkWinTTT, checkTieTTT } = require("./utils/commands");
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -32,7 +33,7 @@ var banArray = [];
 var usersTypingArray = [];
 
 var dotsNumber = 0
-function dots(){
+function dots() {
   return ".".repeat((dotsNumber++) % 3 + 1)
 }
 
@@ -95,15 +96,14 @@ function sockets(socket) {
 
   socket.on("join", (options, callback) => {
     const { error, user } = addUser({ ip, id: socket.id, ...options });
-    if (error)
-      return callback(error)
+    if (error) return callback(error)
 
     socket.join(user.room);
     cLog(Color.bg.green, `${time()} JOIN -> USER: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
 
     //join and welcome message
-    socket.emit("message", generateMessage(`${adminIcon}Admin`, `Welcome, ${user.username}! ${msgGreet}`));
-    socket.broadcast.to(user.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-check fa-lg"></i> ${user.username} has joined!`));
+    socket.emit("message", generateMessage(`${botIcon}Bot`, `Welcome, ${user.username}!</br>Type "/help" to see commands. ${msgGreet}`));
+    socket.broadcast.to(user.room).emit("message", generateMessage(`${botIcon}Bot`, `<i class="fa-solid fa-user-check fa-lg"></i> ${user.username} has joined!`));
 
     //send new room data
     io.to(user.room).emit("roomData", {
@@ -140,6 +140,13 @@ function sockets(socket) {
   socket.on("sendMessage", (message, callback) => {
     const user = getUser(socket.id);
     var msg = message;
+
+    //check for command
+    if (/^\//.test(message)) {
+      runCommand(io, socket, user, message, admin)
+      socket.emit("message-cooldown", msgCooldown);
+      return callback()
+    }
 
     //check for xss and remove unsafe tags if not admin
     if (!admin) {
@@ -215,8 +222,7 @@ function sockets(socket) {
       return callback("Message is over 280!");
     }
 
-    if (!userExists)
-      return callback("User does not exist!");
+    if (!userExists) return callback("User does not exist!");
 
     //send to that user
     var userSendingTo = getUser(userID)
@@ -240,12 +246,10 @@ function sockets(socket) {
       }
     }
 
-    if (indexOfRoom === -1)
-      return cLog(Color.bg.red, `${time()} Room ${user.room} cant be found! Error is from ${getUsername(user)}`)
+    if (indexOfRoom === -1) return cLog(Color.bg.red, `${time()} Room ${user.room} cant be found! Error is from ${getUsername(user)}`)
 
     //if user is not in typing array, add it and delete in 1 second
-    if (usersTypingArray[indexOfRoom].indexOf(user.username, 1) !== -1)
-      return
+    if (usersTypingArray[indexOfRoom].indexOf(user.username, 1) !== -1) return
 
     usersTypingArray[indexOfRoom].push(user.username)
 
@@ -256,8 +260,7 @@ function sockets(socket) {
   });
 
   socket.on("setCooldown", (seconds) => {
-    if (!admin)
-      return cLog(Color.bg.red, `${time()} IP: ${ip} has tried to set cooldown without having admin!`)
+    if (!admin) return cLog(Color.bg.red, `${time()} IP: ${ip} has tried to set cooldown without having admin!`)
 
     msgCooldown = seconds;
     writeSave("cooldown", seconds)
@@ -265,7 +268,7 @@ function sockets(socket) {
 
     cLog(Color.bright, `${time()} New message cooldown is ${msgCooldown} second(s). (set by ip: ${ip})`)
 
-    sendToAllRooms("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-stopwatch fa-lg"></i> The message cooldown has been set to ${seconds} second(s).`))
+    sendToAllRooms("message", generateMessage(`${botIcon}Bot`, `<i class="fa-solid fa-stopwatch fa-lg"></i> The message cooldown has been set to ${seconds} second(s).`))
   });
 
   socket.on("kickUser", (username, callback) => {
@@ -292,13 +295,12 @@ function sockets(socket) {
       }
     }
 
-    if (!userExists)
-      return callback("notExistingUser")
+    if (!userExists) return callback("notExistingUser")
 
     io.to(userModerationObject.room).emit("kick", username);
 
     cLog(Color.bright, `${time()} User: ${username} has been kicked. (kicked by ip: ${ip})`)
-    sendToAllRooms("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-xmark fa-lg"></i> ${username} has been kicked.`));
+    sendToAllRooms("message", generateMessage(`${botIcon}Bot`, `<i class="fa-solid fa-xmark fa-lg"></i> ${username} has been kicked.`));
     callback("good");
   });
 
@@ -327,8 +329,7 @@ function sockets(socket) {
       }
     }
 
-    if (!userExists)
-      return callback("notExistingUser");
+    if (!userExists) return callback("notExistingUser");
 
     //ban them
     io.to(userModerationObject.room).emit("ban", username);
@@ -348,7 +349,7 @@ function sockets(socket) {
     writeSave("blacklisted-usernames", JSON.stringify(blacklistedUsernames))
 
     cLog(Color.bright, `${time()} User: ${username} has been banned. (banned by ip: ${ip})`)
-    sendToAllRooms("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been banned.`));
+    sendToAllRooms("message", generateMessage(`${botIcon}Bot`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been banned.`));
 
     callback("good");
   });
@@ -403,7 +404,7 @@ function sockets(socket) {
     writeSave("blacklisted-usernames", JSON.stringify(blacklistedUsernames))
 
     cLog(Color.bright, `${time()} User: ${username} has been unbanned. (unbanned by ip: ${ip})`)
-    sendToAllRooms("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been unbanned.`));
+    sendToAllRooms("message", generateMessage(`${botIcon}Bot`, `<i class="fa-solid fa-gavel fa-lg"></i> ${username} has been unbanned.`));
 
     callback("good");
   });
@@ -415,11 +416,9 @@ function sockets(socket) {
     }
 
     //filter msg length
-    if (message.length < 3)
-      return callback("short");
+    if (message.length < 3) return callback("short")
 
-    if (message.length > 70)
-      return callback("long");
+    if (message.length > 70) return callback("long")
 
     sendToAllRooms("alert", linkify(message))
     cLog(Color.bright, `${time()} IP: ${ip} has sent a alert to everyone. ALERT = ${message}`)
@@ -430,8 +429,7 @@ function sockets(socket) {
   socket.on("disconnect", () => {
     const userRemove = removeUser(socket.id);
 
-    if (!userRemove)
-      return;
+    if (!userRemove) return;
 
     //remove ip from list when they leave
     ipArray = ipArray.filter(e => e !== getIP(socket));
@@ -444,20 +442,82 @@ function sockets(socket) {
 
     cLog(Color.bg.blue, `${time()} LEFT -> User: ${getUsername(userRemove)} | ROOM: ${userRemove.room} | IP: ${getIP(socket)}`);
 
-    io.to(userRemove.room).emit("message", generateMessage(`${adminIcon}Admin`, `<i class="fa-solid fa-user-large-slash fa-lg"></i> ${userRemove.username} has left!`));
+    io.to(userRemove.room).emit("message", generateMessage(`${botIcon}Bot`, `<i class="fa-solid fa-user-xmark fa-lg"></i> ${userRemove.username} has left!`));
 
     io.to(userRemove.room).emit("roomData", {
       room: userRemove.room,
       users: getUsersInRoom(userRemove.room)
     });
   });
+
+  socket.on("tic-tac-toe", (packet) => {
+    const user = getUser(socket.id);
+
+    const room = packet.substring(0, packet.indexOf("|"))
+    const doing = packet.substring(packet.indexOf("|") + 1)
+
+    //find where the game is stored in the array
+    var gameIndex;
+    for (let index = 0; index < ticTacToeGame.length; ++index) {
+      if (ticTacToeGame[index][0] === room)
+        gameIndex = index
+    }
+
+    if (gameIndex == undefined) return //return if cant find
+
+    const user1 = ticTacToeGame[gameIndex][1]
+    const user2 = ticTacToeGame[gameIndex][2]
+
+    //only allow sockets with people that started game
+    if (!(user === user1 || user === user2)) return
+
+    const status = ticTacToeGame[gameIndex][3]
+
+    if (status === "unaccepted" && doing === "accept") {
+      io.to(room).emit("message-split", generateMessage(`${botIcon}Bot`, generateNewTTTBoard(gameIndex)));
+      ticTacToeGame[gameIndex][3] = "started"
+    } else if (status === "started" && /^t[0-8]$/.test(doing)) {
+      const currentTurn = ticTacToeGame[gameIndex][4]
+
+      if (user !== currentTurn) return //if not users turn
+
+      var indexOfTile = indexOf2dArray(ticTacToeGame[gameIndex][5], doing)
+      if (indexOfTile === false) return //return if cant find
+
+      //place the marker
+      if (currentTurn === user1)
+        ticTacToeGame[gameIndex][5][indexOfTile[0]][indexOfTile[1]] = "X"
+      else
+        ticTacToeGame[gameIndex][5][indexOfTile[0]][indexOfTile[1]] = "O"
+
+      //check for win
+      var playerWon = checkWinTTT(gameIndex)
+      var playerTie = checkTieTTT(ticTacToeGame[gameIndex][5])
+
+      if (playerWon) {
+        ticTacToeGame[gameIndex][3] = "finished"
+      } else if (playerTie) {
+        ticTacToeGame[gameIndex][3] = "tied"
+      } else {
+        //switch the current turn
+        if (currentTurn === user1)
+          ticTacToeGame[gameIndex][4] = ticTacToeGame[gameIndex][2]
+        else
+          ticTacToeGame[gameIndex][4] = ticTacToeGame[gameIndex][1]
+      }
+
+      io.to(room).emit("message-split", generateMessage(`${botIcon}Bot`, generateNewTTTBoard(gameIndex)));
+
+      if (playerWon || playerTie)
+        ticTacToeGame.splice(gameIndex, 1)
+    }
+  })
 }
 
 function sendToAllRooms(event, string) {
   var roomsSentTo = [""]
   for (let index = 0; index < users.length; ++index) {
-    if (roomsSentTo.includes(users[index].room))
-      return;
+    if (roomsSentTo.includes(users[index].room)) return
 
     io.to(users[index].room).emit(event, string);
     roomsSentTo.push(users[index].room)

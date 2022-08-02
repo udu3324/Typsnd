@@ -57,6 +57,7 @@ const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML;
 // =============================================================================
 // set username from cookies
 const username = getCookie("username");
+var userHashed = username
 $user.innerHTML = username;
 
 // set room from cookies
@@ -129,6 +130,14 @@ socket.on("message", message => {
   renderNewMessage(message)
 });
 
+socket.on("message-split", message => {
+  renderNewMessage(message, true)
+});
+
+socket.on("message-split" + userHashed, message => {
+  renderNewMessage(message, true)
+});
+
 socket.on("image", message => {
   renderNewMessage(message)
 });
@@ -168,10 +177,13 @@ $scrollDownButton.addEventListener("click", function () {
 });
 
 var userStored;
-function renderNewMessage(message) {
+function renderNewMessage(message, split) {
+  if (split == undefined)
+    split = false
+  else if (split)
+    userStored = ""
+
   var isMentioned = false
-  var stored = $messages.lastElementChild.firstElementChild.innerHTML
-  userStored = stored.substring(39, stored.indexOf("</span>"));
 
   //handle mentions
   if (message.text.includes(`@${username}`) || message.text.includes(`@everyone`)) {
@@ -207,7 +219,7 @@ function renderNewMessage(message) {
   }
 
   //if previous user messaged is same with new user message, merge it
-  if (message.username === userStored) {
+  if (message.username === userStored && !split) {
     $messages.lastElementChild.lastElementChild.innerHTML += "<br/>" + message.text
   } else {
     //dont merge and create a new message
@@ -230,6 +242,11 @@ function renderNewMessage(message) {
     }
     messageAnimate();
     createMessageOptions($msg);
+
+    if (!split) {
+      var stored = $messages.lastElementChild.firstElementChild.innerHTML
+      userStored = stored.substring(39, stored.indexOf("</span>"));
+    }
   }
 
   //add css to mentioned message
@@ -640,7 +657,6 @@ socket.on("starting-data", array => {
   document.title = array[2];
 });
 
-var userHashed = username
 //recieve direct messages sent
 socket.on("recieveDirectMessage" + userHashed, (packetOut) => {
   //alert(packetOut[0] + "\n" + packetOut[1])

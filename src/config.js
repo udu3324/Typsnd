@@ -2,6 +2,7 @@
 var serverPort = 3000;
 var adminIPs = ["localhost"];
 var adminIcon = `<i class="fa-solid fa-shield"></i>`;
+var botIcon = `<i class="fa-solid fa-keyboard"></i>`;
 var altDetection = true;
 var msgCooldown = "2";
 // Filter is not case sensitive & doesn't apply to admins
@@ -30,6 +31,9 @@ blacklistedIPs = blacklistedIPs.filter(n => n)
 blacklistedUsernames = blacklistedUsernames.filter(n => n)
 msgGreet = msgGreet.replace(/\n/g, "<br/>");
 adminIcon += " " //important
+botIcon += " " //important
+if (msgGreet.length >= 1)
+  msgGreet = "<br/>" + msgGreet
 
 module.exports = {
   serverPort,
@@ -42,5 +46,6 @@ module.exports = {
   msgCooldown,
   multipleRooms,
   tabs,
-  htmlTitle
+  htmlTitle,
+  botIcon
 };

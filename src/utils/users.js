@@ -35,6 +35,13 @@ const addUser = ({ ip, id, username, room }) => {
     };
   }
 
+  // Blacklist splace in username
+  if (username.includes(" ")) {
+    return {
+      error: "Spaces aren't allowed in usernames!"
+    };
+  }
+
   // Check for existing user
   for (let index = 0; index < users.length; ++index) {
 

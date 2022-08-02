@@ -701,6 +701,12 @@ button#send-message-button {
     width: 286px
 }
 
+span#bot-indicator-msg {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--accent);
+}
+
 div#alert-overlay {
     text-align: center;
     position: fixed;
@@ -723,4 +729,33 @@ button#close-alert-overlay {
 
 div#alert-overlay a {
     filter: invert(100%)
+}
+
+/* Tic Tac Toe */
+div#tictactoe-gameboard {
+    display: inline-block;
+}
+
+.ttt-square {
+    width: 75px;
+    height: 75px;
+    float: left;
+    border-color: var(--fontColor);
+    border-width: thin;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 75px;
+    font-size: 70px;
+}
+
+button.ttt-button {
+    background: transparent;
+    padding: 0px;
+    font-size: 0px;
+    width: 75px;
+    height: 75px;
+}
+
+button.ttt-button:hover {
+    background: #00000041
 }
