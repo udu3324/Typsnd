@@ -156,10 +156,10 @@ function runCommand(io, socket, user, message, admin) {
 
 function getUsername(user) {
     if (user.username === undefined)
-      return user.replace(`${adminIcon}`, "(admin) ");
+        return user.replace(`${adminIcon}`, "(admin) ");
     else
-      return user.username.replace(`${adminIcon}`, "(admin) ");
-  }
+        return user.username.replace(`${adminIcon}`, "(admin) ");
+}
 
 function sendPrivateMessage(socket, split, message) {
     if (split)
