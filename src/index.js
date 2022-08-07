@@ -11,7 +11,7 @@ const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
 const { cLog, Color, time } = require("./utils/logging");
 const { createSave, writeSave, readSave, deleteSave } = require("./utils/writer");
-const { runCommand, ticTacToeGame, generateNewTTTBoard, indexOf2dArray, checkWin, checkWinTTT, checkTieTTT } = require("./utils/commands");
+const { runCommand, ticTacToeGame, generateNewTTTBoard, indexOf2dArray, checkWinTTT, checkTieTTT } = require("./utils/commands");
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
