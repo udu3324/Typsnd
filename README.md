@@ -10,7 +10,7 @@
 Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into. It is based on [Express.JS](https://expressjs.com/), [Node.JS](https://nodejs.org/), and [Socket.io.JS](https://socket.io/). (note: typsnd preforms poorly on small screens)
    
 **Features**   
- - Commands (tictactoe so far)
+ - Commands (tictactoe and connect4)
  - Moderation (ban, kick, alert to all)
  - Tabs (easy to access button links)
  - Direct Messaging

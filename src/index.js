@@ -11,7 +11,7 @@ const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
 const { cLog, Color, time } = require("./utils/logging");
 const { createSave, writeSave, readSave, deleteSave } = require("./utils/writer");
-const { runCommand, ticTacToeGame, generateNewTTTBoard, indexOf2dArray, checkWinTTT, checkTieTTT } = require("./utils/commands");
+const { runCommand, ticTacToeGame, generateNewTTTBoard, indexOf2dArray, checkWinTTT, checkTieTTT, connect4Game, generateNewConnect4Board, placeConnect4Tile, checkWinConnect4 } = require("./utils/commands");
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -42,18 +42,18 @@ setInterval(function () {
   for (let index = 0; index < usersTypingArray.length; ++index) {
     //send packet for specific amount
     var room = usersTypingArray[index][0]
-    if (usersTypingArray[index].length >= 7) {
-      sendToSpecificRoom(room, "usr-type", `${usersTypingArray[index].length} users are currently typing${dots()}`)
-    } else if ((usersTypingArray[index].length >= 4)) {
-      var stringOfUsers = usersTypingArray[index].toString().replace(/,([^,]*)$/, ' and $1').replaceAll(",", ", ").substring(usersTypingArray[index].toString().indexOf(",") + 2)
-      sendToSpecificRoom(room, "usr-type", `${stringOfUsers} are typing${dots()}`)
-    } else if ((usersTypingArray[index].length === 3)) {
+    var usersTyping = usersTypingArray[index].length
+
+    if (usersTyping >= 7)
+      sendToSpecificRoom(room, "usr-type", `${usersTyping} users are currently typing${dots()}`)
+    else if ((usersTyping >= 4))
+      sendToSpecificRoom(room, "usr-type", `${usersTypingArray[index].toString().replace(/,([^,]*)$/, ' and $1').replaceAll(",", ", ").substring(usersTypingArray[index].toString().indexOf(",") + 2)} are typing${dots()}`)
+    else if ((usersTyping === 3))
       sendToSpecificRoom(room, "usr-type", `${usersTypingArray[index][1]} and ${usersTypingArray[index][2]} are typing${dots()}`)
-    } else if ((usersTypingArray[index].length === 2)) {
+    else if ((usersTyping === 2))
       sendToSpecificRoom(room, "usr-type", `${usersTypingArray[index][1]} is typing${dots()}`)
-    } else if ((usersTypingArray[index].length === 1)) {
+    else if ((usersTyping === 1))
       sendToSpecificRoom(room, "usr-type", ``)
-    }
   }
 }, 500)
 
@@ -463,7 +463,8 @@ function sockets(socket) {
         gameIndex = index
     }
 
-    if (gameIndex == undefined) return //return if cant find
+    //return if cant find
+    if (gameIndex == undefined) return
 
     const user1 = ticTacToeGame[gameIndex][1]
     const user2 = ticTacToeGame[gameIndex][2]
@@ -476,13 +477,16 @@ function sockets(socket) {
     if (status === "unaccepted" && doing === "accept") {
       io.to(room).emit("message-split", generateMessage(`${botIcon}Bot`, generateNewTTTBoard(gameIndex)));
       ticTacToeGame[gameIndex][3] = "started"
+      ticTacToeGame[gameIndex][6] = new Date()
     } else if (status === "started" && /^t[0-8]$/.test(doing)) {
       const currentTurn = ticTacToeGame[gameIndex][4]
 
-      if (user !== currentTurn) return //if not users turn
+      //return if not user's turn
+      if (user !== currentTurn) return
 
+      //return if cant find tile
       var indexOfTile = indexOf2dArray(ticTacToeGame[gameIndex][5], doing)
-      if (indexOfTile === false) return //return if cant find
+      if (indexOfTile === false) return
 
       //place the marker
       if (currentTurn === user1)
@@ -490,7 +494,7 @@ function sockets(socket) {
       else
         ticTacToeGame[gameIndex][5][indexOfTile[0]][indexOfTile[1]] = "O"
 
-      //check for win
+      //check for win and tie
       var playerWon = checkWinTTT(gameIndex)
       var playerTie = checkTieTTT(ticTacToeGame[gameIndex][5])
 
@@ -510,6 +514,61 @@ function sockets(socket) {
 
       if (playerWon || playerTie)
         ticTacToeGame.splice(gameIndex, 1)
+    }
+  })
+  socket.on("connect4", (packet) => {
+    const user = getUser(socket.id);
+
+    const room = packet.substring(0, packet.indexOf("|"))
+    const doing = packet.substring(packet.indexOf("|") + 1)
+
+    //find where the game is stored in the array
+    var gameIndex;
+    for (let index = 0; index < connect4Game.length; ++index) {
+      if (connect4Game[index][0] === room)
+        gameIndex = index
+    }
+
+    //return if cant find
+    if (gameIndex == undefined) return
+
+    const user1 = connect4Game[gameIndex][1]
+    const user2 = connect4Game[gameIndex][2]
+
+    //only allow sockets with people that started game
+    if (!(user === user1 || user === user2)) return
+
+    const status = connect4Game[gameIndex][3]
+    if (status === "unaccepted" && doing === "accept") {
+      io.to(room).emit("message-split", generateMessage(`${botIcon}Bot`, generateNewConnect4Board(gameIndex)));
+      connect4Game[gameIndex][3] = "started"
+      connect4Game[gameIndex][6] = new Date()
+    } else if (status === "started" && /^[0-6]$/.test(doing)) {
+      const currentTurn = connect4Game[gameIndex][4]
+
+      //return if not user's turn
+      if (user !== currentTurn) return
+
+      //return if the row selected is full
+      if (placeConnect4Tile(gameIndex, doing)) return
+
+      //check for win and tie
+      var playerWon = checkWinConnect4(gameIndex)
+
+      if (playerWon) {
+        connect4Game[gameIndex][3] = "finished"
+      } else {
+        if (currentTurn === user1)
+          connect4Game[gameIndex][4] = connect4Game[gameIndex][2]
+        else
+          connect4Game[gameIndex][4] = connect4Game[gameIndex][1]
+      }
+
+      io.to(room).emit("message-split", generateMessage(`${botIcon}Bot`, generateNewConnect4Board(gameIndex)));
+
+      //delete the game if it won
+      if (playerWon)
+        connect4Game.splice(gameIndex, 1)
     }
   })
 }

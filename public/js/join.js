@@ -1,3 +1,6 @@
+// :3
+console.log("https://github.com/udu3324/typsnd")
+
 // Elements
 var $joinButton = document.querySelector("#join-button");
 var $usernameInput = document.querySelector("#username");
@@ -30,9 +33,8 @@ $usernameInput.focus();
 $usernameInput.select();
 
 //set username if saved
-if (getCookie("username") != "") {
+if (getCookie("username") != "")
   $usernameInput.value = getCookie("username")
-}
 
 //previous room indicator
 if (getCookie("room") != "" && getCookie("room") != "Typsnd") {
@@ -44,9 +46,8 @@ if (getCookie("room") != "" && getCookie("room") != "Typsnd") {
 }
 
 document.addEventListener('keypress', function (e) {
-  if (e.key === 'Enter') {
+  if (e.key === 'Enter')
     joinChat()
-  }
 });
 
 //set accent and light mode

@@ -1,3 +1,6 @@
+// :3
+console.log("https://github.com/udu3324/typsnd")
+
 const socket = io();
 
 // CSS
