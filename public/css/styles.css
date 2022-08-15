@@ -392,7 +392,7 @@ textarea#message-input {
 }
 
 textarea#alert-message-input {
-    width: 303px;
+    width: 304px;
     margin-bottom: 21px;
     height: 80px;
     outline: 0;
@@ -403,7 +403,7 @@ textarea#alert-message-input {
 button#send-alert-button {
     display: block;
     margin-top: -28px;
-    width: 303px;
+    width: 304px;
     border-radius: 0 0 5px 5px
 }
 
@@ -686,7 +686,7 @@ textarea#message-input {
 }
 
 input#room-input {
-    margin: 0 16px 0 0
+    margin: 0 7px 0 0
 }
 
 button#join-default-button {

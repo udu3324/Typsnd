@@ -25,11 +25,11 @@ socket.on("kick", (usernameGiven) => {
 });
 
 socket.on("alt-kick", () => {
-  location.href = "/alt-kick.html";
+  location.href = "/kick.html";
 });
 
 socket.on("blacklisted-ip-kick", () => {
-  location.href = "/blacklisted-ip-kick.html";
+  location.href = "/ban.html";
 });
 
 socket.on("ban", (usernameGiven) => {
