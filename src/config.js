@@ -21,7 +21,7 @@ var tabs = [
   ],
   [
     [`<i class="fa-brands fa-youtube"></i> Youtube`],
-    [`https://youtube.com`]
+    [`https://youtube.com/channel/UCfj3J1cSZA9fBK3ReS6b9Ig`]
   ]
 ];
 
