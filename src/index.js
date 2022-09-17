@@ -47,7 +47,7 @@ setInterval(function () {
     if (usersTyping >= 7)
       sendToSpecificRoom(room, "usr-type", `${usersTyping} users are currently typing${dots()}`)
     else if ((usersTyping >= 4))
-      sendToSpecificRoom(room, "usr-type", `${usersTypingArray[index].toString()} are typing${dots()}`)
+      sendToSpecificRoom(room, "usr-type", `${usersTypingArray[index].slice(1).toString()} are typing${dots()}`)
     else if ((usersTyping === 3))
       sendToSpecificRoom(room, "usr-type", `${usersTypingArray[index][1]} and ${usersTypingArray[index][2]} are typing${dots()}`)
     else if ((usersTyping === 2))
