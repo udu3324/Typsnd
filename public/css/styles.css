@@ -31,7 +31,17 @@ img {
     border-radius: 4px
 }
 
-p#kicked {
+input, textarea {
+    color: var(--fontColor);
+    background: var(--composeInput);
+    border: 1px solid var(--accent);
+    border: 1px solid var(--accent);
+    padding: 12px;
+    outline: 0;
+    transition: .3s ease
+}
+
+.punishment-txt {
     color: #cdcdcd
 }
 
@@ -39,18 +49,8 @@ html {
     font-size: 16px
 }
 
-input,
 label {
-    font-size: 14px
-}
-
-input {
-    border: 1px solid #eee;
-    padding: 12px;
-    outline: 0
-}
-
-label {
+    font-size: 14px;
     display: block;
     margin-bottom: 8px;
     color: var(--fontColor)
@@ -155,7 +155,7 @@ input:checked+.slider:before {
     border-radius: 50%
 }
 
-#settings-overlay,
+.settings-overlay,
 .centered-form {
     justify-content: center;
     align-items: center
@@ -168,7 +168,7 @@ input:checked+.slider:before {
     display: flex
 }
 
-.centered-form__box {
+.centered-div {
     color: #fff;
     background: var(--messageDiv);
     padding: 24px;
@@ -176,34 +176,31 @@ input:checked+.slider:before {
     border-radius: 4px
 }
 
-.centered-form__box2 {
+.punishment-box {
     color: #fff;
     background: #36393f;
     padding: 24px;
-    width: 570px;
+    max-width: 388px;
     border-radius: 4px
 }
 
-.centered-form button {
+.join-btn {
     width: 100%
 }
 
-.centered-form input {
-    color: var(--fontColor);
-    background: var(--composeInput);
-    border: 1px solid var(--accent);
+.username-join-input {
     margin-bottom: 16px;
     width: 100%;
     border-radius: 4px
 }
 
-h1#title,
-span#title-pronounce {
+.title,
+.title-pronounce {
     font-size: 5em;
     color: var(--fontColor)
 }
 
-span#title-pronounce {
+.title-pronounce {
     font-style: italic;
     font-weight: 400;
     font-size: .9em;
@@ -252,20 +249,22 @@ p.dark-mode-p {
     display: inline
 }
 
-.settings__box,
-input#username-input {
+.settings__box {
     color: var(--fontColor);
     border-radius: 4px
 }
 
 input#username-input {
-    background: var(--composeInput);
-    border: 1px solid var(--accent);
     padding: 12px;
     margin: 0-28px 0 0;
     flex-grow: 1;
     transition: .3s ease;
     width: 194px
+}
+
+button#set-username-button {
+    border-radius: 0 4px 4px 0;
+    padding-top: 11px;
 }
 
 button#set-cooldown-button {
@@ -275,42 +274,43 @@ button#set-cooldown-button {
     text-align: left
 }
 
-button#ban-user-button,
-button#kick-user-button,
-button#unban-user-button {
+.admin-btn {
     width: 120px;
     border-radius: 0;
     padding-top: 11px;
     text-align: left
 }
 
-button#set-username-button {
-    border-radius: 0 4px 4px 0;
-    padding-top: 11px;
-    text-align: left
+.color-picker-p {
+    padding-bottom: 11px
 }
 
-input.cooldown-int,
-input[type=color] {
+.color-picker {
+    border: 0;
+    width: 32px;
+    height: 15px;
+    padding: 0;
     -webkit-appearance: none;
-    border-radius: 4px
+    background-color: var(--messageDiv);
 }
 
-input.cooldown-int {
-    color: var(--fontColor);
-    background: var(--composeInput);
-    border: 1px solid var(--accent);
+.color-picker::-webkit-color-swatch-wrapper {
+    padding: 0
+}
+
+.color-picker::-webkit-color-swatch {
+    border: 0
+}
+
+.cooldown-int {
     padding: 12px;
-    margin: 0-20px 0 0;
-    flex-grow: 1;
-    transition: .3s ease;
-    width: 50px;
+    margin: 0 -20px 0 0;
+    width: 54px;
     -moz-appearance: textfield
 }
 
-button#cooldown-down-button,
-button#cooldown-up-button {
-    border-radius: 0 0 0 0;
+.cooldown-btn {
+    border-radius: 0;
     padding-top: 11px;
     margin-right: -10px;
     padding-left: 7px;
@@ -330,21 +330,6 @@ button#cooldown-up-button {
     z-index: 4
 }
 
-input[type=color] {
-    border: 0;
-    width: 12px;
-    height: 12px;
-    padding: 0
-}
-
-input[type=color]::-webkit-color-swatch-wrapper {
-    padding: 0
-}
-
-input[type=color]::-webkit-color-swatch {
-    border: 0
-}
-
 div#admin-panel {
     padding: 4px;
     background-color: var(--messages);
@@ -355,47 +340,22 @@ div#admin-panel {
 
 input#cooldown-input {
     border-radius: 4px 0 0 0;
-    color: var(--fontColor);
-    background: var(--composeInput);
-    border: 1px solid var(--accent)
 }
 
-input#ban-user-input,
-input#kick-user-input,
-input#unban-user-input {
+.admin-input {
     border-radius: 0;
     margin: 0-14px 0 0;
-    width: 188px
+    width: 192px
 }
 
-div#alert,
-div#ban,
-div#kick,
-div#unban {
+.admin-section {
     margin-top: -1px
 }
 
-.compose input,
-input#ban-user-input,
-input#kick-user-input,
-input#room-input,
-input#unban-user-input,
-input#user-message-input,
-textarea#alert-message-input,
-textarea#message-input {
-    color: var(--fontColor);
-    background: var(--composeInput);
-    border: 1px solid var(--accent);
-    padding: 12px;
-    flex-grow: 1;
-    transition: .3s ease
-}
-
-textarea#alert-message-input {
-    width: 304px;
+.alert-msg-input {
+    width: 100%;
     margin-bottom: 21px;
     height: 80px;
-    outline: 0;
     resize: none;
     border-radius: 0
 }
@@ -403,12 +363,8 @@ textarea#alert-message-input {
 button#send-alert-button {
     display: block;
     margin-top: -28px;
-    width: 304px;
+    width: 100%;
     border-radius: 0 0 5px 5px
-}
-
-p#accent-color-p {
-    padding-bottom: 11px
 }
 
 emoji-picker {
@@ -579,12 +535,12 @@ input#room-input,
 input#user-message-input,
 textarea#message-input {
     width: 100%;
-    border-radius: 0 0 0 0
+    border-radius: 0
 }
 
 .compose button {
     font-size: 14px;
-    border-radius: 0 0 0 0
+    border-radius: 0
 }
 
 button#sendImageButton {
@@ -693,15 +649,12 @@ button#join-default-button {
     width: 365px
 }
 
-input#user-message-input,
-textarea#message-input {
+.message-input {
     margin-bottom: 21px
 }
 
 textarea#message-input {
-    transition: 0s ease;
     height: 164px;
-    outline: 0;
     resize: none
 }
 
@@ -739,8 +692,8 @@ p#message__container {
     word-break: break-word
 }
 
-button#send-message-button {
-    width: 286px
+.tab-ui-btn {
+    width: 100%
 }
 
 span#bot-indicator-msg {

@@ -54,7 +54,7 @@
           <textarea placeholder="the message that the user recieves" id="message-input" class="message-input"
             name="room" maxlength="280"></textarea>
           <br>
-          <button id="send-message-button">Send</button>
+          <button id="send-message-button" class="tab-ui-btn">Send</button>
         </div>
       </div>
     </div>
@@ -66,7 +66,7 @@
           <button id="set-room-button">Join</button>
           <br>
           <br>
-          <button id="join-default-button">Join Default Room</button>
+          <button id="join-default-button" class="tab-ui-btn">Join Default Room</button>
         </div>
       </div>
     </div>
@@ -82,38 +82,38 @@
           <i class="fa-solid fa-rotate-right"></i> Refresh </button>
       </div>
     </div>
-    <div id="settings-overlay" style="display: none">
+    <div id="settings-overlay" class="settings-overlay" style="display: none">
       <div id="settings-box" class="settings__box">
         <h1>Settings</h1>
         <p id="admin-status">if you see this, something went wrong</p>
         <div id="admin-panel" style="display: none">
           <div id="cooldown">
             <input type="number" id="cooldown-input" class="cooldown-int" min="0" max="9" disabled />
-            <button id="cooldown-up-button" aria-label="Cooldown Up">
+            <button id="cooldown-up-button" class="cooldown-btn" aria-label="Cooldown Up">
               <i class="fa-solid fa-caret-up"></i>
             </button>
-            <button id="cooldown-down-button" aria-label="Cooldown Down">
+            <button id="cooldown-down-button" class="cooldown-btn" aria-label="Cooldown Down">
               <i class="fa-solid fa-caret-down"></i>
             </button>
             <button id="set-cooldown-button" aria-label="Set Cooldown">Set Cooldown</button>
           </div>
-          <div id="kick">
-            <input id="kick-user-input" class="kick-user-input" type="text" name="kick-user" placeholder="username kick"
+          <div class="admin-section">
+            <input id="kick-user-input" class="admin-input" type="text" name="kick-user" placeholder="username kick"
               maxlength="19" required />
-            <button id="kick-user-button" aria-label="Kick User">Kick User</button>
+            <button id="kick-user-button" class="admin-btn" aria-label="Kick User">Kick User</button>
           </div>
-          <div id="ban">
-            <input id="ban-user-input" class="ban-user-input" type="text" name="ban-user" placeholder="username ban"
+          <div class="admin-section">
+            <input id="ban-user-input" class="admin-input" type="text" name="ban-user" placeholder="username ban"
               maxlength="19" required />
-            <button id="ban-user-button" aria-label="Ban User">Ban User</button>
+            <button id="ban-user-button" class="admin-btn" aria-label="Ban User">Ban User</button>
           </div>
-          <div id="unban">
-            <input id="unban-user-input" class="unban-user-input" type="text" name="unban-user"
+          <div class="admin-section">
+            <input id="unban-user-input" class="admin-input" type="text" name="unban-user"
               placeholder="username unban" maxlength="19" required />
-            <button id="unban-user-button" aria-label="Unban User">Unban User</button>
+            <button id="unban-user-button" class="admin-btn" aria-label="Unban User">Unban User</button>
           </div>
-          <div id="alert">
-            <textarea id="alert-message-input" class="alert-message-input" name="alert" placeholder="alert message"
+          <div class="admin-section">
+            <textarea id="alert-message-input" class="alert-msg-input" name="alert" placeholder="alert message"
               maxlength="70"></textarea>
             <button id="send-alert-button">Send Alert</button>
           </div>
@@ -123,8 +123,8 @@
           <button id="set-username-button">Set Username</button>
         </div>
         <br>
-        <p id="accent-color-p">
-          <input type="color" id="accent-color-picker" name="head" value="#8FBC8F" /> Accent Color
+        <p id="accent-color-p" class="color-picker-p">
+          <input type="color" id="accent-color-picker" class="color-picker" name="head" value="#8FBC8F" /> Accent Color
         </p>
         <div class="dark-mode-div">
           <label class="switch">

@@ -42,7 +42,7 @@ if (getCookie("room") != "" && getCookie("room") != "Typsnd") {
   const node = document.createTextNode(`Your previous room was \"${getCookie("room")}\"`);
   para.style.cssText += 'color:#8fbc8f;padding-top:13px'
   para.appendChild(node);
-  document.getElementById("centered-form__box").appendChild(para);
+  document.getElementById("form__box").appendChild(para);
 }
 
 document.addEventListener('keypress', function (e) {
