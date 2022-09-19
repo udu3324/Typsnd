@@ -7,7 +7,7 @@ const generateMessage = (username, text) => {
 };
 
 const linkify = (inputText) => {
-  var replacedText, replacePattern1, replacePattern2, replacePattern3;
+  let replacedText, replacePattern1, replacePattern2, replacePattern3;
 
   //URLs starting with http://, https://, or ftp://
   replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gim;

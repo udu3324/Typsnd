@@ -1,22 +1,22 @@
 // Server / Moderation Config
-var serverPort = 3000;
-var adminIPs = ["localhost"];
-var adminIcon = `<i class="fa-solid fa-shield"></i>`;
-var botIcon = `<i class="fa-solid fa-keyboard"></i>`;
-var altDetection = true;
-var msgCooldown = "2";
+let serverPort = 3000;
+let adminIPs = ["localhost"];
+let adminIcon = `<i class="fa-solid fa-shield"></i>`;
+let botIcon = `<i class="fa-solid fa-keyboard"></i>`;
+let altDetection = true;
+let msgCooldown = "2";
 // Filter is not case sensitive & doesn't apply to admins
-var blacklistedUsernames = ["admin", "mod", "staff", "server", "typsnd", "code", "system"];
-var blacklistedIPs = [];
+let blacklistedUsernames = ["admin", "mod", "staff", "server", "typsnd", "code", "system"];
+let blacklistedIPs = [];
 //regex: ^[A-Za-z0-9!@#$%^&*()\[\]{};':",.<>\/\\|=`~?+_-]*$
-var blacklistSpecialCharactarsInUsername = true;
-var messageCharactarLimit = 1000;
+let blacklistSpecialCharactarsInUsername = true;
+let messageCharactarLimit = 1000;
 
 // Chat Addons / Functionality
-var htmlTitle = "Typsnd";
-var msgGreet = "";
-var multipleRooms = true;
-var tabs = [
+let htmlTitle = "Typsnd";
+let msgGreet = "";
+let multipleRooms = true;
+let tabs = [
   //example tabs
   [
     [`<i class="fa-brands fa-github"></i> Github`],

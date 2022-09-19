@@ -9,7 +9,7 @@ const DOMPurify = createDOMPurify(window);
 import { encode } from "html-entities";
 
 const addUser = ({ ip, id, username, room }) => {
-  var isAdmin = adminIPs.some(v => ip.includes(v));
+  let isAdmin = adminIPs.some(v => ip.includes(v));
 
   // Clean the data
   try {
@@ -19,7 +19,7 @@ const addUser = ({ ip, id, username, room }) => {
     console.log(e.name + ": " + e.message)
   }
 
-  var lcUsr = username.toLowerCase();
+  let lcUsr = username.toLowerCase();
 
   // Validate the data
   if (!username) {

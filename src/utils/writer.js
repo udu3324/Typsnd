@@ -27,7 +27,7 @@ function createSave() {
 function writeSave(config, value) {
     //if config already exists, write over it
     if (readSave(config) !== false) {
-        var array = fs.readFileSync(path).toString().split("\n");
+        let array = fs.readFileSync(path).toString().split("\n");
         for (i in array) {
             if (array[i].includes(config + "|"))
                 array[i] = `${config}|${value}`
@@ -48,7 +48,7 @@ function writeSave(config, value) {
 function deleteSave(config) {
     //if config exists, delete it
     if (readSave(config) !== false) {
-        var array = fs.readFileSync(path).toString().split("\n");
+        let array = fs.readFileSync(path).toString().split("\n");
         for (i in array) {
             if (array[i].includes(config + "|"))
                 array.splice(i, 1)
@@ -64,8 +64,8 @@ function deleteSave(config) {
 function readSave(config) {
     if (!fs.existsSync(path))
         return false
-    var value = false
-    var array = fs.readFileSync(path).toString().split("\n");
+    let value = false
+    let array = fs.readFileSync(path).toString().split("\n");
     for (i in array) {
         if (array[i].includes(config + "|"))
             value = array[i].substring(array[i].indexOf("|") + 1)
