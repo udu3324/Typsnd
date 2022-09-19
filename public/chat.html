@@ -20,73 +20,123 @@
 </head>
 
 <body>
+  <!-- The entire visible chat -->
   <div class="chat">
+
+    <!-- Message div that shows up when dmed on -->
+
     <div id="message-bar" class="message-bar" style="display: none">
+      <!-- the bar that shows who the dm is from & icon to move msg -->
       <div id="from" class="from">
         <p>
           <i class="fa-solid fa-message"></i> From <b id="message-user-replace"></b>
-          <div style="margin-left: auto"><i class="fa-solid fa-arrows-up-down-left-right"></i></div>
+        <div style="margin-left: auto">
+          <i class="fa-solid fa-arrows-up-down-left-right"></i>
+        </div>
         </p>
       </div>
+
+      <!-- bottom part of dm that shows msg -->
       <div id="message-to" class="message-to">
         <p id="message-replace" class="msg-replace"></p>
+
+        <!-- button that can reply and close the msg -->
         <button id="reply-to-msg-btn" class="dm-options-btn"><i class="fa-solid fa-reply"></i> Reply</button>
         <button id="close-message" class="dm-options-btn"><i class="fa-solid fa-xmark fa-lg"></i> Close </button>
       </div>
     </div>
+
+    <!-- The togglable tools bar -->
+
     <div id="tools-bar" class="tools-bar">
       <button class="toolButton" id="roomButton" aria-label="Room">
-        <i class="fa-solid fa-house-chimney"></i> Room </button>
+        <i class="fa-solid fa-house-chimney"></i> Room
+      </button>
+
       <button class="toolButton" id="messageButton" aria-label="Message">
-        <i class="fa-solid fa-message"></i> Message </button>
+        <i class="fa-solid fa-message"></i> Message
+      </button>
     </div>
+
     <button class="toggleButton" id="toolToggleButton" aria-label="Toggle">
       <i class="fa-solid fa-angle-down"></i>
     </button>
+
+    <!-- Message/DM user overlay for tools bar -->
+
     <div id="message-overlay" class="msg-overlay" style="display: none">
       <div class="message__box" id="message-box">
         <h1>Message A User</h1>
         <div id="message">
           <p>Username</p>
+
+          <!-- input for the username that msg will be sending to -->
           <input id="user-message-input" class="message-input" type="text" name="room" maxlength="19"
             placeholder="the user that recieves" required />
           <p>Message (280 character limit)</p>
-          <textarea class="message-input-area" placeholder="the message that the user recieves" id="message-input" class="message-input"
-            name="room" maxlength="280"></textarea>
+
+          <!-- textarea for the msg -->
+          <textarea class="message-input-area" placeholder="the message that the user recieves" id="message-input"
+            class="message-input" name="room" maxlength="280"></textarea>
           <br>
+
+          <!-- btn to send the msg/dm -->
           <button id="send-message-button" class="tab-ui-btn">Send</button>
         </div>
       </div>
     </div>
+
+    <!-- Room changing overlay for tools bar -->
+
     <div id="room-overlay" class="room-overlay" style="display: none">
       <div class="room__box" id="room-box">
         <h1>Join Different Room</h1>
         <div id="room">
+
+          <!-- room name input -->
           <input id="room-input" class="room-input" type="text" name="room" maxlength="9" required />
           <button id="set-room-button">Join</button>
+          
           <br>
           <br>
+
+          <!-- button to join default room (set in config.js) -->
           <button id="join-default-button" class="tab-ui-btn">Join Default Room</button>
         </div>
       </div>
     </div>
+
+    <!-- Disconnect overlay for when socket loses connection -->
+
     <div id="disconnect-overlay" class="disconnect-overlay" style="display: none">
       <div class="disconnect__box">
         <h1>Disconnected</h1>
+
         <h3>Heres Possibly Why -</h3>
+
         <p id="kicked"> * A constant Wi-Fi connection between the server has been lost <br> * The server is updating
           or off </p>
         <h3>How To Fix -</h3>
         <p id="kicked"> * Refresh the page (try first) <br> * Ask for the server to turned back on </p>
+
+        <!-- button to refresh page (does it automatically in 10s) -->
         <button id="refreshButton" class="refresh-btn" aria-label="Refresh">
-          <i class="fa-solid fa-rotate-right"></i> Refresh </button>
+          <i class="fa-solid fa-rotate-right"></i> Refresh
+        </button>
       </div>
     </div>
+
+    <!-- Settings overlay for changing username, accent color, n more -->
+
     <div id="settings-overlay" class="settings-overlay" style="display: none">
       <div id="settings-box" class="settings__box">
         <h1>Settings</h1>
+
+        <!-- Admin panel that only shows up if admin -->
         <p id="admin-status" class="admin-status">if you see this, something went wrong</p>
         <div id="admin-panel" class="admin-panel" style="display: none">
+
+          <!-- Cooldown -->
           <div id="cooldown">
             <input type="number" id="cooldown-input" class="cooldown-int" min="0" max="9" disabled />
             <button id="cooldown-up-button" class="cooldown-btn" aria-label="Cooldown Up">
@@ -97,35 +147,50 @@
             </button>
             <button id="set-cooldown-button" class="set-cooldown-btn" aria-label="Set Cooldown">Set Cooldown</button>
           </div>
+
+          <!-- Kick -->
           <div class="admin-section">
             <input id="kick-user-input" class="admin-input" type="text" name="kick-user" placeholder="username kick"
               maxlength="19" required />
             <button id="kick-user-button" class="admin-btn" aria-label="Kick User">Kick User</button>
           </div>
+
+          <!-- Ban -->
           <div class="admin-section">
             <input id="ban-user-input" class="admin-input" type="text" name="ban-user" placeholder="username ban"
               maxlength="19" required />
             <button id="ban-user-button" class="admin-btn" aria-label="Ban User">Ban User</button>
           </div>
+
+          <!-- Unban -->
           <div class="admin-section">
-            <input id="unban-user-input" class="admin-input" type="text" name="unban-user"
-              placeholder="username unban" maxlength="19" required />
+            <input id="unban-user-input" class="admin-input" type="text" name="unban-user" placeholder="username unban"
+              maxlength="19" required />
             <button id="unban-user-button" class="admin-btn" aria-label="Unban User">Unban User</button>
           </div>
+
+          <!-- Alert -->
           <div class="admin-section">
             <textarea id="alert-message-input" class="alert-msg-input" name="alert" placeholder="alert message"
               maxlength="70"></textarea>
             <button id="send-alert-button" class="send-alert-btn">Send Alert</button>
-          </div> 
+          </div>
         </div>
+
+        <!-- Set username -->
         <div id="username">
           <input id="username-input" class="username-input" type="text" name="username" maxlength="19" required />
           <button id="set-username-button" class="set-username-btn">Set Username</button>
         </div>
+
         <br>
+
+        <!-- Set accent color -->
         <p id="accent-color-p" class="color-picker-p">
           <input type="color" id="accent-color-picker" class="color-picker" name="head" value="#8FBC8F" /> Accent Color
         </p>
+
+        <!-- Set dark mode -->
         <div class="dark-mode-div">
           <label class="switch">
             <input id="dark-mode-switch" type="checkbox" />
@@ -135,43 +200,79 @@
         </div>
       </div>
     </div>
+
+    <!-- Alert overlay for showing alerts pushed out by admins -->
+
     <div id="alert-overlay" class="alert-overlay">
       <p style="display: inline-block;"></p>
+
+      <!-- button to close alert overlay -->
       <button id="close-alert-overlay" class="close-alert-btn" aria-label="Close Alert">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
+
+    <!-- Emoji picker for chat -->
+
     <emoji-picker></emoji-picker>
+
+    <!-- Sidebar that contains list of users online, room name, & more -->
+
     <div class="sidebar__main">
+      <!-- upper part of sidebar that shows room name -->
       <div id="sidebar" class="users__sidebar"></div>
+
+      <!-- lower part of sidebar -->
       <div class="user__sidebar">
+
+        <!-- Text to display current username -->
         <h id="user-replace" style="margin-right: 16px; align-self: center">temp</h>
+
+        <!-- Settings button -->
         <button id="settingsButton" aria-label="Settings" style="margin-left: auto; margin-right: 0">
           <i class="fa-solid fa-gear fa-lg"></i>
         </button>
       </div>
     </div>
+
+    <!-- Chat div that contains all the msgs and messaging bar -->
+
     <div class="chat__main">
+      <!-- The messages sent and recieved -->
       <div id="messages" class="chat-msgs">
+
+        <!-- Button that pops up when viewing previous msgs but new msg recieved -->
         <button id="scrollDownMSG" class="scroll-down-btn" aria-label="Scroll Down Msg">
           <i class="fa-solid fa-arrow-down"></i>
         </button>
       </div>
+
+      <!-- Message sending bar -->
       <div id="message-sender">
+
+        <!-- Text that pops up when someone's typing -->
         <div class="is-typing-div">
           <p id="users-typing-p"></p>
         </div>
+
+        <!-- The message sending bar & tools & a lot more -->
         <div class="compose">
+
+          <!-- Image sending button -->
           <button id="sendImageButton" class="img-btn" aria-label="Send Image">
             <i class="fa-solid fa-circle-plus fa-lg"></i>
           </button>
+
+          <!-- Input & button to send messages -->
           <form id="message-form" action="">
-            <input class="chat-msg-input" maxlength="3000" name="message" type="text" placeholder="Message" required autocomplete="off"
-              oninput="setCustomValidity('')" />
+            <input class="chat-msg-input" maxlength="3000" name="message" type="text" placeholder="Message" required
+              autocomplete="off" oninput="setCustomValidity('')" />
             <button aria-label="Send Message" class="send-msg-btn">
               <i class="fa-solid fa-paper-plane fa-lg"></i>
             </button>
           </form>
+
+          <!-- Button to open emoji picker ui -->
           <button id="insertEmojiButton" class="emoji-btn" aria-label="Insert Emoji">
             <i class="fa-solid fa-icons fa-lg"></i>
           </button>
@@ -179,37 +280,58 @@
       </div>
     </div>
   </div>
+
+  <!-- Message and Sidebar Templates -->
+
   <script id="message-template" type="text/html">
-      <div id="message-div" class="message">
-        <p>
-          <span class="message__name">{{{username}}}</span>
-          <span class="message__meta">{{createdAt}}</span>
-        </p>
-        <button id="message-options" aria-label="Message Options" class="message-options">
-          <i class="fa-solid fa-ellipsis"></i>
+    <div id="message-div" class="message">
+      <!-- Top part of message -->
+      <p>
+        <span class="message__name">{{{username}}}</span>
+        <span class="message__meta">{{createdAt}}</span>
+      </p>
+
+      <!-- Message options (invisible) -->
+      <button id="message-options" aria-label="Message Options" class="message-options">
+        <i class="fa-solid fa-ellipsis"></i>
+      </button>
+
+      <!-- negative margin to make message look right -->
+      <div id="message-options-div" class="msg-options-div">
+        <button id="menu-mention-button" aria-label="Mention" class="msg-options-btn" style="border-radius: 4px 4px 0px 0px;">
+          <i class="fa-solid fa-quote-right"></i> Mention 
         </button>
-        <div id="message-options-div" class="msg-options-div">
-          <button id="menu-mention-button" aria-label="Mention" class="msg-options-btn" style="border-radius: 4px 4px 0px 0px;">
-            <i class="fa-solid fa-quote-right"></i> Mention </button>
-          <button id="menu-kick-button" aria-label="Kick" class="msg-options-btn">
-            <i class="fa-solid fa-user-large-slash"></i> Kick </button>
-          <button id="menu-ban-button" aria-label="Ban" class="msg-options-btn">
-            <i class="fa-solid fa-gavel"></i> Ban </button>
-          <button id="menu-close-button" aria-label="Close" class="msg-options-btn" style="border-radius: 0px 0px 4px 4px;">
-            <i class="fa-solid fa-xmark"></i> Close </button>
-        </div>
-        <p id="message__container" class="msg-container">{{{message}}}</p>
+
+        <button id="menu-kick-button" aria-label="Kick" class="msg-options-btn">
+          <i class="fa-solid fa-user-large-slash"></i> Kick 
+        </button>
+
+        <button id="menu-ban-button" aria-label="Ban" class="msg-options-btn">
+          <i class="fa-solid fa-gavel"></i> Ban 
+        </button>
+
+        <button id="menu-close-button" aria-label="Close" class="msg-options-btn" style="border-radius: 0px 0px 4px 4px;">
+          <i class="fa-solid fa-xmark"></i> Close 
+        </button>
       </div>
-    </script>
+      
+      <!-- Contents of message -->
+      <p id="message__container" class="msg-container">{{{message}}}</p>
+    </div>
+  </script>
+
   <script id="sidebar-template" type="text/html">
-      <h2 class="room-title">{{room}}</h2>
-      <h3 class="list-title">Users</h3>
-      <ul class="users">
-        {{#users}}
-          <li>{{{username}}}</li>
-        {{/users}}
-      </ul>
-    </script>
+    <h2 class="room-title">{{room}}</h2>
+    <h3 class="list-title">Users</h3>
+    <ul class="users">
+      {{#users}}
+        <li>{{{username}}}</li>
+      {{/users}}
+    </ul>
+  </script>
+
+  <!-- Load Javascript -->
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.8.0/qs.min.js"></script>

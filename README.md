@@ -30,9 +30,14 @@ You can try out Typsnd using this link: [https://Typsnd.potatochips3.repl.co](ht
 
 ## Installation and Running
 Make sure you have [Node.JS](https://nodejs.org/en/download) installed. The version of Node I've tested it on was v14.15.4. 
+
 Clone the repo and run `npm install` to install all dependencies. 
-`npm run dev` will run Typsnd in development mode (nodemon) and
-`npm start` will run Typsnd normally
+
+`npm run dev` will run Typsnd in development mode (nodemon) and `npm start` will run Typsnd normally
+
+⚠ Warning for Production/Public Uses ⚠
+
+⚠ Please combine chat.js with moderation.js to then [obfuscate](https://obfuscator.io/) them. This is to prevent code manipulation. ⚠
 
 ## Config.js
 Optionally, there are variables you can add and modify. 
