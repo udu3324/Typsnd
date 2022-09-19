@@ -1,9 +1,9 @@
 const users = [];
-import createDOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
+import createDOMPurify from "dompurify";
+import { JSDOM } from "jsdom";
 import { blacklistedUsernames, adminIPs, multipleRooms, adminIcon, blacklistSpecialCharactarsInUsername } from "../config.js";
 
-const window = new JSDOM('').window;
+const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
 
 import { encode } from "html-entities";

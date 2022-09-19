@@ -1,7 +1,7 @@
-import { botIcon, adminIcon } from "../config";
-import { cLog, Color, time } from "./logging";
-import { generateMessage } from "./messages";
-import { users, getUser } from "./users";
+import { botIcon, adminIcon } from "../config.js";
+import { cLog, Color, time } from "./logging.js";
+import { generateMessage } from "./messages.js";
+import { users, getUser } from "./users.js";
 
 const botStr = `</br><span class="bot-indicator-msg"><i class="fa-solid fa-eye-slash"></i> Only you can only see this.</span>`
 const crownIcon = `<i class="fa-solid fa-crown"></i>`
