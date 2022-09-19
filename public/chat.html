@@ -21,20 +21,20 @@
 
 <body>
   <div class="chat">
-    <div id="message-bar" style="display: none">
-      <div id="from">
+    <div id="message-bar" class="message-bar" style="display: none">
+      <div id="from" class="from">
         <p>
           <i class="fa-solid fa-message"></i> From <b id="message-user-replace"></b>
           <div style="margin-left: auto"><i class="fa-solid fa-arrows-up-down-left-right"></i></div>
         </p>
       </div>
-      <div id="message-to">
-        <p id="message-replace"></p>
+      <div id="message-to" class="message-to">
+        <p id="message-replace" class="msg-replace"></p>
         <button id="reply-to-msg-btn" class="dm-options-btn"><i class="fa-solid fa-reply"></i> Reply</button>
         <button id="close-message" class="dm-options-btn"><i class="fa-solid fa-xmark fa-lg"></i> Close </button>
       </div>
     </div>
-    <div id="tools-bar">
+    <div id="tools-bar" class="tools-bar">
       <button class="toolButton" id="roomButton" aria-label="Room">
         <i class="fa-solid fa-house-chimney"></i> Room </button>
       <button class="toolButton" id="messageButton" aria-label="Message">
@@ -43,7 +43,7 @@
     <button class="toggleButton" id="toolToggleButton" aria-label="Toggle">
       <i class="fa-solid fa-angle-down"></i>
     </button>
-    <div id="message-overlay" style="display: none">
+    <div id="message-overlay" class="msg-overlay" style="display: none">
       <div class="message__box" id="message-box">
         <h1>Message A User</h1>
         <div id="message">
@@ -51,14 +51,14 @@
           <input id="user-message-input" class="message-input" type="text" name="room" maxlength="19"
             placeholder="the user that recieves" required />
           <p>Message (280 character limit)</p>
-          <textarea placeholder="the message that the user recieves" id="message-input" class="message-input"
+          <textarea class="message-input-area" placeholder="the message that the user recieves" id="message-input" class="message-input"
             name="room" maxlength="280"></textarea>
           <br>
           <button id="send-message-button" class="tab-ui-btn">Send</button>
         </div>
       </div>
     </div>
-    <div id="room-overlay" style="display: none">
+    <div id="room-overlay" class="room-overlay" style="display: none">
       <div class="room__box" id="room-box">
         <h1>Join Different Room</h1>
         <div id="room">
@@ -70,7 +70,7 @@
         </div>
       </div>
     </div>
-    <div id="disconnect-overlay" style="display: none">
+    <div id="disconnect-overlay" class="disconnect-overlay" style="display: none">
       <div class="disconnect__box">
         <h1>Disconnected</h1>
         <h3>Heres Possibly Why -</h3>
@@ -78,15 +78,15 @@
           or off </p>
         <h3>How To Fix -</h3>
         <p id="kicked"> * Refresh the page (try first) <br> * Ask for the server to turned back on </p>
-        <button id="refreshButton" aria-label="Refresh">
+        <button id="refreshButton" class="refresh-btn" aria-label="Refresh">
           <i class="fa-solid fa-rotate-right"></i> Refresh </button>
       </div>
     </div>
     <div id="settings-overlay" class="settings-overlay" style="display: none">
       <div id="settings-box" class="settings__box">
         <h1>Settings</h1>
-        <p id="admin-status">if you see this, something went wrong</p>
-        <div id="admin-panel" style="display: none">
+        <p id="admin-status" class="admin-status">if you see this, something went wrong</p>
+        <div id="admin-panel" class="admin-panel" style="display: none">
           <div id="cooldown">
             <input type="number" id="cooldown-input" class="cooldown-int" min="0" max="9" disabled />
             <button id="cooldown-up-button" class="cooldown-btn" aria-label="Cooldown Up">
@@ -95,7 +95,7 @@
             <button id="cooldown-down-button" class="cooldown-btn" aria-label="Cooldown Down">
               <i class="fa-solid fa-caret-down"></i>
             </button>
-            <button id="set-cooldown-button" aria-label="Set Cooldown">Set Cooldown</button>
+            <button id="set-cooldown-button" class="set-cooldown-btn" aria-label="Set Cooldown">Set Cooldown</button>
           </div>
           <div class="admin-section">
             <input id="kick-user-input" class="admin-input" type="text" name="kick-user" placeholder="username kick"
@@ -115,12 +115,12 @@
           <div class="admin-section">
             <textarea id="alert-message-input" class="alert-msg-input" name="alert" placeholder="alert message"
               maxlength="70"></textarea>
-            <button id="send-alert-button">Send Alert</button>
-          </div>
+            <button id="send-alert-button" class="send-alert-btn">Send Alert</button>
+          </div> 
         </div>
         <div id="username">
           <input id="username-input" class="username-input" type="text" name="username" maxlength="19" required />
-          <button id="set-username-button">Set Username</button>
+          <button id="set-username-button" class="set-username-btn">Set Username</button>
         </div>
         <br>
         <p id="accent-color-p" class="color-picker-p">
@@ -135,9 +135,9 @@
         </div>
       </div>
     </div>
-    <div id="alert-overlay">
+    <div id="alert-overlay" class="alert-overlay">
       <p style="display: inline-block;"></p>
-      <button id="close-alert-overlay" aria-label="Close Alert">
+      <button id="close-alert-overlay" class="close-alert-btn" aria-label="Close Alert">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
@@ -152,8 +152,8 @@
       </div>
     </div>
     <div class="chat__main">
-      <div id="messages" class="chat__messages">
-        <button id="scrollDownMSG" aria-label="Scroll Down Msg">
+      <div id="messages" class="chat-msgs">
+        <button id="scrollDownMSG" class="scroll-down-btn" aria-label="Scroll Down Msg">
           <i class="fa-solid fa-arrow-down"></i>
         </button>
       </div>
@@ -162,17 +162,17 @@
           <p id="users-typing-p"></p>
         </div>
         <div class="compose">
-          <button id="sendImageButton" aria-label="Send Image">
+          <button id="sendImageButton" class="img-btn" aria-label="Send Image">
             <i class="fa-solid fa-circle-plus fa-lg"></i>
           </button>
           <form id="message-form" action="">
-            <input maxlength="3000" name="message" type="text" placeholder="Message" required autocomplete="off"
+            <input class="chat-msg-input" maxlength="3000" name="message" type="text" placeholder="Message" required autocomplete="off"
               oninput="setCustomValidity('')" />
-            <button aria-label="Send Message">
+            <button aria-label="Send Message" class="send-msg-btn">
               <i class="fa-solid fa-paper-plane fa-lg"></i>
             </button>
           </form>
-          <button id="insertEmojiButton" aria-label="Insert Emoji">
+          <button id="insertEmojiButton" class="emoji-btn" aria-label="Insert Emoji">
             <i class="fa-solid fa-icons fa-lg"></i>
           </button>
         </div>
@@ -188,17 +188,17 @@
         <button id="message-options" aria-label="Message Options" class="message-options">
           <i class="fa-solid fa-ellipsis"></i>
         </button>
-        <div id="message-options-div">
-          <button id="menu-mention-button" aria-label="Mention" class="message-options-buttons" style="border-radius: 4px 4px 0px 0px;">
+        <div id="message-options-div" class="msg-options-div">
+          <button id="menu-mention-button" aria-label="Mention" class="msg-options-btn" style="border-radius: 4px 4px 0px 0px;">
             <i class="fa-solid fa-quote-right"></i> Mention </button>
-          <button id="menu-kick-button" aria-label="Kick" class="message-options-buttons">
+          <button id="menu-kick-button" aria-label="Kick" class="msg-options-btn">
             <i class="fa-solid fa-user-large-slash"></i> Kick </button>
-          <button id="menu-ban-button" aria-label="Ban" class="message-options-buttons">
+          <button id="menu-ban-button" aria-label="Ban" class="msg-options-btn">
             <i class="fa-solid fa-gavel"></i> Ban </button>
-          <button id="menu-close-button" aria-label="Close" class="message-options-buttons" style="border-radius: 0px 0px 4px 4px;">
+          <button id="menu-close-button" aria-label="Close" class="msg-options-btn" style="border-radius: 0px 0px 4px 4px;">
             <i class="fa-solid fa-xmark"></i> Close </button>
         </div>
-        <p id="message__container">{{{message}}}</p>
+        <p id="message__container" class="msg-container">{{{message}}}</p>
       </div>
     </script>
   <script id="sidebar-template" type="text/html">

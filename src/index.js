@@ -181,7 +181,7 @@ function sockets(socket) {
     }
 
     socket.emit("message-cooldown", msgCooldown);
-    io.to(user.room).emit("image", generateMessage(user.username, "<img id=\"uploaded-image\" alt=\"image\" src=\"" + base64 + "\">"));
+    io.to(user.room).emit("image", generateMessage(user.username, "<img class=\"uploaded-image\" alt=\"image\" src=\"" + base64 + "\">"));
 
     cLog(Color.reset, `${time()} IMAGE > User: ${getUsername(user)} | ROOM: ${user.room} | IP: ${getIP(socket)}`);
     callback();

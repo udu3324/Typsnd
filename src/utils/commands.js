@@ -3,7 +3,7 @@ const { cLog, Color, time } = require("./logging");
 const { generateMessage } = require("./messages");
 const { users, getUser } = require("./users");
 
-const botStr = `</br><span id="bot-indicator-msg"><i class="fa-solid fa-eye-slash"></i> Only you can only see this.</span>`
+const botStr = `</br><span class="bot-indicator-msg"><i class="fa-solid fa-eye-slash"></i> Only you can only see this.</span>`
 const crownIcon = `<i class="fa-solid fa-crown"></i>`
 const arrowDownIcon = `<i class="fa-solid fa-arrow-down"></i>`
 
@@ -307,7 +307,7 @@ function generateNewTTTBoard(gameIndex) {
 
     return `
     <h2><i class="fa-solid fa-xmark"></i> ${user1.username} vs ${user2.username} <i class="fa-solid fa-o"></i></h2>
-    <div id="tictactoe-gameboard">
+    <div class="tictactoe-gameboard">
         <div style="border-style: none solid solid none;" class="ttt-square">
             ${generateTileTTT("t0", gameIndex)}
         </div>
@@ -432,7 +432,7 @@ function generateNewConnect4Board(gameIndex) {
 
     var startingDOM = `
     <h2>🔴 ${user1.username} vs ${user2.username} 🟡</h2>
-    <div id="connect4-gameboard">`
+    <div class="connect4-gameboard">`
 
     var endingString;
     if (connect4Game[gameIndex][3] === "finished")

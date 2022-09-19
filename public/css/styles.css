@@ -237,15 +237,11 @@ input:checked+.slider:before {
     max-width: 242px
 }
 
-p#admin-status {
-    padding-bottom: 15px
-}
-
 .dark-mode-div {
     padding-top: 3px
 }
 
-p.dark-mode-p {
+.dark-mode-p {
     display: inline
 }
 
@@ -254,20 +250,22 @@ p.dark-mode-p {
     border-radius: 4px
 }
 
-input#username-input {
+.username-input {
     padding: 12px;
     margin: 0-28px 0 0;
     flex-grow: 1;
     transition: .3s ease;
-    width: 194px
+    width: 194px;
+    border-radius: 4px;
+    margin-top: 21px;
 }
 
-button#set-username-button {
+.set-username-btn {
     border-radius: 0 4px 4px 0;
     padding-top: 11px;
 }
 
-button#set-cooldown-button {
+.set-cooldown-btn {
     width: 217px;
     border-radius: 0 4px 0 0;
     padding-top: 11px;
@@ -322,7 +320,7 @@ button#set-cooldown-button {
     padding: 24px
 }
 
-#settings-overlay {
+.settings-overlay {
     background-color: rgba(0, 0, 0, .301);
     position: fixed;
     width: 100%;
@@ -330,15 +328,14 @@ button#set-cooldown-button {
     z-index: 4
 }
 
-div#admin-panel {
+.admin-panel {
     padding: 4px;
     background-color: var(--messages);
     border-radius: 0 0 4px 4px;
     flex-direction: column;
-    margin-bottom: 21px
 }
 
-input#cooldown-input {
+.cooldown-int {
     border-radius: 4px 0 0 0;
 }
 
@@ -360,7 +357,7 @@ input#cooldown-input {
     border-radius: 0
 }
 
-button#send-alert-button {
+.send-alert-btn {
     display: block;
     margin-top: -28px;
     width: 100%;
@@ -384,7 +381,7 @@ emoji-picker {
     border-radius: 4px
 }
 
-#disconnect-overlay {
+.disconnect-overlay {
     background-color: rgba(0, 0, 0, .301);
     position: fixed;
     width: 100%;
@@ -394,7 +391,7 @@ emoji-picker {
     z-index: 100
 }
 
-button#refreshButton {
+.refresh-btn {
     margin-top: 14px;
     background: #7e1c1c
 }
@@ -407,18 +404,15 @@ button#refreshButton {
     min-width: 242px
 }
 
-div#messages {
+.chat-msgs {
     color: var(--fontColor);
     background: var(--messageDiv);
     padding-bottom: 17px;
-}
-
-.chat__messages {
     flex-grow: 1;
     overflow-y: auto
 }
 
-button#scrollDownMSG {
+.scroll-down-btn {
     position: fixed;
     bottom: 0;
     right: 0;
@@ -443,7 +437,7 @@ button#scrollDownMSG {
     margin-right: 8px
 }
 
-p#message__container {
+.msg-container {
     padding-top: 3px;
     margin-top: -151px
 }
@@ -458,7 +452,7 @@ a {
     color: var(--accent)
 }
 
-button#message-options {
+.message-options {
     position: relative;
     top: -48px;
     right: 22px;
@@ -468,7 +462,7 @@ button#message-options {
     opacity: 0
 }
 
-div#message-options-div {
+.msg-options-div {
     pointer-events: none;
     opacity: 0;
     width: 148px;
@@ -478,7 +472,7 @@ div#message-options-div {
     z-index: 3
 }
 
-button.message-options-buttons {
+.msg-options-btn {
     width: 100%;
     border-radius: 0;
     text-align: left;
@@ -494,7 +488,7 @@ button.message-options-buttons {
     /* Standard */
 }
 
-span#mention-text {
+.mention-text {
     background-color: #5373ec;
     color: #fff;
     border-radius: 3px;
@@ -530,25 +524,24 @@ span#mention-text {
     flex-grow: 1
 }
 
-.compose input,
-input#room-input,
-input#user-message-input,
-textarea#message-input {
+.chat-msg-input,
+.room-input,
+.message-input {
     width: 100%;
     border-radius: 0
 }
 
-.compose button {
+.send-msg-btn {
     font-size: 14px;
     border-radius: 0
 }
 
-button#sendImageButton {
+.img-btn {
     border-radius: 4px 0 0 4px
 }
 
-button#insertEmojiButton {
-    border-radius: 0 3px 3px 0
+.emoji-btn {
+    border-radius: 0 4px 4px 0
 }
 
 .room-title {
@@ -572,33 +565,39 @@ button#insertEmojiButton {
     word-break: break-all
 }
 
-img#uploaded-image {
+.uploaded-image {
     border-radius: 4px;
     max-width: 100%;
     height: auto
 }
 
-img#uploaded-image:hover {
+.uploaded-image:hover {
     cursor: pointer;
     filter: brightness(70%);
     transition: .2s
 }
 
-#message-overlay,
-#room-overlay,
-div#tools-bar {
+.msg-overlay,
+.room-overlay {
+    background-color: rgba(0, 0, 0, .301);
+    height: 100%;
+    align-items: center;
+    z-index: 4;
     position: fixed;
     width: 100%;
     justify-content: center
 }
 
-div#tools-bar {
+.tools-bar {
     display: flex;
     transition: .5s ease;
     opacity: 0;
     z-index: 3;
     top: -50px;
     pointer-events: none;
+    position: fixed;
+    width: 100%;
+    justify-content: center
 }
 
 .toolButton {
@@ -626,39 +625,29 @@ div#tools-bar {
     border-radius: 4px
 }
 
-#message-overlay,
-#room-overlay {
-    background-color: rgba(0, 0, 0, .301);
-    height: 100%;
-    align-items: center;
-    z-index: 4
-}
-
-input#room-input,
-input#user-message-input,
-textarea#message-input {
+.room-input,
+.message-input {
     border-radius: 4px;
     width: 286px
 }
 
-input#room-input {
+.room-input {
     margin: 0 7px 0 0
-}
-
-button#join-default-button {
-    width: 365px
 }
 
 .message-input {
     margin-bottom: 21px
 }
 
-textarea#message-input {
+.message-input-area {
     height: 164px;
-    resize: none
+    width: 100%;
+    resize: none;
+    border-radius: 4px;
+    margin-bottom: 15px;
 }
 
-div#message-bar {
+.message-bar {
     position: fixed;
     color: var(--fontColor);
     background-color: var(--sidebar);
@@ -670,14 +659,14 @@ div#message-bar {
     max-width: 509px
 }
 
-div#from {
+.from {
     padding: 9px 9px 3px;
     background-color: var(--accent);
     border-radius: 10px;
     display: flex;
 }
 
-div#message-to {
+.message-to {
     padding: 3px 9px 9px
 }
 
@@ -687,8 +676,8 @@ div#message-to {
     padding: 2px 5px 2px 5px;
 }
 
-p#message-replace,
-p#message__container {
+.msg-replace,
+.msg-container {
     word-break: break-word
 }
 
@@ -696,13 +685,13 @@ p#message__container {
     width: 100%
 }
 
-span#bot-indicator-msg {
+.bot-indicator-msg {
     font-size: 12px;
     font-weight: 900;
     color: var(--accent);
 }
 
-div#alert-overlay {
+.alert-overlay {
     text-align: center;
     position: fixed;
     width: 100%;
@@ -715,19 +704,19 @@ div#alert-overlay {
     word-break: break-all
 }
 
-button#close-alert-overlay {
+.close-alert-btn {
     font-size: 30px;
     border-style: solid;
     padding: 0 10px;
     border-radius: 13px
 }
 
-div#alert-overlay a {
+.alert-overlay a {
     filter: invert(100%)
 }
 
 /* Tic Tac Toe */
-div#tictactoe-gameboard {
+.tictactoe-gameboard {
     display: inline-block;
 }
 
@@ -743,7 +732,7 @@ div#tictactoe-gameboard {
     font-size: 70px;
 }
 
-button.ttt-button {
+.ttt-button {
     background: transparent;
     padding: 0px;
     font-size: 0px;
@@ -751,12 +740,12 @@ button.ttt-button {
     height: 75px;
 }
 
-button.ttt-button:hover {
+.ttt-button:hover {
     background: #00000041
 }
 
 /* Connect 4 */
-div#connect4-gameboard {
+.connect4-gameboard {
     display: inline-block;
     background: hwb(231 12% 12%);
     padding: 3px;
@@ -766,7 +755,7 @@ div#connect4-gameboard {
     border: black 2px solid;
 }
 
-button.connect4-button {
+.connect4-button {
     background: #1f3ce0;
     color: #ffffff;
     padding: 0px 3.5px 0px 3.5px;

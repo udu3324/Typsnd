@@ -15,7 +15,6 @@ const $messages = document.querySelector("#messages");
 const $imageSendButton = document.querySelector("#sendImageButton");
 const $insertEmojiButton = document.querySelector("#insertEmojiButton");
 const $emojiBox = document.querySelector("emoji-picker");
-const $imagesSentInChat = document.querySelector("img#uploaded-image");
 const $scrollDownButton = document.querySelector("#scrollDownMSG");
 const $user = document.querySelector("#user-replace");
 const $disconnectOverlay = document.querySelector("#disconnect-overlay");
@@ -91,8 +90,16 @@ socket.on("roomData", ({ room, users }) => {
 });
 
 // show disconnect div when lost connection to socketio
+var disconnected = false;
 socket.on('disconnect', function () {
+  //disable code being ran twice
+  if (disconnected)
+    return
+  else
+    disconnected = true
+
   console.log("Disconnected from client!")
+  
   $settingsOverlay.style.display = "none";
   $emojiBox.style.display = "none";
   $disconnectOverlay.style.display = "flex";
@@ -208,7 +215,7 @@ function renderNewMessage(message, split) {
       var mentionIndex = message.text.indexOf(`@${usr}`, startingIndex)
 
       //insert span 
-      message.text = message.text.slice(0, mentionIndex) + "<span id=\"mention-text\">" + message.text.slice(mentionIndex);
+      message.text = message.text.slice(0, mentionIndex) + "<span class=\"mention-text\">" + message.text.slice(mentionIndex);
 
       //update index
       mentionIndex = message.text.indexOf(`@${usr}`, startingIndex)
