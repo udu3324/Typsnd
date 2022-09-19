@@ -1,7 +1,7 @@
 const users = [];
 const createDOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
-const { blacklistedUsernames, adminIPs, multipleRooms, adminIcon } = require("../config.js");
+const { blacklistedUsernames, adminIPs, multipleRooms, adminIcon, blacklistSpecialCharactarsInUsername } = require("../config.js");
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
@@ -35,10 +35,17 @@ const addUser = ({ ip, id, username, room }) => {
     };
   }
 
-  // Blacklist splace in username
+  // Blacklist space in username
   if (username.includes(" ")) {
     return {
       error: "Spaces aren't allowed in usernames!"
+    };
+  }
+
+  // Blacklist special symbols in usernames
+  if (!/^[A-Za-z0-9!@#$%^&*()\[\]{};':",.<>\/\\|=`~?+_-]*$/.test(username) && blacklistSpecialCharactarsInUsername) {
+    return {
+      error: "Special charactars aren't allowed in usernames! Only A-Z 0-9 !@#$%^&*()[]{};':\",.<>/\\|=`~?+_- is allowed."
     };
   }
 
@@ -53,7 +60,7 @@ const addUser = ({ ip, id, username, room }) => {
     }
   }
 
-  // Validate only chatroom is chat
+  // Validate only chatroom is chat if multiple rooms is disabled
   if (!(room === "Typsnd") && !multipleRooms) {
     return {
       error: "Multiple rooms are currently disabled."
@@ -61,7 +68,7 @@ const addUser = ({ ip, id, username, room }) => {
   }
 
   // Make sure username is not blacklisted (allow admins to use blacklisted usernames anyways)
-  if (blacklistedUsernames.map(v => v.toLowerCase()).some(v => username.toLowerCase().includes(v)) && !isAdmin) {
+  if (!isAdmin && blacklistedUsernames.map(v => v.toLowerCase()).some(v => username.toLowerCase().includes(v))) {
     return {
       error: "Hey! That's a blacklisted username!"
     };
