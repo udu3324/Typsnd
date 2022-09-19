@@ -1,4 +1,4 @@
-const fs = require('fs');
+import { existsSync, appendFile, readFileSync, writeFileSync } from 'fs';
 
 const path = "save.txt"
 
@@ -10,8 +10,8 @@ const save = "\n# this file stores chat cooldown and bans made in the settings\n
 function createSave() {
     //create a save only when there isn't one
     try {
-        if (!fs.existsSync(path)) {
-            fs.appendFile(path, save, function (err) {
+        if (!existsSync(path)) {
+            appendFile(path, save, function (err) {
                 if (err) throw err;
                 console.log('save.txt | sucessfully created');
             });
@@ -27,17 +27,17 @@ function createSave() {
 function writeSave(config, value) {
     //if config already exists, write over it
     if (readSave(config) !== false) {
-        var array = fs.readFileSync(path).toString().split("\n");
+        var array = readFileSync(path).toString().split("\n");
         for (i in array) {
             if (array[i].includes(config + "|"))
                 array[i] = `${config}|${value}`
         }
 
-        fs.writeFileSync(path, array.join('\n'));
+        writeFileSync(path, array.join('\n'));
 
         console.log(`save.txt | replaced config: "${config}" value: "${value}"`);
     } else {
-        fs.appendFile(path, `${config}|${value}\n`, function (err) {
+        appendFile(path, `${config}|${value}\n`, function (err) {
             if (err) throw err;
             console.log(`save.txt | new config: "${config}" value: "${value}"`);
         });
@@ -48,13 +48,13 @@ function writeSave(config, value) {
 function deleteSave(config) {
     //if config exists, delete it
     if (readSave(config) !== false) {
-        var array = fs.readFileSync(path).toString().split("\n");
+        var array = readFileSync(path).toString().split("\n");
         for (i in array) {
             if (array[i].includes(config + "|"))
                 array.splice(i, 1)
         }
 
-        fs.writeFileSync(path, array.join('\n'));
+        writeFileSync(path, array.join('\n'));
 
         console.log(`save.txt | deleted config: "${config}"`);
     }
@@ -62,10 +62,10 @@ function deleteSave(config) {
 
 //readSave("cooldown") returns 2
 function readSave(config) {
-    if (!fs.existsSync(path))
+    if (!existsSync(path))
         return false
     var value = false
-    var array = fs.readFileSync(path).toString().split("\n");
+    var array = readFileSync(path).toString().split("\n");
     for (i in array) {
         if (array[i].includes(config + "|"))
             value = array[i].substring(array[i].indexOf("|") + 1)
@@ -73,7 +73,7 @@ function readSave(config) {
     return value
 }
 
-module.exports = {
+export default {
     createSave,
     writeSave,
     deleteSave,

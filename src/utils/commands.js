@@ -1,7 +1,7 @@
-const { botIcon, adminIcon } = require("../config");
-const { cLog, Color, time } = require("./logging");
-const { generateMessage } = require("./messages");
-const { users, getUser } = require("./users");
+import { botIcon, adminIcon } from "../config";
+import { cLog, Color, time } from "./logging";
+import { generateMessage } from "./messages";
+import { users, getUser } from "./users";
 
 const botStr = `</br><span class="bot-indicator-msg"><i class="fa-solid fa-eye-slash"></i> Only you can only see this.</span>`
 const crownIcon = `<i class="fa-solid fa-crown"></i>`
@@ -525,7 +525,7 @@ function checkWinConnect4(gameIndex) {
     return won
 }
 
-module.exports = {
+export default {
     runCommand,
     ticTacToeGame,
     generateNewTTTBoard,

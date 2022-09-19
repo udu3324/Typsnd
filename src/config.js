@@ -38,7 +38,7 @@ botIcon += " " //important
 if (msgGreet.length >= 1)
   msgGreet = "<br/>" + msgGreet
 
-module.exports = {
+export default {
   serverPort,
   adminIPs,
   adminIcon,

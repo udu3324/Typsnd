@@ -1,29 +1,29 @@
-const path = require("path");
-const http = require("http");
-const express = require("express");
-const ip = require('ip');
-const { generateMessage, linkify } = require("./utils/messages");
-const { addUser, removeUser, getUser, getUsersInRoom, users } = require("./utils/users");
-var { msgCooldown, serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames, botIcon, messageCharactarLimit } = require("./config.js");
-const { encode } = require("html-entities");
+import { join } from "path";
+import { createServer } from "http";
+import express from "express";
+import { address } from 'ip';
+import { generateMessage, linkify } from "./utils/messages";
+import { addUser, removeUser, getUser, getUsersInRoom, users } from "./utils/users";
+import { msgCooldown, serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames, botIcon, messageCharactarLimit } from "./config.js";
+import { encode } from "html-entities";
 
-const createDOMPurify = require('dompurify');
-const { JSDOM } = require('jsdom');
-const { cLog, Color, time } = require("./utils/logging");
-const { createSave, writeSave, readSave, deleteSave } = require("./utils/writer");
-const { runCommand, ticTacToeGame, generateNewTTTBoard, indexOf2dArray, checkWinTTT, checkTieTTT, connect4Game, generateNewConnect4Board, placeConnect4Tile, checkWinConnect4 } = require("./utils/commands");
+import createDOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
+import { cLog, Color, time } from "./utils/logging";
+import { createSave, writeSave, readSave, deleteSave } from "./utils/writer";
+import { runCommand, ticTacToeGame, generateNewTTTBoard, indexOf2dArray, checkWinTTT, checkTieTTT, connect4Game, generateNewConnect4Board, placeConnect4Tile, checkWinConnect4 } from "./utils/commands";
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 const io = require('socket.io')(server, {
   maxHttpBufferSize: 25e8 //25mb
 });
 
 const port = serverPort;
-const publicDirectoryPath = path.join(__dirname, "../public");
+const publicDirectoryPath = join(__dirname, "../public");
 
 app.use(express.static(publicDirectoryPath));
 
@@ -610,7 +610,7 @@ function getUsername(user) {
 server.listen(port, () => { //credits n stuff
   console.log("\n Typsnd is running at: \n");
   cLog(Color.fg.cyan, `http://localhost:${port}`, ` - Local:   `)
-  cLog(Color.fg.cyan, `http://${ip.address()}:${port} \n`, ` - Network: `)
+  cLog(Color.fg.cyan, `http://${address()}:${port} \n`, ` - Network: `)
 
   createSave()
 

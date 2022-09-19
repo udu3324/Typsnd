@@ -1,12 +1,12 @@
 const users = [];
-const createDOMPurify = require('dompurify');
-const { JSDOM } = require('jsdom');
-const { blacklistedUsernames, adminIPs, multipleRooms, adminIcon, blacklistSpecialCharactarsInUsername } = require("../config.js");
+import createDOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
+import { blacklistedUsernames, adminIPs, multipleRooms, adminIcon, blacklistSpecialCharactarsInUsername } from "../config.js";
 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-const { encode } = require("html-entities");
+import { encode } from "html-entities";
 
 const addUser = ({ ip, id, username, room }) => {
   var isAdmin = adminIPs.some(v => ip.includes(v));
@@ -113,7 +113,7 @@ const getUsersInRoom = room => {
   return users.filter(user => user.room === room);
 };
 
-module.exports = {
+export default {
   addUser,
   removeUser,
   getUser,

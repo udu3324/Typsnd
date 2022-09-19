@@ -24,7 +24,7 @@ const linkify = (inputText) => {
   return replacedText;
 }
 
-module.exports = {
+export default {
   generateMessage,
   linkify
 };
