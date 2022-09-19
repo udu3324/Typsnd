@@ -4,7 +4,7 @@ const express = require("express");
 const ip = require('ip');
 const { generateMessage, linkify } = require("./utils/messages");
 const { addUser, removeUser, getUser, getUsersInRoom, users } = require("./utils/users");
-var { msgCooldown, serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames, botIcon } = require("./config.js");
+var { msgCooldown, serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames, botIcon, messageCharactarLimit } = require("./config.js");
 const { encode } = require("html-entities");
 
 const createDOMPurify = require('dompurify');
@@ -111,7 +111,7 @@ function sockets(socket) {
       users: getUsersInRoom(user.room)
     });
 
-    //add ip to arrays
+    //add ip to list when they join
     ipArray.push(ip);
 
     var alreadyHas = false
@@ -159,11 +159,11 @@ function sockets(socket) {
       msg = encode(msg).replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
     }
 
-    // check if msg is over 3000 characters
-    if (msg.length > 3000) {
-      cLog(Color.bg.red, `${time()} Message from ${getUsername(user)} has been blocked due to character limit.`);
-      msg = `Hi, I'm ${getUsername(user)} and just tried to go over the 3000 character limit.`;
-    }
+    // check if msg is over # characters
+    console.log(msg.length)
+    console.log(messageCharactarLimit)
+    if (msg.length > messageCharactarLimit)
+      return callback("charactar limit" + messageCharactarLimit)
 
     socket.emit("message-cooldown", msgCooldown);
     io.to(user.room).emit("message", generateMessage(user.username, linkify(msg)));

@@ -335,8 +335,10 @@ function sendMessage(message) {
     $messageFormInput.value = "";
 
     //catch user being undefined
-    if (error == "Refresh the page!")
+    if (error === "Refresh the page!")
       return window.location.reload()
+    else if (/^charactar limit/.test(error))
+      alertAsync("you hit the charactar limit of " + error.substring(15) + "!")
     if (menuOpened)
       toggleMenu(theMenuOpened, false)
 

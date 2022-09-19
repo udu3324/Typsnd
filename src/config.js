@@ -10,6 +10,7 @@ var blacklistedUsernames = ["admin", "mod", "staff", "server", "typsnd", "code",
 var blacklistedIPs = [];
 //regex: ^[A-Za-z0-9!@#$%^&*()\[\]{};':",.<>\/\\|=`~?+_-]*$
 var blacklistSpecialCharactarsInUsername = true;
+var messageCharactarLimit = 1000;
 
 // Chat Addons / Functionality
 var htmlTitle = "Typsnd";
@@ -45,6 +46,7 @@ module.exports = {
   blacklistedIPs,
   blacklistedUsernames,
   blacklistSpecialCharactarsInUsername,
+  messageCharactarLimit,
   msgGreet,
   msgCooldown,
   multipleRooms,
