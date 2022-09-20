@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from "fs"
 
 const path = "save.txt"
 
@@ -7,7 +7,7 @@ const save = "\n# this file stores chat cooldown and bans made in the settings\n
     "# please do not edit the contents of this file\n" +
     "# but you're welcome to delete the file to reset it\n\n"
 
-function createSave() {
+export function createSave() {
     //create a save only when there isn't one
     try {
         if (!fs.existsSync(path)) {
@@ -24,10 +24,10 @@ function createSave() {
 }
 
 //writeSave("cooldown", 2)
-function writeSave(config, value) {
+export function writeSave(config, value) {
     //if config already exists, write over it
     if (readSave(config) !== false) {
-        var array = fs.readFileSync(path).toString().split("\n");
+        let array = fs.readFileSync(path).toString().split("\n");
         for (i in array) {
             if (array[i].includes(config + "|"))
                 array[i] = `${config}|${value}`
@@ -45,10 +45,10 @@ function writeSave(config, value) {
 }
 
 //deleteSave("cooldown")
-function deleteSave(config) {
+export function deleteSave(config) {
     //if config exists, delete it
     if (readSave(config) !== false) {
-        var array = fs.readFileSync(path).toString().split("\n");
+        let array = fs.readFileSync(path).toString().split("\n");
         for (i in array) {
             if (array[i].includes(config + "|"))
                 array.splice(i, 1)
@@ -61,21 +61,14 @@ function deleteSave(config) {
 }
 
 //readSave("cooldown") returns 2
-function readSave(config) {
+export function readSave(config) {
     if (!fs.existsSync(path))
         return false
-    var value = false
-    var array = fs.readFileSync(path).toString().split("\n");
+    let value = false
+    let array = fs.readFileSync(path).toString().split("\n");
     for (i in array) {
         if (array[i].includes(config + "|"))
             value = array[i].substring(array[i].indexOf("|") + 1)
     }
     return value
 }
-
-module.exports = {
-    createSave,
-    writeSave,
-    deleteSave,
-    readSave
-};

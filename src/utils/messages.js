@@ -1,4 +1,4 @@
-const generateMessage = (username, text) => {
+export const generateMessage = (username, text) => {
   return {
     username,
     text,
@@ -6,8 +6,8 @@ const generateMessage = (username, text) => {
   };
 };
 
-const linkify = (inputText) => {
-  var replacedText, replacePattern1, replacePattern2, replacePattern3;
+export const linkify = (inputText) => {
+  let replacedText, replacePattern1, replacePattern2, replacePattern3;
 
   //URLs starting with http://, https://, or ftp://
   replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gim;
@@ -23,8 +23,3 @@ const linkify = (inputText) => {
 
   return replacedText;
 }
-
-module.exports = {
-  generateMessage,
-  linkify
-};

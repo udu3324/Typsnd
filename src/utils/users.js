@@ -1,15 +1,16 @@
-const users = [];
-const createDOMPurify = require('dompurify');
-const { JSDOM } = require('jsdom');
-const { blacklistedUsernames, adminIPs, multipleRooms, adminIcon, blacklistSpecialCharactarsInUsername } = require("../config.js");
+import createDOMPurify from "dompurify";
+import { JSDOM } from "jsdom";
+import { blacklistedUsernames, adminIPs, multipleRooms, adminIcon, blacklistSpecialCharactarsInUsername } from "../config.js";
 
-const window = new JSDOM('').window;
+const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
 
-const { encode } = require("html-entities");
+import { encode } from "html-entities";
 
-const addUser = ({ ip, id, username, room }) => {
-  var isAdmin = adminIPs.some(v => ip.includes(v));
+export const users = [];
+
+export const addUser = ({ ip, id, username, room }) => {
+  let isAdmin = adminIPs.some(v => ip.includes(v));
 
   // Clean the data
   try {
@@ -19,7 +20,7 @@ const addUser = ({ ip, id, username, room }) => {
     console.log(e.name + ": " + e.message)
   }
 
-  var lcUsr = username.toLowerCase();
+  let lcUsr = username.toLowerCase();
 
   // Validate the data
   if (!username) {
@@ -96,7 +97,7 @@ const addUser = ({ ip, id, username, room }) => {
   return { user };
 };
 
-const removeUser = id => {
+export const removeUser = id => {
   const index = users.findIndex(user => user.id === id);
 
   if (index !== -1) {
@@ -104,19 +105,11 @@ const removeUser = id => {
   }
 };
 
-const getUser = id => {
+export const getUser = id => {
   return users.find(user => user.id === id);
 };
 
-const getUsersInRoom = room => {
+export const getUsersInRoom = room => {
   room = room.trim();
   return users.filter(user => user.room === room);
-};
-
-module.exports = {
-  addUser,
-  removeUser,
-  getUser,
-  getUsersInRoom,
-  users
 };

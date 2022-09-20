@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Typsnd is a simple web app that people can chat and send images into.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "dev": "node ./node_modules/nodemon/bin/nodemon.js --ext js,css,html src/index.js"

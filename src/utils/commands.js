@@ -1,13 +1,13 @@
-const { botIcon, adminIcon } = require("../config");
-const { cLog, Color, time } = require("./logging");
-const { generateMessage } = require("./messages");
-const { users, getUser } = require("./users");
+import { botIcon, adminIcon } from "../config.js";
+import { cLog, Color, time } from "./logging.js";
+import { generateMessage } from "./messages.js";
+import { users, getUser } from "./users.js";
 
 const botStr = `</br><span class="bot-indicator-msg"><i class="fa-solid fa-eye-slash"></i> Only you can only see this.</span>`
 const crownIcon = `<i class="fa-solid fa-crown"></i>`
 const arrowDownIcon = `<i class="fa-solid fa-arrow-down"></i>`
 
-var ticTacToeGame = [];
+export let ticTacToeGame = [];
 const ticTacToeBoard = [
     ["t0", "t1", "t2"],
     ["t3", "t4", "t5"],
@@ -24,15 +24,8 @@ const ticTacToeWinning = [
     [[0, 2], [1, 1], [2, 0]]
 ];
 
-var connect4Game = [];
-const connect4Board = [
-    "t0", "t1", "t2", "t3", "t4", "t5", "t6",
-    "t7", "t8", "t9", "t10", "t11", "t12", "t13",
-    "t14", "t15", "t16", "t17", "t18", "t19", "t20",
-    "t21", "t22", "t23", "t24", "t25", "t26", "t27",
-    "t28", "t29", "t30", "t31", "t32", "t33", "t34",
-    "t35", "t36", "t37", "t38", "t39", "t40", "t41"
-];
+export let connect4Game = [];
+
 const connect4Winning = [
     [0, 1, 2, 3], [41, 40, 39, 38], [7, 8, 9, 10],
     [34, 33, 32, 31], [14, 15, 16, 17], [27, 26, 25, 24],
@@ -59,7 +52,7 @@ const connect4Winning = [
     [11, 18, 25, 32], [12, 19, 26, 33], [13, 20, 27, 34]
 ];
 
-function runCommand(io, socket, user, message, admin) {
+export function runCommand(io, socket, user, message, admin) {
     if (/^\/help$/.test(message)) {
         sendPrivateMessage(socket, true, `<h1>Commands</h1>
             <h4>Regular Commands</h4>
@@ -82,26 +75,26 @@ function runCommand(io, socket, user, message, admin) {
         if (message.length <= 11)
             return sendPrivateMessage(socket, true, `No user mentioned in command!`)
 
-        var userID = getUserID(message)
+        let userID = getUserID(message)
 
         if (!userID)
             return sendPrivateMessage(socket, true, `The user you wanted to play with doesn't exist!`)
 
         //check if user requesting is not self
-        var userSendingTo = getUser(userID)
+        let userSendingTo = getUser(userID)
 
         if (userSendingTo === user)
             return sendPrivateMessage(socket, true, `You aren't allowed to play Tic Tac Toe against yourself.`)
 
         //check if a game has already started
-        var gameAlreadyStarted = false
-        var minutes
+        let gameAlreadyStarted = false
+        let minutes
         for (let index = 0; index < ticTacToeGame.length; ++index) {
             if (ticTacToeGame[index][0] === user.room && ticTacToeGame[index][3] !== "unaccepted") {
                 gameAlreadyStarted = true
                 
                 //if game has lasted over 1 minute, delete it
-                var diff = Math.abs(ticTacToeGame[index][6] - new Date());
+                let diff = Math.abs(ticTacToeGame[index][6] - new Date());
                 minutes = Math.floor((diff/1000)/60);
                 if (minutes >= 1) {
                     gameAlreadyStarted = false
@@ -145,26 +138,26 @@ function runCommand(io, socket, user, message, admin) {
         if (message.length <= 10)
             return sendPrivateMessage(socket, true, `No user mentioned in command!`)
 
-        var userID = getUserID(message)
+        let userID = getUserID(message)
 
         if (!userID)
             return sendPrivateMessage(socket, true, `The user you wanted to play with doesn't exist!`)
 
         //check if user requesting is not self
-        var userSendingTo = getUser(userID)
+        let userSendingTo = getUser(userID)
 
         if (userSendingTo === user)
             return sendPrivateMessage(socket, true, `You aren't allowed to play Connect 4 against yourself.`)
 
         //check if a game has already started
-        var gameAlreadyStarted = false
-        var minutes
+        let gameAlreadyStarted = false
+        let minutes
         for (let index = 0; index < connect4Game.length; ++index) {
             if (connect4Game[index][0] === user.room && connect4Game[index][3] !== "unaccepted") {
                 gameAlreadyStarted = true
 
                 //if game has lasted over 1 minute, delete it
-                var diff = Math.abs(connect4Game[index][6] - new Date());
+                let diff = Math.abs(connect4Game[index][6] - new Date());
                 minutes = Math.floor((diff/1000)/60);
                 if (minutes >= 5) {
                     gameAlreadyStarted = false
@@ -209,8 +202,8 @@ function runCommand(io, socket, user, message, admin) {
     } else if (/^\/end-connect4$/.test(message)) {
         if (!admin) return sendPrivateMessage(socket, true, `Only admins can run this command!`)
 
-        var gameExists = false
-        var gameIndex;
+        let gameExists = false
+        let gameIndex;
         for (let index = 0; index < connect4Game.length; ++index) {
             if (connect4Game[index][0] === user.room) {
                 gameExists = true
@@ -228,8 +221,8 @@ function runCommand(io, socket, user, message, admin) {
     } else if (/^\/end-tictactoe$/.test(message)) {
         if (!admin) return sendPrivateMessage(socket, true, `Only admins can run this command!`)
 
-        var gameExists = false
-        var gameIndex;
+        let gameExists = false
+        let gameIndex;
         for (let index = 0; index < ticTacToeGame.length; ++index) {
             if (ticTacToeGame[index][0] === user.room) {
                 gameExists = true
@@ -249,13 +242,13 @@ function runCommand(io, socket, user, message, admin) {
 
         if (message.length <= 6) return sendPrivateMessage(socket, true, `No user mentioned in command!`)
 
-        var spaceIndex = message.indexOf(" ", 7)
+        let spaceIndex = message.indexOf(" ", 7)
         if (spaceIndex === -1) return sendPrivateMessage(socket, true, `No message in command!`)
 
-        var userSendTo = message.substring(6, spaceIndex)
-        var messageSudoing = message.substring(spaceIndex + 1)
-        var userExists = false;
-        var userID;
+        let userSendTo = message.substring(6, spaceIndex)
+        let messageSudoing = message.substring(spaceIndex + 1)
+        let userExists = false;
+        let userID;
 
         for (let index = 0; index < users.length; ++index) {
             //remove shield
@@ -268,7 +261,7 @@ function runCommand(io, socket, user, message, admin) {
 
         if (!userExists) return sendPrivateMessage(socket, true, `The user you want to sudo doesn't exist!`)
 
-        var userSudoing = getUser(userID)
+        let userSudoing = getUser(userID)
 
         if (userSudoing.username.includes(adminIcon, "")) return sendPrivateMessage(socket, true, `The user you wanted to sudo is a admin!`)
 
@@ -291,12 +284,12 @@ function sendPrivateMessage(socket, split, message) {
         socket.emit("message", generateMessage(`${botIcon}Bot`, `${message}${botStr}`));
 }
 
-function generateNewTTTBoard(gameIndex) {
+export function generateNewTTTBoard(gameIndex) {
     const user1 = ticTacToeGame[gameIndex][1]
     const user2 = ticTacToeGame[gameIndex][2]
     const currentTurn = ticTacToeGame[gameIndex][4]
 
-    var endingString;
+    let endingString;
 
     if (ticTacToeGame[gameIndex][3] === "finished")
         endingString = `${crownIcon}${crownIcon}${crownIcon} ${currentTurn.username} wins! ${crownIcon}${crownIcon}${crownIcon}`
@@ -354,9 +347,9 @@ function generateTileTTT(tile, gameIndex) {
         return `<button class="ttt-button" onclick="javascript:socket.emit(\`tic-tac-toe\`, \`${ticTacToeGame[gameIndex][0]}|${tile}\`)"></button>`
 }
 
-function checkWinTTT(gameIndex) {
-    var won = false
-    var marker;
+export function checkWinTTT(gameIndex) {
+    let won = false
+    let marker;
 
     //set marker depending on whos turn it is
     if (ticTacToeGame[gameIndex][4] === ticTacToeGame[gameIndex][1])
@@ -366,13 +359,13 @@ function checkWinTTT(gameIndex) {
 
     //for each way to win, check the current state of game to see if won
     for (let i = 0; i < ticTacToeWinning.length; i++) {
-        var tile1 = ticTacToeWinning[i][0]
-        var tile2 = ticTacToeWinning[i][1]
-        var tile3 = ticTacToeWinning[i][2]
+        let tile1 = ticTacToeWinning[i][0]
+        let tile2 = ticTacToeWinning[i][1]
+        let tile3 = ticTacToeWinning[i][2]
 
-        var gTile1 = ticTacToeGame[gameIndex][5][tile1[0]][tile1[1]]
-        var gTile2 = ticTacToeGame[gameIndex][5][tile2[0]][tile2[1]]
-        var gTile3 = ticTacToeGame[gameIndex][5][tile3[0]][tile3[1]]
+        let gTile1 = ticTacToeGame[gameIndex][5][tile1[0]][tile1[1]]
+        let gTile2 = ticTacToeGame[gameIndex][5][tile2[0]][tile2[1]]
+        let gTile3 = ticTacToeGame[gameIndex][5][tile3[0]][tile3[1]]
 
         if (gTile1 === marker && gTile2 === marker && gTile3 === marker) {
             won = true
@@ -382,10 +375,10 @@ function checkWinTTT(gameIndex) {
     return won
 }
 
-function checkTieTTT(array) {
-    var didTie = true
-    for (var x = 0; x < array.length; x++) {
-        for (var y = 0; y < array.length; y++) {
+export function checkTieTTT(array) {
+    let didTie = true
+    for (let x = 0; x < array.length; x++) {
+        for (let y = 0; y < array.length; y++) {
             if (array[y][x].includes("t"))
                 didTie = false
         }
@@ -393,9 +386,9 @@ function checkTieTTT(array) {
     return didTie
 }
 
-function indexOf2dArray(array, item) {
-    for (var x = 0; x < array.length; x++) {
-        for (var y = 0; y < array.length; y++) {
+export function indexOf2dArray(array, item) {
+    for (let x = 0; x < array.length; x++) {
+        for (let y = 0; y < array.length; y++) {
             if (array[y][x] === item)
                 return [y, x]
         }
@@ -405,9 +398,9 @@ function indexOf2dArray(array, item) {
 
 function getUserID(message) {
     //check if the user requesting exists
-    var userSendTo = message.substring(message.indexOf(" ") + 1)
-    var userExists = false;
-    var userID;
+    let userSendTo = message.substring(message.indexOf(" ") + 1)
+    let userExists = false;
+    let userID;
 
     for (let index = 0; index < users.length; ++index) {
         //remove the admin icon
@@ -424,17 +417,17 @@ function getUserID(message) {
         return null
 }
 
-function generateNewConnect4Board(gameIndex) {
+export function generateNewConnect4Board(gameIndex) {
     const room = connect4Game[gameIndex][0]
     const user1 = connect4Game[gameIndex][1]
     const user2 = connect4Game[gameIndex][2]
     const currentTurn = connect4Game[gameIndex][4]
 
-    var startingDOM = `
+    let startingDOM = `
     <h2>🔴 ${user1.username} vs ${user2.username} 🟡</h2>
     <div class="connect4-gameboard">`
 
-    var endingString;
+    let endingString;
     if (connect4Game[gameIndex][3] === "finished")
         endingString = `${crownIcon}${crownIcon}${crownIcon} ${currentTurn.username} wins! ${crownIcon}${crownIcon}${crownIcon}`
     else if (connect4Game[gameIndex][3] === "tied")
@@ -442,12 +435,12 @@ function generateNewConnect4Board(gameIndex) {
     else
         endingString = `It is ${currentTurn.username}'s turn.`
 
-    var endingDOM = `
+    let endingDOM = `
     </div>
     <br>
     ${endingString}`
 
-    var middleDOM = `
+    let middleDOM = `
     <button style="margin-left: 5px;" class="connect4-button" onclick="javascript:socket.emit(\`connect4\`, \`${room}|0\`)">${arrowDownIcon}</button>
     <button class="connect4-button" onclick="javascript:socket.emit(\`connect4\`, \`${room}|1\`)">${arrowDownIcon}</button>
     <button class="connect4-button" onclick="javascript:socket.emit(\`connect4\`, \`${room}|2\`)">${arrowDownIcon}</button>
@@ -457,8 +450,8 @@ function generateNewConnect4Board(gameIndex) {
     <button class="connect4-button" onclick="javascript:socket.emit(\`connect4\`, \`${room}|6\`)">${arrowDownIcon}</button>
     <br>`;
 
-    for (var i = 0; i < connect4Game[gameIndex][5].length; i++) {
-        var tile = connect4Game[gameIndex][5][i]
+    for (let i = 0; i < connect4Game[gameIndex][5].length; i++) {
+        let tile = connect4Game[gameIndex][5][i]
         if (tile === "red")
             middleDOM += "🔴"
         else if (tile === "yellow")
@@ -474,9 +467,9 @@ function generateNewConnect4Board(gameIndex) {
     return startingDOM + middleDOM + endingDOM
 }
 
-function placeConnect4Tile(gameIndex, row) {
+export function placeConnect4Tile(gameIndex, row) {
     //set the tile color
-    var tileColor;
+    let tileColor;
     if (connect4Game[gameIndex][4] === connect4Game[gameIndex][1])
         tileColor = "red"
     else
@@ -486,9 +479,9 @@ function placeConnect4Tile(gameIndex, row) {
     if (!/^t/.test(connect4Game[gameIndex][5][parseInt(row)])) return true
 
     //place the tile
-    for (var i = 0; i < 7; i++) {
-        var tileIndex = parseInt(row) + (i * 7)
-        var tile = connect4Game[gameIndex][5][tileIndex]
+    for (let i = 0; i < 7; i++) {
+        let tileIndex = parseInt(row) + (i * 7)
+        let tile = connect4Game[gameIndex][5][tileIndex]
 
         //place the tile when loop hits already placed tile
         if (!/^t/.test(tile)) {
@@ -498,10 +491,10 @@ function placeConnect4Tile(gameIndex, row) {
     }
 }
 
-function checkWinConnect4(gameIndex) {
-    var won = false
+export function checkWinConnect4(gameIndex) {
+    let won = false
 
-    var tileColor;
+    let tileColor;
     if (connect4Game[gameIndex][4] === connect4Game[gameIndex][1])
         tileColor = "red"
     else
@@ -510,30 +503,17 @@ function checkWinConnect4(gameIndex) {
     //for each way to win, check the current state of game to see if won
     for (let i = 0; i < connect4Winning.length; i++) {
         //[#, #, #, #]
-        var winningTiles = connect4Winning[i]
+        let winningTiles = connect4Winning[i]
 
         //get the tiles requested
-        var tile1 = connect4Game[gameIndex][5][winningTiles[0]]
-        var tile2 = connect4Game[gameIndex][5][winningTiles[1]]
-        var tile3 = connect4Game[gameIndex][5][winningTiles[2]]
-        var tile4 = connect4Game[gameIndex][5][winningTiles[3]]
+        let tile1 = connect4Game[gameIndex][5][winningTiles[0]]
+        let tile2 = connect4Game[gameIndex][5][winningTiles[1]]
+        let tile3 = connect4Game[gameIndex][5][winningTiles[2]]
+        let tile4 = connect4Game[gameIndex][5][winningTiles[3]]
 
         if (tile1 === tileColor && tile2 === tileColor && tile3 === tileColor && tile4 === tileColor)
             won = true
     }
 
     return won
-}
-
-module.exports = {
-    runCommand,
-    ticTacToeGame,
-    generateNewTTTBoard,
-    indexOf2dArray,
-    checkWinTTT,
-    checkTieTTT,
-    connect4Game,
-    generateNewConnect4Board,
-    placeConnect4Tile,
-    checkWinConnect4
 }
