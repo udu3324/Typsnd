@@ -7,11 +7,12 @@
 <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/udu3324/Typsnd">
 
 # Typsnd
-Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into. It is based on [Express.JS](https://expressjs.com/), [Node.JS](https://nodejs.org/), and [Socket.io.JS](https://socket.io/). (note: typsnd preforms poorly on small screens)
+Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that people can chat and send images into. It is based on [Express.JS](https://expressjs.com/), [Node.JS](https://nodejs.org/), and [Socket.io.JS](https://socket.io/).
    
 **Features**   
+ - Mobile/Small Screen Support!!!!
  - Commands (tictactoe and connect4)
- - Moderation (ban, kick, alert to all)
+ - Moderation (ban, kick, alert)
  - Tabs (easy to access button links)
  - Direct Messaging
  - Mentioning
