@@ -401,7 +401,7 @@ emoji-picker {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  max-height: 100vh;
+  height: 100vh;
   min-width: 242px;
 }
 
@@ -513,6 +513,10 @@ a {
   padding: 2px 24px 0px 24px;
 }
 
+.message-sender {
+  background: var(--compose);
+}
+
 .compose {
   background: var(--compose);
   display: flex;
@@ -590,22 +594,18 @@ a {
 }
 
 .tools-bar {
-  display: flex;
   transition: 0.5s ease;
   opacity: 0;
   z-index: 3;
   top: -50px;
   pointer-events: none;
   position: fixed;
-  width: 100%;
-  justify-content: center;
 }
 
 .toolButton {
-  border-radius: 0 0 20px 20px;
-  margin-left: 7px;
-  margin-right: 7px;
+  border-radius: 179px;
   pointer-events: all;
+  margin: 3px;
 }
 
 .toggleButton {
@@ -761,4 +761,37 @@ a {
   padding: 0px 3.5px 0px 3.5px;
   margin-left: -6.6px;
   font-size: 28px;
+}
+
+/* Dynamic CSS */
+.show-sidebar-btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin-bottom: 105px;
+  border-radius: 0px 50px 50px 0px;
+  display: none;
+  z-index: 3;
+  transition: 0s ease;
+}
+
+@media only screen and (max-device-width: 512px) {
+  .sidebar__main {
+    display: none;
+    position: absolute;
+    box-shadow: -7px 0px 20px 0px #000000;
+  }
+
+  .show-sidebar-btn {
+    display: block;
+  }
+
+  .room-input {
+    width: 100%;
+    margin: 0 7px 5px 0;
+  }
+
+  .set-room-btn {
+    width: 100%;
+  }
 }

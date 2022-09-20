@@ -95,7 +95,7 @@
 
           <!-- room name input -->
           <input id="room-input" class="room-input" type="text" name="room" maxlength="9" required />
-          <button id="set-room-button">Join</button>
+          <button class="set-room-btn" id="set-room-button">Join</button>
 
           <br>
           <br>
@@ -218,7 +218,7 @@
 
     <!-- Sidebar that contains list of users online, room name, & more -->
 
-    <div class="sidebar__main">
+    <div id="sidebar__main" class="sidebar__main">
       <!-- upper part of sidebar that shows room name -->
       <div id="sidebar" class="users__sidebar"></div>
 
@@ -235,6 +235,11 @@
       </div>
     </div>
 
+    <!-- Button that pops up when screen is too small -->
+    <button id="sidebarShowButton" class="show-sidebar-btn" aria-label="Show Sidebar Button">
+      Users List <i class="fa-solid fa-arrow-right"></i>
+    </button>
+
     <!-- Chat div that contains all the msgs and messaging bar -->
 
     <div class="chat__main">
@@ -248,7 +253,7 @@
       </div>
 
       <!-- Message sending bar -->
-      <div id="message-sender">
+      <div class="message-sender">
 
         <!-- Text that pops up when someone's typing -->
         <div class="is-typing-div">

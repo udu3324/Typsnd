@@ -49,6 +49,8 @@ const $replyMessageButton = document.querySelector("#reply-to-msg-btn");
 const $joinDefaultButton = document.querySelector("#join-default-button");
 const $alertOverlay = document.querySelector("#alert-overlay");
 const $usersTyping = document.querySelector("#users-typing-p");
+const $sidebarDIV = document.querySelector("#sidebar__main");
+const $sidebarShowButton = document.querySelector("#sidebarShowButton");
 
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML;
@@ -99,7 +101,7 @@ socket.on('disconnect', function () {
     disconnected = true
 
   console.log("Disconnected from client!")
-  
+
   $settingsOverlay.style.display = "none";
   $emojiBox.style.display = "none";
   $disconnectOverlay.style.display = "flex";
@@ -373,6 +375,22 @@ $messageForm.addEventListener("submit", e => {
 });
 
 var boolClickedOn = false;
+
+$sidebarShowButton.addEventListener("click", showTheSidebar);
+var opened = false;
+function showTheSidebar() {
+  if (opened) {
+    $sidebarDIV.style.display = "none";
+    $sidebarShowButton.style.marginLeft = "0px";
+    $sidebarShowButton.innerHTML = `<i class="fa-solid fa-arrow-right"></i>`;
+    opened = false
+  } else {
+    $sidebarDIV.style.display = "flex";
+    $sidebarShowButton.style.marginLeft = "242px";
+    $sidebarShowButton.innerHTML = `<i class="fa-solid fa-arrow-left"></i>`;
+    opened = true
+  }
+}
 // =============================================================================
 // End
 // =============================================================================
