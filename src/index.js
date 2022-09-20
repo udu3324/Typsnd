@@ -4,7 +4,7 @@ import express from "express";
 import ipPKG from 'ip';
 import { generateMessage, linkify } from "./utils/messages.js";
 import { addUser, removeUser, getUser, getUsersInRoom, users } from "./utils/users.js";
-import { msgCooldown, serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames, botIcon, messageCharactarLimit } from "./config.js";
+import { msgCooldown, serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames, botIcon, messageCharactarLimit, setMsgCooldown, setblacklistedUsernames } from "./config.js";
 import { encode } from "html-entities";
 import createDOMPurify from "dompurify";
 import { JSDOM } from "jsdom";
@@ -169,8 +169,6 @@ function sockets(socket) {
     }
 
     // check if msg is over # characters
-    console.log(msg.length)
-    console.log(messageCharactarLimit)
     if (msg.length > messageCharactarLimit)
       return callback("charactar limit" + messageCharactarLimit)
 
@@ -271,7 +269,7 @@ function sockets(socket) {
   socket.on("setCooldown", (seconds) => {
     if (!admin) return cLog(Color.bg.red, `${time()} IP: ${ip} has tried to set cooldown without having admin!`)
 
-    msgCooldown = seconds;
+    setMsgCooldown(seconds)
     writeSave("cooldown", seconds)
     sendToAllRooms("message-cooldown", msgCooldown)
 
@@ -629,7 +627,7 @@ server.listen(port, () => { //credits n stuff
       deleteSave("cooldown")
     } else {
       console.log(`save.txt | using a cooldown of ${readSave("cooldown")} instead of ${msgCooldown}`)
-      msgCooldown = readSave("cooldown")
+      setMsgCooldown(readSave("cooldown"))
     }
   }
 
@@ -638,7 +636,7 @@ server.listen(port, () => { //credits n stuff
       deleteSave("blacklisted-usernames")
     } else {
       console.log(`save.txt | using a blacklist-username of ${readSave("blacklisted-usernames")} instead of ${JSON.stringify(blacklistedUsernames)}`)
-      blacklistedUsernames = JSON.parse(readSave("blacklisted-usernames"))
+      setblacklistedUsernames(JSON.parse(readSave("blacklisted-usernames")))
     }
   }
 

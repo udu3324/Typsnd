@@ -28,7 +28,7 @@ export function writeSave(config, value) {
     //if config already exists, write over it
     if (readSave(config) !== false) {
         let array = fs.readFileSync(path).toString().split("\n");
-        for (i in array) {
+        for (let i in array) {
             if (array[i].includes(config + "|"))
                 array[i] = `${config}|${value}`
         }
@@ -49,7 +49,7 @@ export function deleteSave(config) {
     //if config exists, delete it
     if (readSave(config) !== false) {
         let array = fs.readFileSync(path).toString().split("\n");
-        for (i in array) {
+        for (let i in array) {
             if (array[i].includes(config + "|"))
                 array.splice(i, 1)
         }
@@ -66,7 +66,7 @@ export function readSave(config) {
         return false
     let value = false
     let array = fs.readFileSync(path).toString().split("\n");
-    for (i in array) {
+    for (let i in array) {
         if (array[i].includes(config + "|"))
             value = array[i].substring(array[i].indexOf("|") + 1)
     }

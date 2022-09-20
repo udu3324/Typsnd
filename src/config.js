@@ -37,3 +37,12 @@ adminIcon += " " //important
 botIcon += " " //important
 if (msgGreet.length >= 1)
   msgGreet = "<br/>" + msgGreet
+
+//func to override "TypeError: Assignment to constant variable."
+export function setMsgCooldown(i) {
+  msgCooldown = i
+}
+
+export function setblacklistedUsernames(arr) {
+  blacklistedUsernames = arr
+}
