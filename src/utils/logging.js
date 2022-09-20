@@ -1,5 +1,5 @@
 //ty https://simplernerd.com/js-console-colors/
-const Color = {
+export const Color = {
     reset: "\x1b[0m",
     bright: "\x1b[1m",
     dim: "\x1b[2m",
@@ -34,19 +34,13 @@ const Color = {
 };
 
 //prints out startingText (color) text
-const cLog = (color, text, startingText) => {
+export const cLog = (color, text, startingText) => {
     if (!startingText)
         startingText = ""
 
     console.log(startingText + `${color}%s${Color.reset}`, text);
 };
 
-const time = () => {
+export const time = () => {
     return "[" + new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false }) + "]"
 }
-
-export default {
-    Color,
-    cLog,
-    time
-};

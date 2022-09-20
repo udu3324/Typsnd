@@ -1,4 +1,3 @@
-const users = [];
 import createDOMPurify from "dompurify";
 import { JSDOM } from "jsdom";
 import { blacklistedUsernames, adminIPs, multipleRooms, adminIcon, blacklistSpecialCharactarsInUsername } from "../config.js";
@@ -8,7 +7,9 @@ const DOMPurify = createDOMPurify(window);
 
 import { encode } from "html-entities";
 
-const addUser = ({ ip, id, username, room }) => {
+export const users = [];
+
+export const addUser = ({ ip, id, username, room }) => {
   let isAdmin = adminIPs.some(v => ip.includes(v));
 
   // Clean the data
@@ -96,7 +97,7 @@ const addUser = ({ ip, id, username, room }) => {
   return { user };
 };
 
-const removeUser = id => {
+export const removeUser = id => {
   const index = users.findIndex(user => user.id === id);
 
   if (index !== -1) {
@@ -104,19 +105,11 @@ const removeUser = id => {
   }
 };
 
-const getUser = id => {
+export const getUser = id => {
   return users.find(user => user.id === id);
 };
 
-const getUsersInRoom = room => {
+export const getUsersInRoom = room => {
   room = room.trim();
   return users.filter(user => user.room === room);
-};
-
-export default {
-  addUser,
-  removeUser,
-  getUser,
-  getUsersInRoom,
-  users
 };

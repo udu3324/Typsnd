@@ -7,7 +7,7 @@ const botStr = `</br><span class="bot-indicator-msg"><i class="fa-solid fa-eye-s
 const crownIcon = `<i class="fa-solid fa-crown"></i>`
 const arrowDownIcon = `<i class="fa-solid fa-arrow-down"></i>`
 
-let ticTacToeGame = [];
+export let ticTacToeGame = [];
 const ticTacToeBoard = [
     ["t0", "t1", "t2"],
     ["t3", "t4", "t5"],
@@ -24,15 +24,8 @@ const ticTacToeWinning = [
     [[0, 2], [1, 1], [2, 0]]
 ];
 
-let connect4Game = [];
-const connect4Board = [
-    "t0", "t1", "t2", "t3", "t4", "t5", "t6",
-    "t7", "t8", "t9", "t10", "t11", "t12", "t13",
-    "t14", "t15", "t16", "t17", "t18", "t19", "t20",
-    "t21", "t22", "t23", "t24", "t25", "t26", "t27",
-    "t28", "t29", "t30", "t31", "t32", "t33", "t34",
-    "t35", "t36", "t37", "t38", "t39", "t40", "t41"
-];
+export let connect4Game = [];
+
 const connect4Winning = [
     [0, 1, 2, 3], [41, 40, 39, 38], [7, 8, 9, 10],
     [34, 33, 32, 31], [14, 15, 16, 17], [27, 26, 25, 24],
@@ -59,7 +52,7 @@ const connect4Winning = [
     [11, 18, 25, 32], [12, 19, 26, 33], [13, 20, 27, 34]
 ];
 
-function runCommand(io, socket, user, message, admin) {
+export function runCommand(io, socket, user, message, admin) {
     if (/^\/help$/.test(message)) {
         sendPrivateMessage(socket, true, `<h1>Commands</h1>
             <h4>Regular Commands</h4>
@@ -291,7 +284,7 @@ function sendPrivateMessage(socket, split, message) {
         socket.emit("message", generateMessage(`${botIcon}Bot`, `${message}${botStr}`));
 }
 
-function generateNewTTTBoard(gameIndex) {
+export function generateNewTTTBoard(gameIndex) {
     const user1 = ticTacToeGame[gameIndex][1]
     const user2 = ticTacToeGame[gameIndex][2]
     const currentTurn = ticTacToeGame[gameIndex][4]
@@ -354,7 +347,7 @@ function generateTileTTT(tile, gameIndex) {
         return `<button class="ttt-button" onclick="javascript:socket.emit(\`tic-tac-toe\`, \`${ticTacToeGame[gameIndex][0]}|${tile}\`)"></button>`
 }
 
-function checkWinTTT(gameIndex) {
+export function checkWinTTT(gameIndex) {
     let won = false
     let marker;
 
@@ -382,7 +375,7 @@ function checkWinTTT(gameIndex) {
     return won
 }
 
-function checkTieTTT(array) {
+export function checkTieTTT(array) {
     let didTie = true
     for (let x = 0; x < array.length; x++) {
         for (let y = 0; y < array.length; y++) {
@@ -393,7 +386,7 @@ function checkTieTTT(array) {
     return didTie
 }
 
-function indexOf2dArray(array, item) {
+export function indexOf2dArray(array, item) {
     for (let x = 0; x < array.length; x++) {
         for (let y = 0; y < array.length; y++) {
             if (array[y][x] === item)
@@ -424,7 +417,7 @@ function getUserID(message) {
         return null
 }
 
-function generateNewConnect4Board(gameIndex) {
+export function generateNewConnect4Board(gameIndex) {
     const room = connect4Game[gameIndex][0]
     const user1 = connect4Game[gameIndex][1]
     const user2 = connect4Game[gameIndex][2]
@@ -474,7 +467,7 @@ function generateNewConnect4Board(gameIndex) {
     return startingDOM + middleDOM + endingDOM
 }
 
-function placeConnect4Tile(gameIndex, row) {
+export function placeConnect4Tile(gameIndex, row) {
     //set the tile color
     let tileColor;
     if (connect4Game[gameIndex][4] === connect4Game[gameIndex][1])
@@ -498,7 +491,7 @@ function placeConnect4Tile(gameIndex, row) {
     }
 }
 
-function checkWinConnect4(gameIndex) {
+export function checkWinConnect4(gameIndex) {
     let won = false
 
     let tileColor;
@@ -523,17 +516,4 @@ function checkWinConnect4(gameIndex) {
     }
 
     return won
-}
-
-export default {
-    runCommand,
-    ticTacToeGame,
-    generateNewTTTBoard,
-    indexOf2dArray,
-    checkWinTTT,
-    checkTieTTT,
-    connect4Game,
-    generateNewConnect4Board,
-    placeConnect4Tile,
-    checkWinConnect4
 }

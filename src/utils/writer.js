@@ -7,7 +7,7 @@ const save = "\n# this file stores chat cooldown and bans made in the settings\n
     "# please do not edit the contents of this file\n" +
     "# but you're welcome to delete the file to reset it\n\n"
 
-function createSave() {
+export function createSave() {
     //create a save only when there isn't one
     try {
         if (!fs.existsSync(path)) {
@@ -24,7 +24,7 @@ function createSave() {
 }
 
 //writeSave("cooldown", 2)
-function writeSave(config, value) {
+export function writeSave(config, value) {
     //if config already exists, write over it
     if (readSave(config) !== false) {
         let array = fs.readFileSync(path).toString().split("\n");
@@ -45,7 +45,7 @@ function writeSave(config, value) {
 }
 
 //deleteSave("cooldown")
-function deleteSave(config) {
+export function deleteSave(config) {
     //if config exists, delete it
     if (readSave(config) !== false) {
         let array = fs.readFileSync(path).toString().split("\n");
@@ -61,7 +61,7 @@ function deleteSave(config) {
 }
 
 //readSave("cooldown") returns 2
-function readSave(config) {
+export function readSave(config) {
     if (!fs.existsSync(path))
         return false
     let value = false
@@ -72,10 +72,3 @@ function readSave(config) {
     }
     return value
 }
-
-export default {
-    createSave,
-    writeSave,
-    deleteSave,
-    readSave
-};

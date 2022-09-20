@@ -1,7 +1,7 @@
 import { join } from "path";
 import { createServer } from "http";
 import express from "express";
-import { address } from 'ip';
+import ipPKG from 'ip';
 import { generateMessage, linkify } from "./utils/messages.js";
 import { addUser, removeUser, getUser, getUsersInRoom, users } from "./utils/users.js";
 import { msgCooldown, serverPort, blacklistedIPs, msgGreet, adminIPs, tabs, adminIcon, altDetection, htmlTitle, blacklistedUsernames, botIcon, messageCharactarLimit } from "./config.js";
@@ -12,16 +12,26 @@ import { cLog, Color, time } from "./utils/logging.js";
 import { createSave, writeSave, readSave, deleteSave } from "./utils/writer.js";
 import { runCommand, ticTacToeGame, generateNewTTTBoard, indexOf2dArray, checkWinTTT, checkTieTTT, connect4Game, generateNewConnect4Board, placeConnect4Tile, checkWinConnect4 } from "./utils/commands.js";
 
+import path from 'path';
+import {fileURLToPath} from 'url';
+
+import { Server } from "socket.io";
+
+const { address } = ipPKG;
+
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
 
 const app = express();
 const server = createServer(app);
-const io = require('socket.io')(server, {
+const io = new Server(server, {
   maxHttpBufferSize: 25e8 //25mb
 });
 
 const port = serverPort;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const publicDirectoryPath = join(__dirname, "../public");
 
 app.use(express.static(publicDirectoryPath));
