@@ -197,30 +197,30 @@ function renderNewMessage(message, split) {
 
   var isMentioned = false
 
-  //handle mentions
-  if (message.text.includes(`@${username}`) || message.text.includes(`@everyone`)) {
-    var usr = username
+  //handle mentions (filtered returns back things like < and > )
+  var filteredUsername = $('<div>').text(username).html();
+  if (message.text.includes(`@${filteredUsername}`) || message.text.includes(`@everyone`)) {
 
     if (message.text.includes(`@everyone`))
-      usr = "everyone"
+      filteredUsername = "everyone"
 
     console.log("Mentioned!")
 
-    var regex = new RegExp(`@${usr}`, 'g');
+    var regex = new RegExp(`@${filteredUsername}`, 'g');
     var count = (message.text.match(regex) || []).length;
 
-    var sizeOfMention = `@${usr}`.length
+    var sizeOfMention = `@${filteredUsername}`.length
     var startingIndex = 0
     //style all the mentions
     for (let i = 0; i < count; i++) {
       //get where the mention is located
-      var mentionIndex = message.text.indexOf(`@${usr}`, startingIndex)
+      var mentionIndex = message.text.indexOf(`@${filteredUsername}`, startingIndex)
 
       //insert span 
       message.text = message.text.slice(0, mentionIndex) + "<span class=\"mention-text\">" + message.text.slice(mentionIndex);
 
       //update index
-      mentionIndex = message.text.indexOf(`@${usr}`, startingIndex)
+      mentionIndex = message.text.indexOf(`@${filteredUsername}`, startingIndex)
 
       //insert /span 
       message.text = message.text.slice(0, mentionIndex + sizeOfMention) + "</span>" + message.text.slice(mentionIndex + sizeOfMention);

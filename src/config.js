@@ -1,6 +1,6 @@
 // Server / Moderation Config
 export let serverPort = 3000;
-export let adminIPs = ["localhost"];
+export let adminIPs = [];
 export let adminIcon = `<i class="fa-solid fa-shield"></i>`;
 export let botIcon = `<i class="fa-solid fa-keyboard"></i>`;
 export let altDetection = true;

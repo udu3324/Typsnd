@@ -76,16 +76,18 @@ export const addUser = ({ ip, id, username, room }) => {
   }
 
   // Remove XSS
-  username = DOMPurify.sanitize(username);
+  username = DOMPurify.sanitize(username, {ALLOWED_TAGS: ['']});
   if ((username === "")) {
     return {
       error: "Nice try, but XSS does not work here!"
     };
   }
 
-  // encode entities
-  username = encode(username);
-
+  // convert &, <, >, ", ' into entities
+  username = encode(username).replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
+  
+  console.log("before1: " + username)
+  
   // Add admin icon
   if (adminIPs.some(v => ip.includes(v))) {
     username = adminIcon + username
