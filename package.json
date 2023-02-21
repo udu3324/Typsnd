@@ -17,7 +17,7 @@
     "html-entities": "^2.3.3",
     "ip": "^1.1.8",
     "jsdom": "^20.0.3",
-    "socket.io": "^4.5.4"
+    "socket.io": "^4.6.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
