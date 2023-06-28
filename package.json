@@ -14,7 +14,7 @@
   "dependencies": {
     "dompurify": "^3.0.1",
     "express": "^4.18.2",
-    "html-entities": "^2.3.3",
+    "html-entities": "^2.3.5",
     "ip": "^1.1.8",
     "jsdom": "^21.1.1",
     "socket.io": "^4.6.1"
