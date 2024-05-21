@@ -25,9 +25,9 @@ Typsnd. Type, send. It's as simple as that. Typsnd is a simple web app that peop
 You can try out Typsnd using this link: [https://Typsnd.potatochips3.repl.co](https://Typsnd.potatochips3.repl.co)
 
 ## What it Looks Like
-![1](https://media.discordapp.net/attachments/956773599644090379/989685655225397348/unknown.png)
-![2](https://cdn.discordapp.com/attachments/956773599644090379/989687528045019166/unknown.png)
-![3](https://cdn.discordapp.com/attachments/956773599644090379/989687994812366899/unknown.png)
+![1](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/1.png)
+![2](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/2.png)
+![3](https://raw.githubusercontent.com/udu3324/Typsnd/master/public/img/3.png)
 
 ## Installation and Running
 Make sure you have [Node.JS](https://nodejs.org/en/download) installed. The version of Node I've tested it on was v14.15.4. 
