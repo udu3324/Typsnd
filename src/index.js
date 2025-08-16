@@ -36,6 +36,9 @@ const publicDirectoryPath = join(__dirname, "../public");
 
 app.use(express.static(publicDirectoryPath));
 
+//serve local copies of libraries
+app.use('/vendor', express.static(join(__dirname, '../node_modules')));
+
 let ipArray = [];
 let ipUsernameArray = [];
 let banArray = [];
