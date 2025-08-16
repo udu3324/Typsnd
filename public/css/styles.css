@@ -422,6 +422,7 @@ emoji-picker {
   border-radius: 27px;
   visibility: hidden;
   z-index: 3;
+  animation: bounce 1s infinite;
 }
 
 .message {
@@ -793,5 +794,14 @@ a {
 
   .set-room-btn {
     width: 100%;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0); /* Starting and ending position */
+  }
+  50% {
+    transform: translateY(-5px); /* Peak of the bounce */
   }
 }
